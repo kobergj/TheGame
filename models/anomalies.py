@@ -12,5 +12,7 @@ class Planet(Anomaly):
     def __init__(self, planetInformation):
         Anomaly.__init__(self)
 
+        self.Name = planetInformation['name']
+
         self.goodsConsumed = planetInformation['goodsConsumed']
         self.goodsProduced = planetInformation['goodsProduced']

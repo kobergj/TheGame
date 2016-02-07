@@ -6,27 +6,34 @@ def Arrive(Planet, Player):
     print "Goods Produced: %s" % Planet.goodsProduced
     print "Goods Consumed: %s" % Planet.goodsConsumed
     print "Possible Actions:"
+    print "[0] quit game"
     print "[1] buy goods"
     print "[2] sell goods"
     print "[3] depart"
 
     choice = input()
 
-    if choice == 3:
-        next_dest = ChooseDestination(Planet, Player)
-        return next_dest
-    elif choice == 2:
-        SellGoods(Planet, Player)
-    elif choice == 1:
-        BuyGoods(Planet, Player)
-    return
+    if choice == 0:
+        return choice-1
+
+    while choice != 3:
+        if choice == 2:
+            SellGoods(Planet, Player)
+        elif choice == 1:
+            BuyGoods(Planet, Player)
+
+    next_dest = ChooseDestination(Planet, Player)
+
+    return next_dest
 
 
 def ChooseDestination(Planet, Player):
     print "\n Choose Destination"
 
-    print "[1] Earth"
-    print "[2] Mars"
+    i = 1
+    for destination in Planet.distances:
+        print "\n [%s] %s, distance: %s" % (i, destination, Planet.distances[destination])
+        i += 1
 
     choice = input()
 
@@ -40,9 +47,9 @@ def BuyGoods(Planet, Player):
     for good in Planet.goodsProduced:
         print "[%s] buy %s" % (i, good)
 
-    choice = input()
+    numberOfGood = input()
 
-    if choice == 0:
+    if numberOfGood == 0:
         Arrive(Planet, Player)
     else:
         BuyGoods(Planet, Player)

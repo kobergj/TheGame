@@ -1,16 +1,19 @@
-import models.anomalies as anm
 import controller.planet_interactions as pi
+import models.player as pyr
+import models.universe as uvs
 
+player_info = {'name': 'Dr.Play', 'startingCredits': 12}
 
-earth_info = {'name': 'Earth', 'goodsConsumed': ['Videogames'], 'goodsProduced': ['Gin']}
-mars_info = {'name': 'Mars', 'goodsProduced': ['Sand', 'Evil'], 'goodsConsumed': ['Gin']}
+earth_info = {'name': 'Earth', 'goodsConsumed': ['Videogames'], 'goodsProduced': ['Gin'], 'coordinates': [0, 1, 0]}
+mars_info = {'name': 'Mars', 'goodsProduced': ['Sand', 'Evil'], 'goodsConsumed': ['Gin'], 'coordinates': [0, 1, 0]}
 
-Earth = anm.Planet(earth_info)
-Mars = anm.Planet(mars_info)
+anomalyInfos = {'planets': [earth_info, mars_info]}
 
-Planets = [Earth, Mars]
+universe = uvs.Universe(anomalyInfos)
 
-next_destination = pi.Arrive(Earth)
+player = pyr.Adventurer(player_info)
+
+next_destination = pi.Arrive(universe.Earth, player)
 
 while next_destination is not None:
-    next_destination = pi.Arrive(Planets[next_destination])
+    next_destination = pi.Arrive(universe.planetList[next_destination], player)

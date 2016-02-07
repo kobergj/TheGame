@@ -3,14 +3,13 @@
 
 class Anomaly():
     # Generic Anomaly in Space.
-    # TODO: Coordinates
-    def __init__(self):
-        self.coordinates = [0, 0, 0]
+    def __init__(self, anomalieInformation):
+        self.coordinates = anomalieInformation['coordinates']
 
 
 class Planet(Anomaly):
     def __init__(self, planetInformation):
-        Anomaly.__init__(self)
+        Anomaly.__init__(self, planetInformation)
 
         self.Name = planetInformation['name']
 

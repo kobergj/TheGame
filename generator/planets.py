@@ -11,6 +11,12 @@ MAX_NUMBER_GOODS_CONSUMED = 3
 MIN_NUMBER_GOODS_PRODUCED = 1
 MAX_NUMBER_GOODS_PRODUCED = 3
 
+MIN_SELL_PRICE = 1
+MAX_SELL_PRICE = 3
+
+MIN_BUY_PRICE = 4
+MAX_BUY_PRICE = 10
+
 POSSIBLE_GOODS = ['Gin', 'Videogames', 'Evil', 'BBQ Ribs', 'Airplanes', 'Mutton', 'Sand', 'Splice',
                   'Garlic', 'Ice Cubes', 'Slibbery Worms', 'Merchandise', 'Blunt Weapons']
 
@@ -36,12 +42,16 @@ def generatePlanetInformation():
     goodsConsumed = generateConsumedGoods()
     goodsProduced = generateProducedGoods(goodsConsumed)
 
+    prices = generatePrices(goodsConsumed, goodsProduced)
+
     planetInformation = {
         'name': planetName,
         'coordinates': coordinates,
 
         'goodsConsumed': goodsConsumed,
-        'goodsProduced': goodsProduced
+        'goodsProduced': goodsProduced,
+
+        'prices': prices
     }
 
     return planetInformation
@@ -99,3 +109,14 @@ def generateProducedGoods(goodsConsumed):
                 goodsProduced.append(good)
 
     return goodsProduced
+
+
+def generatePrices(goodsConsumed, goodsProduced):
+    prices = dict()
+    for good in goodsConsumed:
+        prices.update({good: random.randint(MIN_BUY_PRICE, MAX_BUY_PRICE)})
+
+    for good in goodsProduced:
+        prices.update({good: random.randint(MIN_SELL_PRICE, MAX_SELL_PRICE)})
+
+    return prices

@@ -15,3 +15,5 @@ class Planet(Anomaly):
 
         self.goodsConsumed = planetInformation['goodsConsumed']
         self.goodsProduced = planetInformation['goodsProduced']
+
+        self.prices = planetInformation['prices']

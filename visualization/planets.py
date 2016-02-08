@@ -2,8 +2,9 @@ def planetArrival(Planet, Player):
     print "\n You are at Planet %s" % Planet.Name
     print "Goods Produced: %s" % Planet.goodsProduced
     print "Goods Consumed: %s" % Planet.goodsConsumed
-    print "Currently in Cargobay: %s" % Player.currentShip.inCargo
-    print "Possible Actions:"
+    print "\nCurrently in Cargobay: %s" % Player.currentShip.inCargo
+    print "Number of Credits: %s" % Player.credits
+    print "\nPossible Actions:"
     print "[0] quit game"
     print "[1] buy goods"
     print "[2] sell goods"
@@ -20,6 +21,8 @@ def planetArrival(Planet, Player):
 def invalidChoice(choice):
     print 'Sorry, %s not valid' % choice
     choice = input()
+
+    return choice
 
 
 def chooseNextDestination(Planet, Player):
@@ -45,7 +48,7 @@ def chooseGoodToBuy(Planet, Player):
     print '\n Possiblities:'
     print "[0] Buy Nothing"
     for good in Planet.goodsProduced:
-        print "[%s] buy %s" % (i, good)
+        print "[%s] buy %s for %s credits" % (i, good, Planet.prices[good])
         i += 1
 
     choice = input()
@@ -63,7 +66,7 @@ def chooseGoodToSell(Planet, Player):
     print "[0] sell Nothing"
     for good in Player.currentShip.inCargo.keys():
         if good in Planet.goodsConsumed:
-            print "[%s] sell %s" % (i, good)
+            print "[%s] sell %s for %s credits" % (i, good, Planet.prices[good])
             i += 1
 
     choice = input()

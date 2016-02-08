@@ -1,19 +1,28 @@
 import controller.planet_interactions as pi
 import models.player as pyr
 import models.universe as uvs
+import generator.planets as gpl
 
+NUMBER_OF_PLANETS = 5
+
+# Player Not yet Implemented
 player_info = {'name': 'Dr.Play', 'startingCredits': 12}
-
-earth_info = {'name': 'Earth', 'goodsConsumed': ['Videogames'], 'goodsProduced': ['Gin'], 'coordinates': [0, 17, 33]}
-mars_info = {'name': 'Mars', 'goodsProduced': ['Sand', 'Evil'], 'goodsConsumed': ['Gin'], 'coordinates': [0, 12, 56]}
-
-anomalyInfos = {'planets': [earth_info, mars_info]}
-
-universe = uvs.Universe(anomalyInfos)
-
 player = pyr.Adventurer(player_info)
 
-next_destination = pi.Arrive(universe.Earth, player)
+# generate List of Planets
+listOfPlanets = gpl.generatePlanetList(NUMBER_OF_PLANETS)
 
-while next_destination != -1:
-    next_destination = pi.Arrive(universe.__dict__[universe.planetList[next_destination]], player)
+# generate Anomaly Dict
+anomalyInfos = {'planets': listOfPlanets}
+
+# generate Universe
+universe = uvs.Universe(anomalyInfos)
+
+# Set starting Planet
+next_destination_name = universe.planetList[0]
+
+# Start
+while next_destination_name != 'quit':
+    planet = universe.__dict__[next_destination_name]
+
+    next_destination_name = pi.Arrive(planet, player)

@@ -4,7 +4,7 @@ class Adventurer():
         self.credits = playerInfo['startingCredits']
 
     def earnCredits(self, numberOfCredts):
-        self.credits -= numberOfCredts
+        self.credits += numberOfCredts
 
     def spendCredits(self, numberOfCredts):
         self.credits -= numberOfCredts

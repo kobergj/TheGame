@@ -25,13 +25,12 @@ def invalidChoice(choice):
     return choice
 
 
-def chooseNextDestination(Planet, Player):
-    # Returns Index of Destination in Planet.distances.keys()
+def chooseNextDestination(Planet, Player, travelCosts):
     print "\n Choose Destination"
 
     i = 1
     for destination in Planet.distances.keys():
-        print "[%s] %s, distance: %s clicks" % (i, destination, Planet.distances[destination])
+        print "[%s] %s, distance: %s clicks, Cost: %s" % (i, destination, Planet.distances[destination], travelCosts[destination])
         i += 1
 
     choice = input()
@@ -39,11 +38,12 @@ def chooseNextDestination(Planet, Player):
     while choice not in range(i):
         choice = invalidChoice(choice)
 
-    return choice - 1
+    next_dest = Planet.distances.keys()[choice-1]
+
+    return next_dest
 
 
 def chooseGoodToBuy(Planet, Player):
-    # Returns Index of Good in Planet.goodsProduced or -1 for quit
     i = 1
     print '\n Possiblities:'
     print "[0] Buy Nothing"
@@ -56,17 +56,24 @@ def chooseGoodToBuy(Planet, Player):
     while choice not in range(i):
         choice = invalidChoice(choice)
 
-    return choice - 1
+    if choice == 0:
+        return 'quitBuy'
+
+    good_to_buy = Planet.goodsProduced[choice-1]
+
+    return good_to_buy
 
 
 def chooseGoodToSell(Planet, Player):
-    # Returns Index of Good in Player.currentShip.inCargo.keys() or -1 for quit
+    choiceOptions = list()
+
     i = 1
     print '\n Possiblities:'
     print "[0] sell Nothing"
     for good in Player.currentShip.inCargo.keys():
         if good in Planet.goodsConsumed:
             print "[%s] sell %s for %s credits" % (i, good, Planet.prices[good])
+            choiceOptions.append(good)
             i += 1
 
     choice = input()
@@ -74,4 +81,9 @@ def chooseGoodToSell(Planet, Player):
     while choice not in range(i):
         choice = invalidChoice(choice)
 
-    return choice - 1
+    if choice == 0:
+        return 'quitSell'
+
+    good_to_sell = Player.currentShip.inCargo.keys()[choice-1]
+
+    return good_to_sell

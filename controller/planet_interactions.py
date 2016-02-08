@@ -23,21 +23,25 @@ def Arrive(Planet, Player):
 
 
 def ChooseDestination(Planet, Player):
+    travelCostDict = dict()
+    for destination in Planet.distances:
+        travelCost = int(Planet.distances[destination] / Player.currentShip.speed)
+        travelCostDict.update({destination: travelCost})
 
-    choice = viz.chooseNextDestination(Planet, Player)
+    next_dest = viz.chooseNextDestination(Planet, Player, travelCostDict)
 
-    next_dest = Planet.distances.keys()[choice]
+    cost_for_travel = travelCostDict[next_dest]
+    Player.spendCredits(cost_for_travel)
 
     return next_dest
 
 
 def BuyGoods(Planet, Player):
-    choice = viz.chooseGoodToBuy(Planet, Player)
+    good_to_buy = viz.chooseGoodToBuy(Planet, Player)
 
-    if choice == -1:
+    if good_to_buy == 'quitBuy':
         return
 
-    good_to_buy = Planet.goodsProduced[choice]
     price = Planet.prices[good_to_buy]
 
     Player.spendCredits(price)
@@ -46,12 +50,11 @@ def BuyGoods(Planet, Player):
 
 
 def SellGoods(Planet, Player):
-    choice = viz.chooseGoodToSell(Planet, Player)
+    good_to_sell = viz.chooseGoodToSell(Planet, Player)
 
-    if choice == -1:
+    if good_to_sell == 'quitSell':
         return
 
-    good_to_sell = Player.currentShip.inCargo.keys()[choice]
     price = Planet.prices[good_to_sell]
 
     # TODO: CargoAmount

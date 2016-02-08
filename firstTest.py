@@ -5,9 +5,11 @@ import generator.planets as gpl
 
 NUMBER_OF_PLANETS = 5
 
-# Player Not yet Implemented
 player_info = {'name': 'Dr.Play', 'startingCredits': 12}
-player = pyr.Adventurer(player_info)
+starting_ship_stats = {'cargoCapacity': 10, 'speed': 4}
+
+# Initialize Player
+player = pyr.Player(player_info, starting_ship_stats)
 
 # generate List of Planets
 listOfPlanets = gpl.generatePlanetList(NUMBER_OF_PLANETS)

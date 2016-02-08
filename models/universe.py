@@ -24,16 +24,14 @@ class Universe():
             currentAnomaly.distances.update({anomalyName: distance})
 
     def calculateDistance(self, point1, point2):
-        x0 = point1[0]
-        x1 = point2[0]
+        distance = 0.0
+        for i in range(len(point1)):
+            x = point1[i]
+            y = point2[i]
 
-        y0 = point1[1]
-        y1 = point2[1]
+            distance += (x - y)**2
 
-        z0 = point1[2]
-        z1 = point2[2]
-
-        distance = (x0 - x1) ** 2 + (y0 - y1) ** 2 + (z0 - z1) ** 2
-        distance = math.sqrt(float(distance))
+        distance = math.sqrt(distance)
+        distance = round(distance, 2)
 
         return distance

@@ -34,16 +34,22 @@ def ChooseDestination(Planet, Player):
 def BuyGoods(Planet, Player):
     choice = viz.chooseGoodToBuy(Planet, Player)
 
+    if choice == -1:
+        return
+
     good_to_buy = Planet.goodsProduced[choice]
 
-    # TODO
-    print 'Bought %s' % good_to_buy
+    # TODO: CargoAmount
+    Player.currentShip.loadCargo(good_to_buy, 1)
 
 
 def SellGoods(Planet, Player):
     choice = viz.chooseGoodToSell(Planet, Player)
 
-    good_to_sell = Planet.goodsConsumed[choice]
+    if choice == -1:
+        return
 
-    # TODO
-    print 'Sold %s' % good_to_sell
+    good_to_sell = Player.currentShip.inCargo.keys()[choice]
+
+    # TODO: CargoAmount
+    Player.currentShip.unloadCargo(good_to_sell, 1)

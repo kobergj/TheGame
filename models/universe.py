@@ -13,11 +13,9 @@ class Universe():
             self.anomalyList.append(planet['name'])
 
         for anomaly in self.anomalyList:
-            self.listDistances(self.__dict__[anomaly])
+            self.updateDistances(self.__dict__[anomaly])
 
-    def listDistances(self, currentAnomaly):
-        currentAnomaly.distances = dict()
-
+    def updateDistances(self, currentAnomaly):
         for anomalyName in self.anomalyList:
             anomaly = self.__dict__[anomalyName]
             distance = self.calculateDistance(currentAnomaly.coordinates, anomaly.coordinates)

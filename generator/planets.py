@@ -1,24 +1,25 @@
 import random
+import database.database as db
 
-POSSIBLE_NAMES = ['Earth', 'Mars', 'Venus', 'Jupiter', 'Vulcan', 'Kobol', "Quo'Nos", 'Galistrat C']
 
-MAX_COORDINATES = [10, 10, 10]
-MIN_COORDINATES = [-10, -10, -10]
+POSSIBLE_NAMES = db.Planets.ListOfNames
 
-MIN_NUMBER_GOODS_CONSUMED = 1
-MAX_NUMBER_GOODS_CONSUMED = 3
+MAX_COORDINATES = db.Universe.MaxCoordinates
+MIN_COORDINATES = db.Universe.MinCoordinates
 
-MIN_NUMBER_GOODS_PRODUCED = 1
-MAX_NUMBER_GOODS_PRODUCED = 3
+MIN_NUMBER_GOODS_CONSUMED = db.Goods.MinNumberOfGoodsConsumed
+MAX_NUMBER_GOODS_CONSUMED = db.Goods.MaxNumberOfGoodsConsumed
 
-MIN_SELL_PRICE = 1
-MAX_SELL_PRICE = 3
+MIN_NUMBER_GOODS_PRODUCED = db.Goods.MinNumberOfGoodsProduced
+MAX_NUMBER_GOODS_PRODUCED = db.Goods.MaxNumberOfGoodsProduced
 
-MIN_BUY_PRICE = 4
-MAX_BUY_PRICE = 10
+MIN_SELL_PRICE = db.Goods.MinSellPrice
+MAX_SELL_PRICE = db.Goods.MaxSellPrice
 
-POSSIBLE_GOODS = ['Gin', 'Videogames', 'Evil', 'BBQ Ribs', 'Airplanes', 'Mutton', 'Sand', 'Splice',
-                  'Garlic', 'Ice Cubes', 'Slibbery Worms', 'Merchandise', 'Blunt Weapons']
+MIN_BUY_PRICE = db.Goods.MinBuyPrice
+MAX_BUY_PRICE = db.Goods.MaxBuyPrice
+
+POSSIBLE_GOODS = db.Goods.ListOfNames
 
 
 def generatePlanetList(numberOfPlanets):

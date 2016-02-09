@@ -43,6 +43,14 @@ def chooseNextDestination(Planet, Player, travelCosts):
     return next_dest
 
 
+def drawSectorMap(universe):
+    mapdict = dict()
+    for anomalyName in universe.anomalyList:
+        anomaly = universe.__dict__[anomalyName]
+
+        mapdict.update{}
+
+
 def chooseGoodToBuy(Planet, Player):
     i = 1
     print '\n Possiblities:'

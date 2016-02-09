@@ -5,6 +5,7 @@ class Anomaly():
     # Generic Anomaly in Space.
     def __init__(self, anomalieInformation):
         self.coordinates = anomalieInformation['coordinates']
+        self.distances = dict()
 
 
 class Planet(Anomaly):

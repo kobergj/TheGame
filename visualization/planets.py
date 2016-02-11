@@ -30,7 +30,10 @@ def chooseNextDestination(Planet, Player, travelCosts):
 
     i = 1
     for destination in Planet.distances.keys():
-        print "[%s] %s, distance: %s clicks, Cost: %s" % (i, destination, Planet.distances[destination], travelCosts[destination])
+        print "[%s] %s, distance: %s clicks, Cost: %s" % (i,
+                                                          destination,
+                                                          Planet.distances[destination],
+                                                          travelCosts[destination])
         i += 1
 
     choice = input()
@@ -42,16 +45,14 @@ def chooseNextDestination(Planet, Player, travelCosts):
 
     return next_dest
 
-
-def drawSectorMap(universe):
-    mapdict = dict()
-    for anomalyName in universe.anomalyList:
-        anomaly = universe.__dict__[anomalyName]
-
-        mapdict.update{}
+# Moved to Sprint 2
+# def drawSectorMap(universe):
+#     mapdict = dict()
+#     for anomalyName in universe.anomalyList:
+#         anomaly = universe.__dict__[anomalyName]
 
 
-def chooseGoodToBuy(Planet, Player):
+def chooseGoodToBuy(Planet, Player, freeCargoSpace):
     i = 1
     print '\n Possiblities:'
     print "[0] Buy Nothing"
@@ -69,7 +70,14 @@ def chooseGoodToBuy(Planet, Player):
 
     good_to_buy = Planet.goodsProduced[choice-1]
 
-    return good_to_buy
+    print "\n Choose Amount [0 - %s]:" % Player.freeCargoSpace
+
+    amount = input()
+
+    while amount not in range(Player.freeCargoSpace):
+        amount = invalidChoice(amount)
+
+    return good_to_buy, amount
 
 
 def chooseGoodToSell(Planet, Player):

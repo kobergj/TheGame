@@ -10,6 +10,7 @@ class Ship():
 
         # Initialize Cargobay
         self.inCargo = dict()
+        self.freeCargoSpace = shipStats['cargoCapacity']
 
     def loadCargo(self, cargoId, cargoAmount):
         if cargoId in self.inCargo:
@@ -17,10 +18,14 @@ class Ship():
         else:
             self.inCargo.update({cargoId: cargoAmount})
 
+        self.freeCargoSpace -= cargoAmount
+
     def unloadCargo(self, cargoId, cargoAmount):
         self.inCargo[cargoId] -= cargoAmount
         if self.inCargo[cargoId] <= 0:
             del self.inCargo[cargoId]
+
+        self.freeCargoSpace += cargoAmount
 
 
 # Freighter. Can be overloaded.

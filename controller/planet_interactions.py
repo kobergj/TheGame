@@ -37,15 +37,18 @@ def ChooseDestination(Planet, Player):
 
 
 def BuyGoods(Planet, Player):
-    good_to_buy = viz.chooseGoodToBuy(Planet, Player)
+    good_to_buy, amount = viz.chooseGoodToBuy(Planet, Player)
 
     if good_to_buy == 'quitBuy':
+        return
+
+    if amount == 0:
         return
 
     price = Planet.prices[good_to_buy]
 
     Player.spendCredits(price)
-    # TODO: CargoAmount
+
     Player.currentShip.loadCargo(good_to_buy, 1)
 
 

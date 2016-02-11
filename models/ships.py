@@ -7,10 +7,15 @@ class Ship():
         # Assign Stats
         self.cargoCapacity = shipStats['cargoCapacity']
         self.speed = shipStats['speed']
+        self.maxTravelDistance = shipStats['maxTravelDistance']
 
         # Initialize Cargobay
         self.inCargo = dict()
         self.freeCargoSpace = shipStats['cargoCapacity']
+
+        # Initialize SensorBay
+        self.sectorMap = self.initSectorMap()
+        self.sectorMapLegend = list()
 
     def loadCargo(self, cargoId, cargoAmount):
         if cargoId in self.inCargo:
@@ -26,6 +31,31 @@ class Ship():
             del self.inCargo[cargoId]
 
         self.freeCargoSpace += cargoAmount
+
+    def initSectorMap(self):
+        # Currently Two Dimensional.
+
+        sectorMap = list()
+        for j in range(self.maxTravelDistance*2):
+            row = list()
+            for i in range(self.maxTravelDistance*2):
+                row.append(0)
+            sectorMap.append(row)
+
+    # Not Sure if this right here.
+    def updateSectorMap(self, relativeCoordinatesDict):
+        # Currently Two Dimensional.
+        self.sectorMap = self.initSectorMap()
+
+        self.sectorMapLegend = ['Nothing']
+        i = 1
+        for anomaly in relativeCoordinatesDict:
+            cords = relativeCoordinatesDict[anomaly]
+            if cords[0] in range(self.maxTravelDistance*2):
+                if cords[1] in range(self.maxTravelDistance*2):
+                    self.sectorMap[cords[1]][cords[0]] = i
+                    self.sectorMapLegend.append(anomaly)
+                    i += 1
 
 
 # Freighter. Can be overloaded.

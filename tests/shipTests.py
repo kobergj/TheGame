@@ -7,12 +7,14 @@ GENERIC_CARGO_AMOUNT = 2
 
 GENERIC_SHIP_CAPACITY = 10
 GENERIC_SHIP_SPEED = 4
+GENERIC_SHIP_TRAVELDISTANCE = 1
 
 GENERIC_OVERLOAD_BONUS = 5
 GENERIC_OVERLOAD_MALUS = 2
 
 GENERIC_SHIP_STATS = {'cargoCapacity': GENERIC_SHIP_CAPACITY,
                       'speed': GENERIC_SHIP_SPEED,
+                      'maxTravelDistance': GENERIC_SHIP_TRAVELDISTANCE,
 
                       'overloadbonus': GENERIC_OVERLOAD_BONUS,
                       'overloadmalus': GENERIC_OVERLOAD_MALUS}
@@ -52,6 +54,12 @@ class genericShip_methodTests(unittest.TestCase):
         genericShip.unloadCargo(GENERIC_CARGO_NAME, GENERIC_CARGO_AMOUNT)
         self.assertEqual(genericShip.inCargo, expected,
                          err.NOT_EQUAL('unloadCargo', genericShip.inCargo, expected))
+
+    def test_initSectorMap(self):
+        expected = [[0, 0], [0, 0]]
+        genericShip = s.Ship(GENERIC_SHIP_STATS)
+        self.assertEqual(genericShip.sectorMap, expected,
+                         err.NOT_EQUAL('sectorMapInit', genericShip.inCargo, expected))
 
 
 class freighter_MethodTests(unittest.TestCase):

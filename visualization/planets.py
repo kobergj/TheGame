@@ -1,3 +1,4 @@
+
 def planetArrival(Planet, Player):
     print "\n You are at Planet %s" % Planet.Name
     print "Goods Produced: %s" % Planet.goodsProduced
@@ -28,29 +29,34 @@ def invalidChoice(choice):
 def chooseNextDestination(Planet, Player, travelCosts):
     print "\n Choose Destination"
 
+    choiceList = list()
+
     i = 1
+    print "[0] Show Sector Map"
     for destination in Planet.distances.keys():
-        print "[%s] %s, distance: %s clicks, Cost: %s" % (i,
-                                                          destination,
-                                                          Planet.distances[destination],
-                                                          travelCosts[destination])
-        i += 1
+        if Planet.distances[destination] <= Player.currentShip.maxTravelDistance:
+            print "[%s] %s, distance: %s clicks, Cost: %s" % (i,
+                                                              destination,
+                                                              Planet.distances[destination],
+                                                              travelCosts[destination])
+            i += 1
+            choiceList.append(destination)
 
     choice = input()
 
     while choice not in range(i):
         choice = invalidChoice(choice)
 
-    next_dest = Planet.distances.keys()[choice-1]
+    if choice == 0:
+        showSectorMap(Player, Planet)
+
+    next_dest = choiceList[choice-1]
 
     return next_dest
 
-# Moved to Sprint 2
-# def drawSectorMap(universe):
-#     mapdict = dict()
-#     for anomalyName in universe.anomalyList:
-#         anomaly = universe.__dict__[anomalyName]
 
+def showSectorMap(Planet, Player):
+    
 
 def chooseGoodToBuy(Planet, Player):
     i = 1

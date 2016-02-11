@@ -3,10 +3,10 @@ import models.player as pyr
 import models.universe as uvs
 import generator.planets as gpl
 
-NUMBER_OF_PLANETS = 5
+NUMBER_OF_PLANETS = 10
 
 player_info = {'name': 'Dr.Play', 'startingCredits': 12}
-starting_ship_stats = {'cargoCapacity': 10, 'speed': 4}
+starting_ship_stats = {'cargoCapacity': 10, 'speed': 4, 'maxTravelDistance': 10}
 
 # Initialize Player
 player = pyr.Player(player_info, starting_ship_stats)

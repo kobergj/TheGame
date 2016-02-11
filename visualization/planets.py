@@ -52,7 +52,7 @@ def chooseNextDestination(Planet, Player, travelCosts):
 #         anomaly = universe.__dict__[anomalyName]
 
 
-def chooseGoodToBuy(Planet, Player, freeCargoSpace):
+def chooseGoodToBuy(Planet, Player):
     i = 1
     print '\n Possiblities:'
     print "[0] Buy Nothing"
@@ -70,11 +70,11 @@ def chooseGoodToBuy(Planet, Player, freeCargoSpace):
 
     good_to_buy = Planet.goodsProduced[choice-1]
 
-    print "\n Choose Amount [0 - %s]:" % Player.freeCargoSpace
+    print "\n Choose Amount [0 - %s]:" % Player.currentShip.freeCargoSpace
 
     amount = input()
 
-    while amount not in range(Player.freeCargoSpace):
+    while amount not in range(Player.currentShip.freeCargoSpace+1):
         amount = invalidChoice(amount)
 
     return good_to_buy, amount
@@ -102,4 +102,11 @@ def chooseGoodToSell(Planet, Player):
 
     good_to_sell = Player.currentShip.inCargo.keys()[choice-1]
 
-    return good_to_sell
+    print "\n Choose Amount [0-%s]:" % Player.currentShip.inCargo[good_to_sell]
+
+    amount = input()
+
+    while amount not in range(Player.currentShip.inCargo[good_to_sell]+1):
+        amount = invalidChoice(amount)
+
+    return good_to_sell, amount

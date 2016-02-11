@@ -47,20 +47,22 @@ def BuyGoods(Planet, Player):
 
     price = Planet.prices[good_to_buy]
 
-    Player.spendCredits(price)
+    Player.spendCredits(price*amount)
 
-    Player.currentShip.loadCargo(good_to_buy, 1)
+    Player.currentShip.loadCargo(good_to_buy, amount)
 
 
 def SellGoods(Planet, Player):
-    good_to_sell = viz.chooseGoodToSell(Planet, Player)
+    good_to_sell, amount = viz.chooseGoodToSell(Planet, Player)
 
     if good_to_sell == 'quitSell':
         return
 
+    if amount == 0:
+        return
+
     price = Planet.prices[good_to_sell]
 
-    # TODO: CargoAmount
-    Player.currentShip.unloadCargo(good_to_sell, 1)
+    Player.currentShip.unloadCargo(good_to_sell, amount)
 
-    Player.earnCredits(price)
+    Player.earnCredits(price*amount)

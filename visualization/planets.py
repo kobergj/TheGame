@@ -2,6 +2,7 @@ import visualization.universe as uvs
 
 
 def planetArrival(Planet, Player):
+    print "==" * 20
     print "\n You are at Planet %s" % Planet.Name
     print "Goods Produced: %s" % Planet.goodsProduced
     print "Goods Consumed: %s" % Planet.goodsConsumed
@@ -69,7 +70,7 @@ def chooseGoodToSell(Planet, Player):
     if choice == 0:
         return 'quitSell'
 
-    good_to_sell = Player.currentShip.inCargo.keys()[choice-1]
+    good_to_sell = choiceOptions[choice-1]
 
     print "\n Choose Amount [0-%s]:" % Player.currentShip.inCargo[good_to_sell]
 

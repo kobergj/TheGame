@@ -42,12 +42,13 @@ class Universe():
 
         universeMap = list()
 
-        for i in range(universeExpansion_y):
+        # Problems with negative Coordinates
+        for j in range(universeExpansion_y + 1):
             row = list()
-            for j in range(universeExpansion_x):
+            for i in range(universeExpansion_x + 1):
                 point_in_space = ''
 
-                for planet_info in universeInformation['Planets']:
+                for planet_info in universeInformation['planets']:
                     if planet_info['coordinates'] == [j, i]:
                         point_in_space = planet_info['name']
 

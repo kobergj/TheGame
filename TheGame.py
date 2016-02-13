@@ -12,6 +12,7 @@ starting_ship_stats = {'cargoCapacity': 10, 'speed': 4, 'maxTravelDistance': 10}
 # Initialize Player
 player = pyr.Player(player_info, starting_ship_stats)
 
+# generate Universe Information
 universeInfos = guv.generateUniverseInformation(NUMBER_OF_PLANETS)
 
 # generate Universe
@@ -26,6 +27,7 @@ while next_destination_name != 'quit':
 
     player.currentShip.scanSector(planet.distances)
 
-    pi.Arrive(planet, player)
+    next_destination_name = pi.Arrive(planet, player)
 
-    next_destination_name = ui.ChooseDestination(universe, player)
+    if not next_destination_name:
+        next_destination_name = ui.ChooseDestination(universe, player)

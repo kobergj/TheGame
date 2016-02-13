@@ -1,3 +1,5 @@
+import visualization.universe as uvs
+
 
 def planetArrival(Planet, Player):
     print "\n You are at Planet %s" % Planet.Name
@@ -14,49 +16,10 @@ def planetArrival(Planet, Player):
     choice = input()
 
     while choice not in range(4):
-        choice = invalidChoice(choice)
+        choice = uvs.invalidChoice(choice)
 
     return choice
 
-
-def invalidChoice(choice):
-    print 'Sorry, %s not valid' % choice
-    choice = input()
-
-    return choice
-
-
-def chooseNextDestination(Planet, Player, travelCosts):
-    print "\n Choose Destination"
-
-    choiceList = list()
-
-    i = 1
-    print "[0] Show Sector Map"
-    for destination in Planet.distances.keys():
-        if Planet.distances[destination] <= Player.currentShip.maxTravelDistance:
-            print "[%s] %s, distance: %s clicks, Cost: %s" % (i,
-                                                              destination,
-                                                              Planet.distances[destination],
-                                                              travelCosts[destination])
-            i += 1
-            choiceList.append(destination)
-
-    choice = input()
-
-    while choice not in range(i):
-        choice = invalidChoice(choice)
-
-    if choice == 0:
-        showSectorMap(Player, Planet)
-
-    next_dest = choiceList[choice-1]
-
-    return next_dest
-
-
-def showSectorMap(Planet, Player):
-    
 
 def chooseGoodToBuy(Planet, Player):
     i = 1
@@ -69,7 +32,7 @@ def chooseGoodToBuy(Planet, Player):
     choice = input()
 
     while choice not in range(i):
-        choice = invalidChoice(choice)
+        choice = uvs.invalidChoice(choice)
 
     if choice == 0:
         return 'quitBuy'
@@ -81,7 +44,7 @@ def chooseGoodToBuy(Planet, Player):
     amount = input()
 
     while amount not in range(Player.currentShip.freeCargoSpace+1):
-        amount = invalidChoice(amount)
+        amount = uvs.invalidChoice(amount)
 
     return good_to_buy, amount
 
@@ -101,7 +64,7 @@ def chooseGoodToSell(Planet, Player):
     choice = input()
 
     while choice not in range(i):
-        choice = invalidChoice(choice)
+        choice = uvs.invalidChoice(choice)
 
     if choice == 0:
         return 'quitSell'
@@ -113,6 +76,6 @@ def chooseGoodToSell(Planet, Player):
     amount = input()
 
     while amount not in range(Player.currentShip.inCargo[good_to_sell]+1):
-        amount = invalidChoice(amount)
+        amount = uvs.invalidChoice(amount)
 
     return good_to_sell, amount

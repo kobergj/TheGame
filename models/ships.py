@@ -14,8 +14,8 @@ class Ship():
         self.freeCargoSpace = shipStats['cargoCapacity']
 
         # Initialize SensorBay
-        self.sectorMap = self.initSectorMap()
-        self.sectorMapLegend = list()
+        self.distances = dict()
+        self.travelCosts = dict()
 
     def loadCargo(self, cargoId, cargoAmount):
         if cargoId in self.inCargo:
@@ -31,6 +31,20 @@ class Ship():
             del self.inCargo[cargoId]
 
         self.freeCargoSpace += cargoAmount
+
+    def scanSector(self, distanceDict):
+        # update distances
+        self.distances = distanceDict
+
+        # calculate travelCosts
+        travelCostDict = dict()
+        for destination in self.distances:
+            if self.distances[destination] <= self.maxTravelDistance:
+                travelCost = int(self.distances[destination] / self.speed)
+                travelCostDict.update({destination: travelCost})
+
+        # update travelCosts
+        self.travelCosts = travelCostDict
 
     def initSectorMap(self):
         # Currently Two Dimensional.

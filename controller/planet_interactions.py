@@ -1,9 +1,10 @@
-import visualization.planets as viz
+import visualization.planets as vizplnt
+import visualization.universe as vizuvs
 
 
 def Arrive(Planet, Player):
     while True:
-        choice = viz.planetArrival(Planet, Player)
+        choice = vizplnt.planetArrival(Planet, Player)
 
         if choice == 0:
             return 'quit'
@@ -15,29 +16,14 @@ def Arrive(Planet, Player):
             SellGoods(Planet, Player)
 
         elif choice == 3:
-            next_dest_name = ChooseDestination(Planet, Player)
-            return next_dest_name
+            return
 
         else:
-            choice = viz.invalidChoice(choice)
-
-
-def ChooseDestination(Planet, Player):
-    travelCostDict = dict()
-    for destination in Planet.distances:
-        travelCost = int(Planet.distances[destination] / Player.currentShip.speed)
-        travelCostDict.update({destination: travelCost})
-
-    next_dest = viz.chooseNextDestination(Planet, Player, travelCostDict)
-
-    cost_for_travel = travelCostDict[next_dest]
-    Player.spendCredits(cost_for_travel)
-
-    return next_dest
+            choice = vizuvs.invalidChoice(choice)
 
 
 def BuyGoods(Planet, Player):
-    good_to_buy, amount = viz.chooseGoodToBuy(Planet, Player)
+    good_to_buy, amount = vizplnt.chooseGoodToBuy(Planet, Player)
 
     if good_to_buy == 'quitBuy':
         return
@@ -53,7 +39,7 @@ def BuyGoods(Planet, Player):
 
 
 def SellGoods(Planet, Player):
-    good_to_sell, amount = viz.chooseGoodToSell(Planet, Player)
+    good_to_sell, amount = vizplnt.chooseGoodToSell(Planet, Player)
 
     if good_to_sell == 'quitSell':
         return

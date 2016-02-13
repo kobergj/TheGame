@@ -12,6 +12,12 @@ class Universe():
             self.planetList.append(planet['name'])
             self.anomalyList.append(planet['name'])
 
+        self.spacegateList = list()
+        for spacegate in anomalieInformations['spacegates']:
+            self.__dict__[spacegate['name']] = ans.Spacegate(spacegate)
+            self.spacegateList.append(spacegate['name'])
+            self.anomalyList.append(spacegate['name'])
+
         for anomaly in self.anomalyList:
             self.updateDistances(self.__dict__[anomaly])
 
@@ -22,6 +28,9 @@ class Universe():
             anomaly = self.__dict__[anomalyName]
             distance = self.calculateDistance(currentAnomaly.coordinates, anomaly.coordinates)
             currentAnomaly.distances.update({anomalyName: distance})
+
+        if currentAnomaly.name in self.spacegateList:
+            currentAnomaly.overrideDistances()
 
     def calculateDistance(self, point1, point2):
         distance = 0.0
@@ -43,14 +52,16 @@ class Universe():
         universeMap = list()
 
         # Problems with negative Coordinates
+        # Currently 2-Dims Only
         for j in range(universeExpansion_y + 1):
             row = list()
             for i in range(universeExpansion_x + 1):
                 point_in_space = ''
 
-                for planet_info in universeInformation['planets']:
-                    if planet_info['coordinates'] == [j, i]:
-                        point_in_space = planet_info['name']
+                for anomaly in self.anomalyList:
+                    crds = self.__dict__[anomaly].coordinates
+                    if crds == [j, i]:
+                        point_in_space = anomaly
 
                 row.append(point_in_space)
 

@@ -7,7 +7,7 @@ def Arrive(Planet, Player):
         choice = vizplnt.planetArrival(Planet, Player)
 
         if choice == 0:
-            return 'quit'
+            quit()
 
         elif choice == 1:
             BuyGoods(Planet, Player)

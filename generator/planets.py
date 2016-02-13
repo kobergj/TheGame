@@ -1,12 +1,7 @@
 import random
 import database.database as db
 
-
-POSSIBLE_NAMES = db.Planets.ListOfNames
-
-MAX_COORDINATES = db.Universe.MaxCoordinates
-MIN_COORDINATES = db.Universe.MinCoordinates
-
+# TODO: Replace
 MIN_NUMBER_GOODS_CONSUMED = db.Goods.MinNumberOfGoodsConsumed
 MAX_NUMBER_GOODS_CONSUMED = db.Goods.MaxNumberOfGoodsConsumed
 
@@ -59,7 +54,7 @@ def generatePlanetInformation():
 
 
 def generatePlanetName():
-    possibleNames = POSSIBLE_NAMES
+    possibleNames = db.Planets.ListOfNames
 
     planetName = random.choice(possibleNames)
 
@@ -67,8 +62,8 @@ def generatePlanetName():
 
 
 def generateCoordinates():
-    maxCoordinates = MAX_COORDINATES
-    minCoordinates = MIN_COORDINATES
+    maxCoordinates = db.Universe.MaxCoordinates
+    minCoordinates = db.Universe.MinCoordinates
 
     coordinates = list()
 

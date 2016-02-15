@@ -10,3 +10,7 @@ Buy and sell Goods
 ## Spacegates
 
 Jump Anywhere for no Travel Costs
+
+## Starbases
+
+Buy Ships

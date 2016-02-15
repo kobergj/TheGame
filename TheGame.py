@@ -10,8 +10,8 @@ import models.ships as shp
 import generator.universe as guv
 
 NUMBER_OF_PLANETS = 10
-NUMBER_OF_SPACEGATES = 3
-NUMBER_OF_STARBASES = 3
+NUMBER_OF_SPACEGATES = 4
+NUMBER_OF_STARBASES = 5
 
 player_info = {'name': 'Dr.Play', 'startingCredits': 12}
 starting_ship_stats = {'cargoCapacity': 10, 'speed': 2, 'maxTravelDistance': 4, 'spaceForRooms': 2}

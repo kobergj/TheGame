@@ -1,5 +1,3 @@
-# Contains Planet Data
-
 
 class Anomaly():
     # Generic Anomaly in Space.
@@ -8,6 +6,9 @@ class Anomaly():
 
         self.coordinates = anomalieInformation['coordinates']
         self.distances = dict()
+
+    def Arrive():
+        pass
 
 
 class Planet(Anomaly):
@@ -25,6 +26,16 @@ class Starbase(Anomaly):
     # Buy Ships and Rooms
     def __init__(self, starbaseInformation):
         Anomaly.__init__(self, starbaseInformation)
+
+        self.shipForSale = None
+
+        self.roomsForSale = dict()
+
+    def changeShipForSale(self, Ship):
+        self.shipForSale = Ship
+
+    def addRoomForSale(self, Room):
+        self.roomsForSale.update({Room.name: Room})
 
 
 class Spacegate(Anomaly):

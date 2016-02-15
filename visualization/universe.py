@@ -3,23 +3,32 @@ def chooseNextDestination(Universe, Player):
 
     print '###'*len(Universe.Map[0])
 
-    i = 1
     choiceList = list()
 
     for row in Universe.Map:
-        for identifier in row:
+        for name in row:
 
-            if identifier == '':
+            if name == '':
                 print '  ',
 
             else:
-                if identifier in Player.currentShip.travelCosts:
-                    print i, ' ',
-                    choiceList.append(identifier)
-                    i += 1
+                if name in Player.currentShip.travelCosts:
+                    choiceList.append(name)
+
+                    if name in Universe.planetList:
+                        idString = ' %s ' % str(len(choiceList))
+                    elif name in Universe.spacegateList:
+                        idString = '[%s]' % str(len(choiceList))
+
+                    if Player.currentShip.distances[name] == 0.0:
+                        idString = '(%s)' % idString
+                    else:
+                        idString = ' %s ' % idString
+
+                    print idString,
 
                 else:
-                    print identifier[:2],
+                    print ' ' + name[:2] + ' ',
         print '\n',
 
     print '###'*len(Universe.Map[0])

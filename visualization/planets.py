@@ -36,7 +36,7 @@ def chooseGoodToBuy(Planet, Player):
         choice = uvs.invalidChoice(choice)
 
     if choice == 0:
-        return 'quitBuy'
+        return 'quitBuy', 0
 
     good_to_buy = Planet.goodsProduced[choice-1]
 
@@ -68,7 +68,7 @@ def chooseGoodToSell(Planet, Player):
         choice = uvs.invalidChoice(choice)
 
     if choice == 0:
-        return 'quitSell'
+        return 'quitSell', 0
 
     good_to_sell = choiceOptions[choice-1]
 

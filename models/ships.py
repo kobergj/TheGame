@@ -9,6 +9,10 @@ class Ship():
         self.speed = shipStats['speed']
         self.maxTravelDistance = shipStats['maxTravelDistance']
 
+        # Rooms
+        self.rooms = dict()
+        self.spaceForRooms = shipStats['spaceForRooms']
+
         # Initialize Cargobay
         self.inCargo = dict()
         self.freeCargoSpace = shipStats['cargoCapacity']
@@ -16,6 +20,17 @@ class Ship():
         # Initialize SensorBay
         self.distances = dict()
         self.travelCosts = dict()
+
+    # Room Operations
+    def attachRoom(self, Room):
+        self.rooms.update({Room.name: Room})
+
+        Room.attachAt(self)
+
+    def detachRoom(self, Room):
+        Room.detachFrom(self)
+
+        del self.rooms[Room.name]
 
     # CargoBay Methods
     def loadCargo(self, cargoId, cargoAmount):
@@ -34,10 +49,7 @@ class Ship():
         self.freeCargoSpace += cargoAmount
 
     # Sensor Bay Methods
-    def scanSector(self, distanceDict):
-        # update distances
-        self.distances = distanceDict
-
+    def scanSector(self):
         # calculate travelCosts
         travelCostDict = dict()
         for destination in self.distances:
@@ -47,32 +59,6 @@ class Ship():
 
         # update travelCosts
         self.travelCosts = travelCostDict
-
-    # Deprecated
-    # def initSectorMap(self):
-    #     # Currently Two Dimensional.
-
-    #     sectorMap = list()
-    #     for j in range(self.maxTravelDistance*2):
-    #         row = list()
-    #         for i in range(self.maxTravelDistance*2):
-    #             row.append(0)
-    #         sectorMap.append(row)
-
-    # # Not Sure if this right here.
-    # def updateSectorMap(self, relativeCoordinatesDict):
-    #     # Currently Two Dimensional.
-    #     self.sectorMap = self.initSectorMap()
-
-    #     self.sectorMapLegend = ['Nothing']
-    #     i = 1
-    #     for anomaly in relativeCoordinatesDict:
-    #         cords = relativeCoordinatesDict[anomaly]
-    #         if cords[0] in range(self.maxTravelDistance*2):
-    #             if cords[1] in range(self.maxTravelDistance*2):
-    #                 self.sectorMap[cords[1]][cords[0]] = i
-    #                 self.sectorMapLegend.append(anomaly)
-    #                 i += 1
 
 
 # Freighter. Can be overloaded.

@@ -1,25 +1,32 @@
 import visualization.planets as vizplnt
-import visualization.universe as vizuvs
 
 
 def Arrive(Planet, Player):
+    # generate List of Actions
+    possibleActions = {'quit': Quit,
+                       'buyGoods': BuyGoods,
+                       'sellGoods': SellGoods,
+                       'depart': Depart
+                       }
+
     while True:
+        # Get Choice From Player
         choice = vizplnt.planetArrival(Planet, Player)
 
-        if choice == 0:
-            quit()
+        # Execute Choice
+        killSwitch = possibleActions[choice](Planet, Player)
 
-        elif choice == 1:
-            BuyGoods(Planet, Player)
-
-        elif choice == 2:
-            SellGoods(Planet, Player)
-
-        elif choice == 3:
+        # Kill While Loop
+        if killSwitch:
             return
 
-        else:
-            choice = vizuvs.invalidChoice(choice)
+
+def Depart(Planet, Player):
+    return True
+
+
+def Quit(Planet, Player):
+    quit()
 
 
 def BuyGoods(Planet, Player):

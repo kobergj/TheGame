@@ -2,23 +2,51 @@ import visualization.universe as uvs
 
 
 def planetArrival(Planet, Player):
-    print '\n' * 100
-    print "==" * 20
-    print "\n You are at Planet %s" % Planet.name
-    print "Goods Produced: %s" % Planet.goodsProduced
-    print "Goods Consumed: %s" % Planet.goodsConsumed
-    print "\nCurrently in Cargobay: %s" % Player.currentShip.inCargo
-    print "Number of Credits: %s" % Player.credits
-    print "\nPossible Actions:"
-    print "[0] quit game"
-    print "[1] buy goods"
-    print "[2] sell goods"
-    print "[3] depart"
+    # Initialize Print String
+    to_print = ''
 
+    # Flush Terminal
+    to_print += '\n' * 100
+
+    # Fancy Border
+    to_print += "==" * 40
+
+    # Planet Informations
+    to_print += "\n You are at Planet %s" % Planet.name
+    to_print += "\nGoods Produced: %s" % Planet.goodsProduced
+    to_print += "\nGoods Consumed: %s" % Planet.goodsConsumed
+
+    # Player Informations
+    to_print += "\n\nCurrently in Cargobay: %s" % Player.currentShip.inCargo
+    to_print += "\nNumber of Credits: %s" % Player.credits
+
+    # Possible Actions
+    to_print += "\nPossible Actions:"
+
+    choiceList = list()
+
+    to_print += "\n[0] Quit Game"
+    choiceList.append('quit')
+
+    to_print += "\n[1] Buy Goods"
+    choiceList.append('buyGoods')
+
+    to_print += "\n[2] Sell Goods"
+    choiceList.append('sellGoods')
+
+    to_print += "\n[3] Depart"
+    choiceList.append('depart')
+
+    # Print String
+    print to_print
+
+    # Await Players Choice
     choice = input()
 
     while choice not in range(4):
         choice = uvs.invalidChoice(choice)
+
+    choice = choiceList[choice]
 
     return choice
 

@@ -1,12 +1,15 @@
 import controller.planet_interactions as pi
 import controller.universe_interactions as ui
 import controller.spacegate_interactions as sgi
+import controller.starbase_interactions as sbi
+
 import models.player as pyr
 import models.universe as uvs
 import generator.universe as guv
 
 NUMBER_OF_PLANETS = 10
 NUMBER_OF_SPACEGATES = 3
+NUMBER_OF_STARBASES = 3
 
 player_info = {'name': 'Dr.Play', 'startingCredits': 12}
 starting_ship_stats = {'cargoCapacity': 10, 'speed': 2, 'maxTravelDistance': 8, 'spaceForRooms': 3}
@@ -15,7 +18,10 @@ starting_ship_stats = {'cargoCapacity': 10, 'speed': 2, 'maxTravelDistance': 8, 
 player = pyr.Player(player_info, starting_ship_stats)
 
 # generate Universe Information
-universeInfos = guv.generateUniverseInformation(NUMBER_OF_PLANETS, NUMBER_OF_SPACEGATES)
+universeInfos = guv.generateUniverseInformation(NUMBER_OF_PLANETS,
+                                                NUMBER_OF_SPACEGATES,
+                                                NUMBER_OF_STARBASES
+                                                )
 
 # generate Universe
 universe = uvs.Universe(universeInfos)
@@ -40,6 +46,10 @@ while True:
     elif anomaly.__class__.__name__ == 'Spacegate':
         # Arrive at Spacegate
         sgi.Arrive(anomaly, player)
+
+    elif anomaly.__class__.__name__ == 'Starbase':
+        # Arrive at Spacegate
+        sbi.Arrive(anomaly, player)
 
     # Finally, choose Next Destination
     next_destination_name = ui.ChooseDestination(universe, player)

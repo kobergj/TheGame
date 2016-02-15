@@ -5,10 +5,6 @@ class Anomaly():
         self.name = anomalieInformation['name']
 
         self.coordinates = anomalieInformation['coordinates']
-        self.distances = dict()
-
-    def Arrive():
-        pass
 
 
 class Planet(Anomaly):

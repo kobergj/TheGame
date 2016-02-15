@@ -4,7 +4,9 @@
 # Generic Ship. No special Abilites.
 class Ship():
     def __init__(self, shipStats):
-        # Assign Stats
+        # Assign Stats - Dict Or Direct Assign?
+        self.stats = shipStats
+
         self.cargoCapacity = shipStats['cargoCapacity']
         self.speed = shipStats['speed']
         self.maxTravelDistance = shipStats['maxTravelDistance']

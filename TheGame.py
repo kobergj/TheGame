@@ -46,18 +46,22 @@ while True:
     universe.updateDistances(player.currentShip, anomaly.coordinates)
     player.currentShip.scanSector()
 
-    # Solution Suboptimal
-    if anomaly.__class__.__name__ == 'Planet':
-        # Arrive at Planet
-        pi.Arrive(anomaly, player)
-
-    elif anomaly.__class__.__name__ == 'Spacegate':
-        # Arrive at Spacegate
-        sgi.Arrive(anomaly, player)
-
-    elif anomaly.__class__.__name__ == 'Starbase':
-        # Arrive at Starbase
-        sbi.Arrive(anomaly, player)
-
-    # Finally, choose Next Destination
+    # Choose Next Destination
     next_destination_name = ui.ChooseDestination(universe, player)
+
+    # Solution Suboptimal
+    while next_destination_name == 'land':
+        if anomaly.__class__.__name__ == 'Planet':
+            # Arrive at Planet
+            pi.Arrive(anomaly, player)
+
+        elif anomaly.__class__.__name__ == 'Spacegate':
+            # Arrive at Spacegate
+            sgi.Arrive(anomaly, player)
+
+        elif anomaly.__class__.__name__ == 'Starbase':
+            # Arrive at Starbase
+            sbi.Arrive(anomaly, player)
+
+        # Choose Next Destination
+        next_destination_name = ui.ChooseDestination(universe, player)

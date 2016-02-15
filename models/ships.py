@@ -27,10 +27,10 @@ class Ship():
     def attachRoom(self, Room):
         self.rooms.update({Room.name: Room})
 
-        Room.attachAt(self)
+        Room.powerUp(self)
 
     def detachRoom(self, Room):
-        Room.detachFrom(self)
+        Room.powerDown(self)
 
         del self.rooms[Room.name]
 
@@ -52,12 +52,28 @@ class Ship():
 
     # Sensor Bay Methods
     def scanSector(self):
-        # calculate travelCosts
+        # init travelCost Dict
         travelCostDict = dict()
+        nearestDestination = None
+
+        # Loop through Destinations
         for destination in self.distances:
+            # Add if in Travel Distance
             if self.distances[destination] <= self.stats['maxTravelDistance']:
                 travelCost = int(self.distances[destination] / self.stats['speed'])
                 travelCostDict.update({destination: travelCost})
+
+            # update nearest
+            if not nearestDestination:
+                nearestDestination = destination
+            elif self.distances[destination] <= self.distances[nearestDestination]:
+                if self.distances[destination] != 0.0:
+                    nearestDestination = destination
+
+        # Check For Reachable Destinations
+        if len(travelCostDict) < 2:
+                travelCost = int(self.distances[nearestDestination] / self.stats['speed'])
+                travelCostDict.update({nearestDestination: travelCost})
 
         # update travelCosts
         self.travelCosts = travelCostDict

@@ -18,6 +18,12 @@ class Player():
 
     def switchShip(self, Ship):
         if self.currentShip:
+            # load distance Dict
+            Ship.distances = self.currentShip.distances
+            # Scan Sector
+            Ship.scanSector()
+            # dump current Ship
             self.deprecatedShips.append(self.currentShip)
 
+        # Attach Ship
         self.currentShip = Ship

@@ -65,6 +65,9 @@ def buyShip(Starbase, Player):
     to_print = ''
     choiceList = list()
 
+    # Fancy Border
+    to_print += "--" * 40
+
     # Info Message
     to_print += "\nShip For Sale:"
 

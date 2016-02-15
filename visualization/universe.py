@@ -9,7 +9,7 @@ def chooseNextDestination(Universe, Player):
 
     print '###'*(len(Universe.Map[0])*2-1)
 
-    choiceList = list()
+    choiceList = ['land']
 
     for row in Universe.Map:
         for name in row:
@@ -20,12 +20,13 @@ def chooseNextDestination(Universe, Player):
                 to_print = mapIdentifiers[anomaly.__class__.__name__]
 
                 if name in Player.currentShip.travelCosts:
-                    choiceList.append(name)
-
-                    to_print = to_print.replace('00', str(len(choiceList)))
-
                     if Player.currentShip.distances[name] == 0.0:
+                        to_print = to_print.replace('00', str(0))
                         to_print = '->' + to_print
+                    else:
+                        choiceList.append(name)
+
+                        to_print = to_print.replace('00', str(len(choiceList)-1))
 
                 else:
                     to_print = to_print.replace('00', '')
@@ -39,22 +40,24 @@ def chooseNextDestination(Universe, Player):
 
     print '###'*(len(Universe.Map[0])*2-1)
 
-    for anomaly in choiceList:
-        print "[%s] %s, distance: %s clicks, Cost: %s" % (choiceList.index(anomaly) + 1,
-                                                          anomaly,
-                                                          Player.currentShip.distances[anomaly],
-                                                          Player.currentShip.travelCosts[anomaly])
+    print "[0]  -- Land -- "
+    print "[99] -- Show TravelInfos --"
 
     choice = input()
 
-    while choice not in range(1, len(choiceList)+1):
-        if choice == -1:
-            print Universe.Map
-            choice = 0
-        else:
-            choice = invalidChoice(choice)
+    if choice == 99:
+        for anomaly in choiceList[1:]:
+            print "[%s] %s, distance: %s clicks, Cost: %s" % (choiceList.index(anomaly),
+                                                              anomaly,
+                                                              Player.currentShip.distances[anomaly],
+                                                              Player.currentShip.travelCosts[anomaly])
 
-    next_dest = choiceList[choice-1]
+        choice = input()
+
+    while choice not in range(len(choiceList)+1):
+        choice = invalidChoice(choice)
+
+    next_dest = choiceList[choice]
 
     return next_dest
 

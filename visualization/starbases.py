@@ -11,15 +11,18 @@ def starbaseArrival(Starbase, Player):
     # Fancy Border
     to_print += "==" * 40
 
-    # Planet Informations
+    # Starbase Informations
     to_print += "\n You are at Starbase %s" % Starbase.name
-    to_print += "\nShip For Sale: %s" % Starbase.shipForSale
+    # # show ship
+    # to_print += "\nShip For Sale:"
+    # # Shipstats
+    # for stat in
     to_print += "\nRooms For Sale: %s" % Starbase.roomsForSale
 
-    # Player Informations
-    to_print += "\n\nCurrent Shipstats:\n"
-    for name, value in Player.currentShip.stats.iteritems():
-        to_print += '       %s: %s' % (name, value)
+    # # Player Informations
+    # to_print += "\n\nCurrent Shipstats:\n"
+    # for name, value in Player.currentShip.stats.iteritems():
+    #     to_print += '       %s: %s' % (name, value)
 
     to_print += "\n\nCurrent Rooms: %s" % Player.currentShip.rooms
     to_print += "\nNumber of Credits: %s" % Player.credits
@@ -29,14 +32,19 @@ def starbaseArrival(Starbase, Player):
 
     choiceList = list()
 
-    to_print += "\n[0] Quit Game"
+    i = 0
+    to_print += "\n[%s] Quit Game" % i
     choiceList.append('quit')
+    i += 1
 
-    to_print += "\n[1] Inspect Ship"
-    choiceList.append('inspectShip')
+    if Starbase.shipForSale:
+        to_print += "\n[%s] Inspect Ship" % i
+        choiceList.append('inspectShip')
+        i += 1
 
-    to_print += "\n[2] Depart"
+    to_print += "\n[%s] Depart" % i
     choiceList.append('depart')
+    i += 1
 
     # Print String
     print to_print
@@ -59,6 +67,9 @@ def buyShip(Starbase, Player):
 
     # Info Message
     to_print += "\nShip For Sale:"
+
+    # Print Price
+    to_print += "\n Price: %s" % Starbase.shipPrice
 
     # Loop through Shipstats
     for stat in Starbase.shipForSale.stats:

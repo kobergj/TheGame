@@ -17,7 +17,7 @@ def Arrive(Starbase, Player):
                            'depart': Depart
                            }
 
-        # Await Player Choose
+        # Await Player Choice
         choice = viz.starbaseArrival(Starbase, Player)
 
         # Execute Choice
@@ -53,4 +53,8 @@ def RefuseShip(Starbase, Player):
 
 
 def AcceptShip(Starbase, Player):
-    pass
+    Player.spendCredits(Starbase.shipPrice)
+
+    Player.switchShip(Starbase.shipForSale)
+
+    Starbase.shipForSale = None

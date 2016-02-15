@@ -21,17 +21,34 @@ class Planet(Anomaly):
 class Starbase(Anomaly):
     # Buy Ships and Rooms
     def __init__(self, starbaseInformation):
+        # Init Anomaly
         Anomaly.__init__(self, starbaseInformation)
 
+        # Ship Bay
         self.shipForSale = None
+        self.shipPrice = 0
 
+        # Room Merchant
         self.roomsForSale = dict()
 
     def changeShipForSale(self, Ship):
+        # Attach Ship
         self.shipForSale = Ship
+        # Calculate Costs
+        self.calculateShipPrice(Ship)
 
     def addRoomForSale(self, Room):
+        # Add Room
         self.roomsForSale.update({Room.name: Room})
+
+    def calculateShipPrice(self, Ship):
+        price = 0
+        for statValue in Ship.stats.values():
+            price += statValue
+
+        price *= 10
+
+        self.shipPrice = price
 
 
 class Spacegate(Anomaly):

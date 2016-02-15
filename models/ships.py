@@ -7,9 +7,9 @@ class Ship():
         # Assign Stats - Dict Or Direct Assign?
         self.stats = shipStats
 
-        self.cargoCapacity = shipStats['cargoCapacity']
-        self.speed = shipStats['speed']
-        self.maxTravelDistance = shipStats['maxTravelDistance']
+        # self.cargoCapacity = shipStats['cargoCapacity']
+        # self.speed = shipStats['speed']
+        # self.maxTravelDistance = shipStats['maxTravelDistance']
 
         # Rooms
         self.rooms = dict()
@@ -55,8 +55,8 @@ class Ship():
         # calculate travelCosts
         travelCostDict = dict()
         for destination in self.distances:
-            if self.distances[destination] <= self.maxTravelDistance:
-                travelCost = int(self.distances[destination] / self.speed)
+            if self.distances[destination] <= self.stats['maxTravelDistance']:
+                travelCost = int(self.distances[destination] / self.stats['speed'])
                 travelCostDict.update({destination: travelCost})
 
         # update travelCosts

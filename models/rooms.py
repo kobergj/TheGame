@@ -4,10 +4,10 @@ class Room():
         self.name = roomInformation['name']
         self.statBoosts = roomInformation['statBoosts']
 
-    def attachAt(self, Ship):
+    def powerUp(self, Ship):
         for stat in self.statBoosts:
-            Ship.__dict__[stat] += stat
+            Ship.stats[stat] += stat
 
-    def detachFrom(self, Ship):
+    def powerDown(self, Ship):
         for stat in self.statBoosts:
-            Ship.__dict__[stat] -= stat
+            Ship.stats[stat] -= stat

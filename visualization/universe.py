@@ -1,37 +1,43 @@
+import database.database as db
+
+
 def chooseNextDestination(Universe, Player):
+    mapIdentifiers = db.Visualization.mapIdentifiers
+
+    print '\n' * 100
     print "\n Choose Destination\n"
 
-    print '###'*len(Universe.Map[0])
+    print '###'*(len(Universe.Map[0])*2-1)
 
     choiceList = list()
 
     for row in Universe.Map:
         for name in row:
+            to_print = mapIdentifiers['Empty']
 
-            if name == '':
-                print '  ',
+            if name:
+                anomaly = Universe.anomalyList[name]
+                to_print = mapIdentifiers[anomaly.__class__.__name__]
 
-            else:
                 if name in Player.currentShip.travelCosts:
                     choiceList.append(name)
 
-                    if name in Universe.planetList:
-                        idString = ' %s ' % str(len(choiceList))
-                    elif name in Universe.spacegateList:
-                        idString = '[%s]' % str(len(choiceList))
+                    to_print = to_print.replace('00', str(len(choiceList)))
 
                     if Player.currentShip.distances[name] == 0.0:
-                        idString = '(%s)' % idString
-                    else:
-                        idString = ' %s ' % idString
-
-                    print idString,
+                        to_print = '->' + to_print
 
                 else:
-                    print ' ' + name[:2] + ' ',
+                    to_print = to_print.replace('00', '')
+
+            while len(to_print) < 4:
+                to_print += ' '
+
+            print to_print,
+
         print '\n',
 
-    print '###'*len(Universe.Map[0])
+    print '###'*(len(Universe.Map[0])*2-1)
 
     for anomaly in choiceList:
         print "[%s] %s, distance: %s clicks, Cost: %s" % (choiceList.index(anomaly) + 1,

@@ -21,7 +21,7 @@ universeInfos = guv.generateUniverseInformation(NUMBER_OF_PLANETS, NUMBER_OF_SPA
 universe = uvs.Universe(universeInfos)
 
 # Set starting Planet
-next_destination_name = universeInfos['planets'][0]['name']
+next_destination_name = universeInfos['anomalyInformations']['Planet'][0]['name']
 
 # Start
 while True:
@@ -33,11 +33,11 @@ while True:
     player.currentShip.scanSector()
 
     # Solution Suboptimal
-    if anomaly.name in universe.planetList:
+    if anomaly.__class__.__name__ == 'Planet':
         # Arrive at Planet
         pi.Arrive(anomaly, player)
 
-    elif anomaly.name in universe.spacegateList:
+    elif anomaly.__class__.__name__ == 'Spacegate':
         # Arrive at Spacegate
         sgi.Arrive(anomaly, player)
 

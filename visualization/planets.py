@@ -2,6 +2,7 @@ import visualization.universe as uvs
 
 
 def planetArrival(Planet, Player):
+    print '\n' * 100
     print "==" * 20
     print "\n You are at Planet %s" % Planet.name
     print "Goods Produced: %s" % Planet.goodsProduced

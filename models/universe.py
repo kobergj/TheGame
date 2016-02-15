@@ -1,40 +1,26 @@
-import anomalies as ans
+import models.anomalies as ans
 import math
 
 
 class Universe():
-    def __init__(self, anomalieInformations):
+    def __init__(self, universeInformations):
+        # Extract Anomaly Informations:
+        anomalyClasses = universeInformations['anomalyInformations']
         # Init Anomaly List
         self.anomalyList = dict()
 
-        # Init Planet List:
-        self.planetList = dict()
-        # Loop through Planet Informations
-        for planetInformation in anomalieInformations['planets']:
-            # Create Planet
-            planet = ans.Planet(planetInformation)
+        # Loop through Anomaly Classes
+        for anomalyClass, anomalyInformationList in anomalyClasses.iteritems():
+            # Loop through Anomalies
+            for anomalyInformation in anomalyInformationList:
+                # Create Anomaly
+                anomaly = ans.__dict__[anomalyClass](anomalyInformation)
 
-            # Append Planet to Planet List
-            self.planetList.update({planet.name: planet})
-
-            # Append Planet to Anomaly List
-            self.anomalyList.update({planet.name: planet})
-
-        # Init Spacegate List
-        self.spacegateList = dict()
-        # Loop through Spacegate Information
-        for spacegate in anomalieInformations['spacegates']:
-            # Create Spacegate
-            spacegate = ans.Spacegate(spacegate)
-
-            # Append Spacegate to Spacegate List
-            self.spacegateList.update({spacegate.name: spacegate})
-
-            # Append Spacegate to Anomaly List
-            self.anomalyList.update({spacegate.name: spacegate})
+                # Append Anomaly to Anomaly List
+                self.anomalyList.update({anomaly.name: anomaly})
 
         # Draw Universe Map
-        self.Map = self.drawUniverseMap(anomalieInformations)
+        self.Map = self.drawUniverseMap(universeInformations)
 
     def updateDistances(self, Ship, currentCoordinates):
         # Reset Distances
@@ -45,9 +31,6 @@ class Universe():
             distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
             # Update Distance Dist
             Ship.distances.update({anomaly.name: distance})
-
-        # if currentAnomaly.name in self.spacegateList:
-        #     currentAnomaly.overrideDistances()
 
     def calculateDistance(self, point1, point2):
         distance = 0.0
@@ -73,7 +56,7 @@ class Universe():
         for j in range(universeExpansion_y + 1):
             row = list()
             for i in range(universeExpansion_x + 1):
-                point_in_space = ''
+                point_in_space = None
 
                 for anomaly in self.anomalyList.itervalues():
                     if anomaly.coordinates == [j, i]:

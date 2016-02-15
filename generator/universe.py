@@ -11,8 +11,10 @@ def generateUniverseInformation(numberOfPlanets, numberOfSpacegates):
     listOfSpacegates = gsg.generateSpacegateList(numberOfSpacegates)
 
     # generate Universe Dict
-    universeInfos = {'planets': listOfPlanets,
-                     'spacegates': listOfSpacegates,
+    universeInfos = {'anomalyInformations': {
+                        'Planet': listOfPlanets,
+                        'Spacegate': listOfSpacegates
+                        },
 
                      'maxCoordinates': db.Universe.MaxCoordinates,
                      'minCoordinates': db.Universe.MinCoordinates}

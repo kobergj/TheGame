@@ -16,9 +16,12 @@ def generateStarbaseInformation():
     starbaseName = generateStarbaseName()
     coordinates = generateCoordinates()
 
+    maxRoomsforSale = generateMaxRoomsForSale()
+
     spacegateInformation = {
         'name': starbaseName,
         'coordinates': coordinates,
+        'maxRoomsforSale': maxRoomsforSale,
     }
 
     return spacegateInformation
@@ -41,3 +44,9 @@ def generateCoordinates():
         coordinates.append(coordinate)
 
     return coordinates
+
+
+def generateMaxRoomsForSale():
+    maxNumber = 3
+
+    return maxNumber

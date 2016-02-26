@@ -2,12 +2,14 @@
 class Room():
     def __init__(self, roomInformation):
         self.name = roomInformation['name']
-        self.statBoosts = roomInformation['statBoosts']
 
     def powerUp(self, Ship):
-        for stat in self.statBoosts:
-            Ship.stats[stat] += stat
+        pass
 
     def powerDown(self, Ship):
-        for stat in self.statBoosts:
-            Ship.stats[stat] -= stat
+        pass
+
+class CargoBay(Room):
+    def __init__(self, roomInormation)
+    Room.__init__(roomInformation)
+

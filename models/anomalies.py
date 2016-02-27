@@ -26,30 +26,36 @@ class Starbase(Anomaly):
 
         # Ship Bay
         self.shipForSale = None
-        self.shipPrice = 0
+        self.deprecatedShips = list()
 
         # Room Merchant
-        self.maxRoomsforSale = starbaseInformation['maxRoomsforSale']
+        self.maxRoomsForSale = starbaseInformation['maxRoomsforSale']
         self.roomsForSale = dict()
 
     def changeShipForSale(self, Ship):
+        if self.shipForSale:
+
+            # Mmmh
+
+            # Attach to List Of Deprecated Ships
+            self.deprecatedShips.append(self.shipForSale)
+
+            del self.shipForSale
+
         # Attach Ship
         self.shipForSale = Ship
-        # Calculate Costs
-        self.calculateShipPrice(Ship)
+
+    # def calculateShipPrice(self, Ship):
+    #     price = 0
+    #     for statValue in Ship.stats.values():
+    #         price += statValue
+
+    #     price *= 10
+
+    #     self.shipPrice = price
 
     def addRoomForSale(self, Room):
-        # Add Room
         self.roomsForSale.update({Room.name: Room})
-
-    def calculateShipPrice(self, Ship):
-        price = 0
-        for statValue in Ship.stats.values():
-            price += statValue
-
-        price *= 10
-
-        self.shipPrice = price
 
 
 class Spacegate(Anomaly):

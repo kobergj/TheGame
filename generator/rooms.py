@@ -1,3 +1,5 @@
+import random
+
 
 def generateRoomInformation():
     # Name
@@ -15,7 +17,9 @@ def generateRoomInformation():
 
 
 def generateName():
-    name = 'roomName'
+    name = 'room#'
+
+    name += str(random.randint(0, 99))
 
     return name
 

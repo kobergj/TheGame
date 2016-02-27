@@ -11,6 +11,9 @@ class Ship():
         self.speed = shipStats['speed']
         self.maxTravelDistance = shipStats['maxTravelDistance']
 
+        # Price
+        self.price = shipStats['price']
+
         # Rooms
         self.rooms = dict()
         self.spaceForRooms = shipStats['spaceForRooms']

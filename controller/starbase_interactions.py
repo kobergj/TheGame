@@ -18,7 +18,7 @@ def Arrive(Starbase, Player):
         room = gro.generateRoomInformation()
 
         # Add Room
-        Starbase.addRoomForSale(room)
+        Starbase.addRoomForSale(mro.Room(room))
 
     while True:
         # Define Possible Actions
@@ -54,6 +54,7 @@ def InspectShip(Starbase, Player):
 
     # Await Players Choice
     choice = viz.buyShip(Starbase, Player)
+    print choice
 
     # Execute Choice
     possibleActions[choice](Starbase, Player)
@@ -64,12 +65,14 @@ def RefuseShip(Starbase, Player):
 
 
 def AcceptShip(Starbase, Player):
-    Player.spendCredits(Starbase.shipPrice)
+    # Spend Credits
+    Player.spendCredits(Player.currentShip.price)
 
+    # Switch Ship
     Player.switchShip(Starbase.shipForSale)
 
     Starbase.shipForSale = None
 
 
 def InspectRooms(Starbase, Player):
-    print Starbase.roomsForSale
+    viz.buyRooms(Starbase, Player)

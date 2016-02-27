@@ -2,6 +2,7 @@ import visualization.universe as uvs
 
 
 def starbaseArrival(Starbase, Player):
+
     # Initialize Print String
     to_print = ''
 
@@ -17,7 +18,7 @@ def starbaseArrival(Starbase, Player):
     # to_print += "\nShip For Sale:"
     # # Shipstats
     # for stat in
-    to_print += "\nRooms For Sale: %s" % Starbase.roomsForSale
+    to_print += "\nRooms For Sale: %s" % Starbase.roomsForSale.keys()
 
     # # Player Informations
     # to_print += "\n\nCurrent Shipstats:\n"
@@ -41,6 +42,10 @@ def starbaseArrival(Starbase, Player):
         to_print += "\n[%s] Inspect Ship" % i
         choiceList.append('inspectShip')
         i += 1
+
+    to_print += "\n[%s] Inspect Rooms" % i
+    choiceList.append('inspectRooms')
+    i += 1
 
     to_print += "\n[%s] Depart" % i
     choiceList.append('depart')
@@ -72,12 +77,15 @@ def buyShip(Starbase, Player):
     to_print += "\nShip For Sale:"
 
     # Print Price
-    to_print += "\n Price: %s" % Starbase.shipPrice
+    to_print += "\n Price: %s" % Player.currentShip.price
+
+    # Bad
+    statList = ['cargoCapacity', 'speed', 'maxTravelDistance', 'spaceForRooms']
 
     # Loop through Shipstats
-    for stat in Starbase.shipForSale.stats:
-        new_ship = Starbase.shipForSale.stats[stat]
-        current_ship = Player.currentShip.stats[stat]
+    for stat in statList:
+        new_ship = Starbase.shipForSale.__dict__[stat]
+        current_ship = Player.currentShip.__dict__[stat]
 
         if new_ship >= current_ship:
             to_print += "\n [%s]: %s (+%s)" % (stat, new_ship, new_ship-current_ship)
@@ -91,7 +99,7 @@ def buyShip(Starbase, Player):
     to_print += "\n[1] Buy Ship"
     choiceList.append('accept')
 
-    # Print String
+    # Print
     print to_print
 
     # Await Players Choice
@@ -103,3 +111,16 @@ def buyShip(Starbase, Player):
     choice = choiceList[choice]
 
     return choice
+
+
+def buyRooms(Starbase, Player):
+    to_print = ''
+
+    for room in Starbase.roomsForSale.values():
+        to_print += "\n %s" % room.name
+
+        to_print += "\n  %s" % room.price
+
+    print to_print
+
+    raw_input()

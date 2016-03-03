@@ -14,12 +14,12 @@ NUMBER_OF_SPACEGATES = 4
 NUMBER_OF_STARBASES = 5
 
 player_info = {'name': 'Dr.Play', 'startingCredits': 12}
-starting_ship_stats = {'cargoCapacity': 10, 'speed': 2, 'maxTravelDistance': 4, 'spaceForRooms': 2}
+starting_ship_stats = {'cargoCapacity': 10, 'speed': 2, 'maxTravelDistance': 4, 'spaceForRooms': 2, 'price': 0}
 
 # Initialize Player
 player = pyr.Player(player_info)
 
-# Initialize Ship
+# Initialize switchShip
 startingShip = shp.Ship(starting_ship_stats)
 
 # Board Ship

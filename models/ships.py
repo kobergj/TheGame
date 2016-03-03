@@ -4,12 +4,15 @@
 # Generic Ship. No special Abilites.
 class Ship():
     def __init__(self, shipStats):
-        # Assign Stats - Dict Or Direct Assign?
-        self.stats = shipStats
+        # Assign Stats - Dict Or Direct Assign? -> Go For Direct
+        # self.stats = shipStats
 
-        # self.cargoCapacity = shipStats['cargoCapacity']
-        # self.speed = shipStats['speed']
-        # self.maxTravelDistance = shipStats['maxTravelDistance']
+        self.cargoCapacity = shipStats['cargoCapacity']
+        self.speed = shipStats['speed']
+        self.maxTravelDistance = shipStats['maxTravelDistance']
+
+        # Price
+        self.price = shipStats['price']
 
         # Rooms
         self.rooms = dict()
@@ -59,8 +62,8 @@ class Ship():
         # Loop through Destinations
         for destination in self.distances:
             # Add if in Travel Distance
-            if self.distances[destination] <= self.stats['maxTravelDistance']:
-                travelCost = int(self.distances[destination] / self.stats['speed'])
+            if self.distances[destination] <= self.maxTravelDistance:
+                travelCost = int(self.distances[destination] / self.speed)
                 travelCostDict.update({destination: travelCost})
 
             # update nearest
@@ -72,7 +75,7 @@ class Ship():
 
         # Check For Reachable Destinations
         if len(travelCostDict) < 2:
-                travelCost = int(self.distances[nearestDestination] / self.stats['speed'])
+                travelCost = int(self.distances[nearestDestination] / self.speed)
                 travelCostDict.update({nearestDestination: travelCost})
 
         # update travelCosts

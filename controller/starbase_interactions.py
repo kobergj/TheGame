@@ -1,6 +1,8 @@
 import visualization.starbases as viz
 import generator.ships as gsh
-import models.ships as mod
+import generator.rooms as gro
+import models.ships as msh
+import models.rooms as mro
 
 
 def Arrive(Starbase, Player):
@@ -8,12 +10,21 @@ def Arrive(Starbase, Player):
     ship = gsh.generateShipInformation()
 
     # Attach Ship to Station
-    Starbase.changeShipForSale(mod.Ship(ship))
+    Starbase.changeShipForSale(msh.Ship(ship))
+
+    # Fill Room List
+    while len(Starbase.roomsForSale) < Starbase.maxRoomsForSale:
+        # Create Room
+        room = gro.generateRoomInformation()
+
+        # Add Room
+        Starbase.addRoomForSale(mro.Room(room))
 
     while True:
         # Define Possible Actions
         possibleActions = {'quit': Quit,
                            'inspectShip': InspectShip,
+                           'inspectRooms': InspectRooms,
                            'depart': Depart
                            }
 
@@ -43,6 +54,7 @@ def InspectShip(Starbase, Player):
 
     # Await Players Choice
     choice = viz.buyShip(Starbase, Player)
+    print choice
 
     # Execute Choice
     possibleActions[choice](Starbase, Player)
@@ -53,8 +65,14 @@ def RefuseShip(Starbase, Player):
 
 
 def AcceptShip(Starbase, Player):
-    Player.spendCredits(Starbase.shipPrice)
+    # Spend Credits
+    Player.spendCredits(Player.currentShip.price)
 
+    # Switch Ship
     Player.switchShip(Starbase.shipForSale)
 
     Starbase.shipForSale = None
+
+
+def InspectRooms(Starbase, Player):
+    viz.buyRooms(Starbase, Player)

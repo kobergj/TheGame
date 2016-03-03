@@ -1,7 +1,5 @@
-import controller.planet_interactions as pi
 import controller.universe_interactions as ui
-import controller.spacegate_interactions as sgi
-import controller.starbase_interactions as sbi
+import controller.anomaly_interactions as ai
 
 import models.player as pyr
 import models.universe as uvs
@@ -51,17 +49,6 @@ while True:
 
     # Solution Suboptimal
     while next_destination_name == 'land':
-        if anomaly.__class__.__name__ == 'Planet':
-            # Arrive at Planet
-            pi.Arrive(anomaly, player)
-
-        elif anomaly.__class__.__name__ == 'Spacegate':
-            # Arrive at Spacegate
-            sgi.Arrive(anomaly, player)
-
-        elif anomaly.__class__.__name__ == 'Starbase':
-            # Arrive at Starbase
-            sbi.Arrive(anomaly, player)
-
+        ai.Arrive(player, anomaly)
         # Choose Next Destination
         next_destination_name = ui.ChooseDestination(universe, player)

@@ -6,6 +6,12 @@ class Anomaly():
 
         self.coordinates = anomalieInformation['coordinates']
 
+        self.enemies = list()
+
+    def addEnemy(self, enemy):
+
+        self.enemies.append(enemy)
+
 
 class Planet(Anomaly):
     # Buy and Sell Goods

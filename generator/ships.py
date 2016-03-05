@@ -7,11 +7,15 @@ def generateShipInformation():
     speed = generateStat(db.Ships.Speedbounds)
     maxTravelDistance = generateStat(db.Ships.Travelbounds)
     spaceForRooms = generateStat(db.Ships.Roombounds)
+    attackPower = generateStat(db.Ships.Attackbounds)
+    shieldStrength = generateStat(db.Ships.Shieldbounds)
 
-    shipStats = {'cargoCapacity': cargoCapacity,
-                 'speed': speed,
-                 'maxTravelDistance': maxTravelDistance,
-                 'spaceForRooms': spaceForRooms,
+    shipStats = {'cargoCapacity':       cargoCapacity,
+                 'speed':               speed,
+                 'maxTravelDistance':   maxTravelDistance,
+                 'spaceForRooms':       spaceForRooms,
+                 'attackPower':         attackPower,
+                 'shieldStrength':      shieldStrength,
 
                  }
 

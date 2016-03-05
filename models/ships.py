@@ -7,10 +7,6 @@ class Ship():
         # Assign Stats - Dict Or Direct Assign? -> Go For Direct
         # self.stats = shipStats
 
-        self.cargoCapacity = shipStats['cargoCapacity']
-        self.speed = shipStats['speed']
-        self.maxTravelDistance = shipStats['maxTravelDistance']
-
         # Price
         self.price = shipStats['price']
 
@@ -19,12 +15,23 @@ class Ship():
         self.spaceForRooms = shipStats['spaceForRooms']
 
         # Initialize Cargobay
+        self.cargoCapacity = shipStats['cargoCapacity']
         self.inCargo = dict()
         self.freeCargoSpace = shipStats['cargoCapacity']
 
         # Initialize SensorBay
         self.distances = dict()
         self.travelCosts = dict()
+
+        # Power Engines
+        self.maxTravelDistance = shipStats['maxTravelDistance']
+        self.speed = shipStats['speed']
+
+        # Load Weapons
+        self.attackPower = shipStats['attackPower']
+
+        # activate Shields
+        self.shieldStrength = shipStats['shieldStrength']
 
     # Room Operations
     def attachRoom(self, Room):

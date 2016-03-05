@@ -9,7 +9,7 @@ def chooseNextDestination(Universe, Player):
 
     print '###'*(len(Universe.Map[0])*2-1)
 
-    choiceList = ['land']
+    choiceList = [False]
 
     for row in Universe.Map:
         for name in row:

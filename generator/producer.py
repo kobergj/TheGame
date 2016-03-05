@@ -1,5 +1,6 @@
 import models as mod
 import generator as gen
+import database.database as db
 
 import random
 
@@ -25,7 +26,7 @@ def Producer(Universe):
                 i = random.randint(0, 100)
 
                 # Enemy Probability
-                if i <= 20:
+                if i <= db.Universe.EnemyProbability:
                     enemyShip = None
 
                 anomaly.enemyQ.put(enemyShip)

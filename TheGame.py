@@ -47,15 +47,16 @@ universe = uvs.Universe(universeInfos)
 
 # Create Producer Thread
 producerThread = threading.Thread(target=gpr.Producer, args=(universe, ))
+# Make Him a Daemon
 producerThread.daemon = True
+# Give Him a Name
 producerThread.name = 'ProducerThread'
-
 # Start Producer
 producerThread.start()
 
 # Set starting Planet
 startingPlanet = universeInfos['anomalyInformations']['Planet'][0]['name']
-print startingPlanet
+# Travel to Starting Planet
 player.travelTo(startingPlanet)
 
 if __name__ == '__main__':

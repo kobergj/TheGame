@@ -40,7 +40,14 @@ def chooseNextDestination(Universe, Player):
 
     print '###'*(len(Universe.Map[0])*2-1)
 
-    print "[0]  -- Land -- "
+    currentAnomaly = Universe.anomalyList[Player.currentPosition]
+
+    if currentAnomaly.enemies:
+        fight_or_land = 'Fight'
+    else:
+        fight_or_land = 'Land'
+
+    print "[0]  -- " + fight_or_land + " -- "
     print "[99] -- Show TravelInfos --"
 
     choice = input()

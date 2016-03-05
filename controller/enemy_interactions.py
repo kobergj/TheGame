@@ -1,4 +1,6 @@
 
 def beginFight(Ship, Enemy):
     # TODO: Fights
-    pass
+    print 'You: ' + str(Ship.attackPower) + ' vs. ' + 'Enemy: ' + str(Enemy.attackPower)
+
+    raw_input()

@@ -30,6 +30,8 @@ class Ships:
     Speedbounds = [1, 3]
     Travelbounds = [2, 4]
     Roombounds = [2, 4]
+    Attackbounds = [3, 6]
+    Shieldbounds = [8, 14]
 
 
 class Spacegates:

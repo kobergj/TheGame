@@ -3,7 +3,6 @@ import random
 
 def generatePlanetInformation(db):
     planetName = generatePlanetName(db)
-    coordinates = generateCoordinates(db)
 
     goodsConsumed = generateConsumedGoods(db)
     goodsProduced = generateProducedGoods(db, goodsConsumed)
@@ -12,7 +11,6 @@ def generatePlanetInformation(db):
 
     planetInformation = {
         'name': planetName,
-        'coordinates': coordinates,
 
         'goodsConsumed': goodsConsumed,
         'goodsProduced': goodsProduced,
@@ -31,24 +29,6 @@ def generatePlanetName(db):
     db.Planets.ListOfNames.remove(planetName)
 
     return planetName
-
-
-def generateCoordinates(db):
-    maxCoordinates = db.Universe.MaxCoordinates
-    minCoordinates = db.Universe.MinCoordinates
-
-    coordinates = db.Universe.RestrictedCoordinates[0]
-
-    while coordinates in db.Universe.RestrictedCoordinates:
-        coordinates = list()
-
-        for i in range(len(maxCoordinates)):
-            coordinate = random.randint(minCoordinates[i], maxCoordinates[i])
-            coordinates.append(coordinate)
-
-    db.Universe.RestrictedCoordinates.append(coordinates)
-
-    return coordinates
 
 
 def generateConsumedGoods(db):

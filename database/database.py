@@ -23,6 +23,8 @@ class DynamicDatabase:
         MaxCoordinates = [10, 10]
         MinCoordinates = [0, 0]
 
+        RestrictedCoordinates = list([0, 0])
+
         EnemyProbability = 50
 
         AnomalyTypes = ['Planet', 'Planet', 'Planet', 'Spacegate', 'Starbase', 'Starbase']
@@ -36,7 +38,7 @@ class DynamicDatabase:
         Shieldbounds = [8, 14]
 
     class Spacegates:
-        Identifiers = 'SPG-#XX'
+        IdentifiersList = ['SPG-#XX']
 
         CostForUse = 0
 

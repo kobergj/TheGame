@@ -18,14 +18,18 @@ def generateSpacegateInformation(db):
 
 
 def generateSpacegateName(db):
-    name = random.choice(db.Spacegates.Identifiers)
+    name = db.Spacegates.IdentifiersList[0]
 
-    currentId = random.randint(1, 100)
+    while name in db.Spacegates.IdentifiersList:
 
-    if currentId <= 10:
-        name = name.replace('XX', '0%s' % currentId)
-    else:
-        name = name.replace('XX', str(currentId))
+        currentId = random.randint(1, 100)
+
+        if currentId <= 10:
+            name = name.replace('XX', '0%s' % currentId)
+        else:
+            name = name.replace('XX', str(currentId))
+
+    db.Spacegates.IdentifiersList.append(name)
 
     return name
 
@@ -34,11 +38,16 @@ def generateCoordinates(db):
     maxCoordinates = db.Universe.MaxCoordinates
     minCoordinates = db.Universe.MinCoordinates
 
-    coordinates = list()
+    coordinates = db.Universe.RestrictedCoordinates[0]
 
-    for i in range(len(maxCoordinates)):
-        coordinate = random.randint(minCoordinates[i], maxCoordinates[i])
-        coordinates.append(coordinate)
+    while coordinates in db.Universe.RestrictedCoordinates:
+        coordinates = list()
+
+        for i in range(len(maxCoordinates)):
+            coordinate = random.randint(minCoordinates[i], maxCoordinates[i])
+            coordinates.append(coordinate)
+
+    db.Universe.RestrictedCoordinates.append(coordinates)
 
     return coordinates
 

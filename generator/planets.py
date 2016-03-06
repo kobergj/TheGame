@@ -28,6 +28,8 @@ def generatePlanetName(db):
 
     planetName = random.choice(possibleNames)
 
+    db.Planets.ListOfNames.remove(planetName)
+
     return planetName
 
 
@@ -35,11 +37,16 @@ def generateCoordinates(db):
     maxCoordinates = db.Universe.MaxCoordinates
     minCoordinates = db.Universe.MinCoordinates
 
-    coordinates = list()
+    coordinates = db.Universe.RestrictedCoordinates[0]
 
-    for i in range(len(maxCoordinates)):
-        coordinate = random.randint(minCoordinates[i], maxCoordinates[i])
-        coordinates.append(coordinate)
+    while coordinates in db.Universe.RestrictedCoordinates:
+        coordinates = list()
+
+        for i in range(len(maxCoordinates)):
+            coordinate = random.randint(minCoordinates[i], maxCoordinates[i])
+            coordinates.append(coordinate)
+
+    db.Universe.RestrictedCoordinates.append(coordinates)
 
     return coordinates
 

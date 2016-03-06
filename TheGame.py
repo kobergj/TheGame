@@ -10,7 +10,7 @@ import database.database as db
 
 import threading
 
-NUMBER_OF_ANOMALIES = 18
+NUMBER_OF_ANOMALIES = 20
 
 MIN_COORDINATES = [0, 0]
 MAX_COORDINATES = [20, 20]
@@ -21,10 +21,10 @@ player_info = {'name': 'Dr.Play',
 
 starting_ship_stats = {'cargoCapacity': 10,
                        'speed': 2,
-                       'maxTravelDistance': 4,
+                       'maxTravelDistance': 12,
                        'spaceForRooms': 2,
                        'price': 0,
-                       'attackPower': 4,
+                       'attackPower': 22,
                        'shieldStrength': 10,
                        }
 
@@ -44,11 +44,9 @@ universe = uvs.Universe(MIN_COORDINATES, MAX_COORDINATES)
 database = db.DynamicDatabase
 
 # Create Producer Thread
-producerThread = threading.Thread(target=gpr.Producer, args=(database, universe))
+producerThread = threading.Thread(name='ProducerThread', target=gpr.Producer, args=(database, universe))
 # Make Him a Daemon
 producerThread.daemon = True
-# Give Him a Name
-producerThread.name = 'ProducerThread'
 # Start Producer
 producerThread.start()
 

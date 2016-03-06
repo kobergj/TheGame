@@ -3,19 +3,12 @@ import Queue
 
 
 class Universe():
-    # I guess this not right here...
-    mapIdentifiers = {'Empty': '',
-                      'Planet': '(00)',
-                      'Spacegate': '[00]',
-                      'Starbase': '$00$',
-                      }
-
     def __init__(self, minCoordinates, maxCoordinates):
         # Init Anomaly List
         self.anomalyList = dict()
 
         # Init Queue - One For all Anomalies?
-        self.anomalyQ = Queue.Queue(maxsize=10)
+        self.anomalyQ = Queue.Queue(maxsize=3)
 
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)

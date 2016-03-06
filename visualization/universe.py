@@ -1,12 +1,16 @@
 
 def chooseNextDestination(Universe, Player):
     # Where to store them best?
-    mapIdentifiers = Universe.mapIdentifiers
+    mapIdentifiers = {'Empty': '  ',
+                      'Planet': '(00)',
+                      'Spacegate': '[00]',
+                      'Starbase': '$00$',
+                      }
 
     print '\n' * 100
     print "\n Choose Destination\n"
 
-    print '###'*(len(Universe.Map[0])*2-1)
+    print '####'*(len(Universe.Map[0]))
 
     choiceList = [False]
 
@@ -37,7 +41,7 @@ def chooseNextDestination(Universe, Player):
 
         print '\n',
 
-    print '###'*(len(Universe.Map[0])*2-1)
+    print '####'*(len(Universe.Map[0]))
 
     currentAnomaly = Universe.anomalyList[Player.currentPosition]
 

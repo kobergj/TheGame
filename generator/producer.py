@@ -12,11 +12,15 @@ import random
 
 
 def Producer(Database, Universe):
-    """Produces various Items.
+    """Produces:
+            Planets
+            Starbases
+            Spacegates
 
-       For the Moment only Enemies included.
+            Rooms
+            Ships
 
-       Could be extended for rooms, ships, anomalies etc."""
+            Enemies"""
 
     # For the Moment Only One Universe per Producer
 
@@ -27,7 +31,7 @@ def Producer(Database, Universe):
 
             # I dont like if clauses...
             # Add Planet
-            if anomalyType == 'Planet':
+            if all([anomalyType == 'Planet', Database.Planets.ListOfNames]):
                 planetinfo = gpl.generatePlanetInformation(Database)
 
                 planet = mod.Planet(planetinfo)
@@ -35,7 +39,7 @@ def Producer(Database, Universe):
                 Universe.anomalyQ.put(planet)
 
             # Add Starbase
-            elif anomalyType == 'Starbase':
+            elif all([anomalyType == 'Starbase', Database.Starbases.ListOfNames]):
                 starbaseinfo = gsb.generateStarbaseInformation(Database)
 
                 starbase = mod.Starbase(starbaseinfo)

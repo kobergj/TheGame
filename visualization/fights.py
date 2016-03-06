@@ -13,19 +13,19 @@ def showFightInfo(Ship, Enemy):
     to_print += 'Enemy: Atk:%s HP:%s' % (str(Enemy.attackPower), str(Enemy.shieldStrength))
 
     to_print += '\n'*2
-    to_print += '[1] Fight!'
+    to_print += '[ENTER] Fight!'
 
     to_print += '\n'
-    to_print += '[2] Flee...'
+    to_print += '[1] Flee...'
 
     print to_print
 
-    choice = input()
+    choice = raw_input()
 
-    while choice not in [1, 2]:
+    while choice not in ['', '1']:
         choice = vui.invalidChoice(choice)
 
-    if choice == 1:
+    if choice == '':
         return True
 
 

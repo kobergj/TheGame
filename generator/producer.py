@@ -58,31 +58,6 @@ def Producer(Database, Universe):
                 # Put In Q
                 Universe.anomalyQ.put(anomaly)
 
-            # # I dont like if clauses...
-            # # Add Planet
-            # if all([anomalyType == 'Planet', Database.Planets.ListOfNames]):
-            #     planetinfo = gpl.generatePlanetInformation(Database)
-
-            #     planet = mod.Planet(planetinfo)
-
-            #     Universe.anomalyQ.put(planet)
-
-            # # Add Starbase
-            # elif all([anomalyType == 'Starbase', Database.Starbases.ListOfNames]):
-            #     starbaseinfo = gsb.generateStarbaseInformation(Database)
-
-            #     starbase = mod.Starbase(starbaseinfo)
-
-            #     Universe.anomalyQ.put(starbase)
-
-            # # Add Spacegate
-            # elif anomalyType == 'Spacegate':
-            #     spacegateinfo = gsg.generateSpacegateInformation(Database)
-
-            #     spacegate = mod.Spacegate(spacegateinfo)
-
-            #     Universe.anomalyQ.put(spacegate)
-
         # Ships
         while not Universe.shipQ.full():
             shipinfo = gsp.generateShipInformation(Database)

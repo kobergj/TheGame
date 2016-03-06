@@ -1,5 +1,3 @@
-import Queue
-
 
 class Anomaly():
     # Generic Anomaly in Space.

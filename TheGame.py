@@ -13,7 +13,7 @@ import threading
 NUMBER_OF_ANOMALIES = 20
 
 MIN_COORDINATES = [0, 0]
-MAX_COORDINATES = [10, 10]
+MAX_COORDINATES = [15, 15]
 
 PLAYER_INFO = {'name': 'Dr.Play',
                'startingCredits': 12

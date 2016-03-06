@@ -1,10 +1,21 @@
+import Queue
+
 
 class Anomaly():
     # Generic Anomaly in Space.
     def __init__(self, anomalieInformation):
+        # Identifier
         self.name = anomalieInformation['name']
-
+        # Coordinates
         self.coordinates = anomalieInformation['coordinates']
+        # Enemies in Orbit
+        self.enemies = list()
+        # Future Enemys
+        self.enemyQ = Queue.Queue(maxsize=5)
+
+    def addEnemy(self, enemy):
+
+        self.enemies.append(enemy)
 
 
 class Planet(Anomaly):
@@ -34,9 +45,6 @@ class Starbase(Anomaly):
 
     def changeShipForSale(self, Ship):
         if self.shipForSale:
-
-            # Mmmh
-
             # Attach to List Of Deprecated Ships
             self.deprecatedShips.append(self.shipForSale)
 
@@ -44,15 +52,6 @@ class Starbase(Anomaly):
 
         # Attach Ship
         self.shipForSale = Ship
-
-    # def calculateShipPrice(self, Ship):
-    #     price = 0
-    #     for statValue in Ship.stats.values():
-    #         price += statValue
-
-    #     price *= 10
-
-    #     self.shipPrice = price
 
     def addRoomForSale(self, Room):
         self.roomsForSale.update({Room.name: Room})

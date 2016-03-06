@@ -41,7 +41,7 @@ player.switchShip(startingShip)
 universe = uvs.Universe(MIN_COORDINATES, MAX_COORDINATES)
 
 # get Database
-database = db.DynamicDatabase
+database = db.DynamicDatabase()
 
 # Create Producer Thread
 producerThread = threading.Thread(name='ProducerThread', target=gpr.Producer, args=(database, universe))

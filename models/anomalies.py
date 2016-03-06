@@ -10,8 +10,6 @@ class Anomaly():
         self.coordinates = None
         # Enemies in Orbit
         self.enemies = list()
-        # Future Enemys
-        self.enemyQ = Queue.Queue(maxsize=5)
 
     def addEnemy(self, enemy):
 
@@ -22,7 +20,7 @@ class Anomaly():
 
     def update(self, Universe):
         # Get Enemy from Queue
-        newEnemy = self.enemyQ.get()
+        newEnemy = Universe.enemyQ.get()
         # Append to Enemy List
         if newEnemy:
             self.enemies.append(newEnemy)
@@ -48,12 +46,10 @@ class Starbase(Anomaly):
         # Ship Bay
         self.shipForSale = None
         self.deprecatedShips = list()
-        self.shipQ = Queue.Queue(maxsize=3)
 
         # Room Merchant
         self.maxRoomsForSale = starbaseInformation['maxRoomsforSale']
         self.roomsForSale = dict()
-        self.roomQ = Queue.Queue(maxsize=5)
 
     def changeShipForSale(self, Ship):
         if self.shipForSale:
@@ -67,6 +63,23 @@ class Starbase(Anomaly):
 
     def addRoomForSale(self, Room):
         self.roomsForSale.update({Room.name: Room})
+
+    def update(self, Universe):
+        Anomaly.update(self, Universe)
+
+        # Get Ship
+        ship = Universe.shipQ.get()
+
+        # Attach Ship to Station
+        self.changeShipForSale(ship)
+
+        # Fill Room List
+        while len(self.roomsForSale) < self.maxRoomsForSale:
+            # Get Room
+            room = Universe.roomQ.get()
+
+            # Add Room
+            self.addRoomForSale(room)
 
 
 class Spacegate(Anomaly):

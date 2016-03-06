@@ -8,8 +8,11 @@ class Universe():
         # Init Anomaly List
         self.anomalyList = dict()
 
-        # Init Queue - One For all Anomalies?
+        # Init Queues
         self.anomalyQ = Queue.Queue(maxsize=3)
+        self.enemyQ = Queue.Queue(maxsize=3)
+        self.shipQ = Queue.Queue(maxsize=3)
+        self.roomQ = Queue.Queue(maxsize=3)
 
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)

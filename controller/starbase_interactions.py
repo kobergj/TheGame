@@ -2,20 +2,6 @@ import visualization.starbases as viz
 
 
 def Arrive(Starbase, Player):
-    # Get Ship
-    ship = Starbase.shipQ.get()
-
-    # Attach Ship to Station
-    Starbase.changeShipForSale(ship)
-
-    # Fill Room List
-    while len(Starbase.roomsForSale) < Starbase.maxRoomsForSale:
-        # Get Room
-        room = Starbase.roomQ.get()
-
-        # Add Room
-        Starbase.addRoomForSale(room)
-
     while True:
         # Define Possible Actions
         possibleActions = {'quit': Quit,

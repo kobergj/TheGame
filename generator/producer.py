@@ -5,10 +5,24 @@ import models.rooms as mro
 import generator.planets as gpl
 import generator.spacegates as gsg
 import generator.starbases as gsb
+
 import generator.ships as gsp
 import generator.rooms as gro
 
 import random
+
+
+ANOMALY_INFO_FUNCS = {
+    'Planet':       gpl.generatePlanetInformation,
+    'Starbase':     gsb.generateStarbaseInformation,
+    'Spacegate':    gsg.generateSpacegateInformation,
+}
+
+ANOMALY_MODELS = {
+    'Planet': mod.Planet,
+    'Starbase': mod.Starbase,
+    'Spacegate': mod.Spacegate,
+}
 
 
 def Producer(Database, Universe):
@@ -25,67 +39,78 @@ def Producer(Database, Universe):
     # For the Moment Only One Universe per Producer
 
     while True:
+        # Anomalies
         while not Universe.anomalyQ.full():
             # Choose Anomaly Type
             anomalyType = random.choice(Database.Universe.AnomalyTypes)
 
-            # I dont like if clauses...
-            # Add Planet
-            if all([anomalyType == 'Planet', Database.Planets.ListOfNames]):
-                planetinfo = gpl.generatePlanetInformation(Database)
+            # Get Info Func
+            genInfo = ANOMALY_INFO_FUNCS[anomalyType]
+            # Get Info
+            anomalyInfo = genInfo(Database)
 
-                planet = mod.Planet(planetinfo)
+            if anomalyInfo:
+                # Get Model
+                model = ANOMALY_MODELS[anomalyType]
+                # Create Anomaly
+                anomaly = model(anomalyInfo)
 
-                Universe.anomalyQ.put(planet)
+                # Put In Q
+                Universe.anomalyQ.put(anomaly)
 
-            # Add Starbase
-            elif all([anomalyType == 'Starbase', Database.Starbases.ListOfNames]):
-                starbaseinfo = gsb.generateStarbaseInformation(Database)
+            # # I dont like if clauses...
+            # # Add Planet
+            # if all([anomalyType == 'Planet', Database.Planets.ListOfNames]):
+            #     planetinfo = gpl.generatePlanetInformation(Database)
 
-                starbase = mod.Starbase(starbaseinfo)
+            #     planet = mod.Planet(planetinfo)
 
-                Universe.anomalyQ.put(starbase)
+            #     Universe.anomalyQ.put(planet)
 
-            # Add Spacegate
-            elif anomalyType == 'Spacegate':
-                spacegateinfo = gsg.generateSpacegateInformation(Database)
+            # # Add Starbase
+            # elif all([anomalyType == 'Starbase', Database.Starbases.ListOfNames]):
+            #     starbaseinfo = gsb.generateStarbaseInformation(Database)
 
-                spacegate = mod.Spacegate(spacegateinfo)
+            #     starbase = mod.Starbase(starbaseinfo)
 
-                Universe.anomalyQ.put(spacegate)
+            #     Universe.anomalyQ.put(starbase)
 
-        # Loop through Anomalies
-        for anomaly in Universe.anomalyList.values():
-            # Enemies
-            while not anomaly.enemyQ.full():
-                # generate Stats for Enemy Ship
-                enemyShipInformation = gsp.generateShipInformation(Database)
-                # generate Enemys
-                enemyShip = msp.Ship(enemyShipInformation)
+            # # Add Spacegate
+            # elif anomalyType == 'Spacegate':
+            #     spacegateinfo = gsg.generateSpacegateInformation(Database)
 
-                # Random Number
-                i = random.randint(0, 100)
+            #     spacegate = mod.Spacegate(spacegateinfo)
 
-                # Enemy Probability
-                if i <= Database.Universe.EnemyProbability:
-                    enemyShip = None
+            #     Universe.anomalyQ.put(spacegate)
 
-                anomaly.enemyQ.put(enemyShip)
+        # Ships
+        while not Universe.shipQ.full():
+            shipinfo = gsp.generateShipInformation(Database)
 
-            # Ships
-            if hasattr(anomaly, 'shipQ'):
-                while not anomaly.shipQ.full():
-                    shipinfo = gsp.generateShipInformation(Database)
+            ship = msp.Ship(shipinfo)
 
-                    ship = msp.Ship(shipinfo)
+            Universe.shipQ.put(ship)
 
-                    anomaly.shipQ.put(ship)
+        # Rooms
+        while not Universe.roomQ.full():
+            roominfo = gro.generateRoomInformation(Database)
 
-            # Rooms
-            if hasattr(anomaly, 'roomQ'):
-                while not anomaly.roomQ.full():
-                    roominfo = gro.generateRoomInformation(Database)
+            room = mro.Room(roominfo)
 
-                    room = mro.Room(roominfo)
+            Universe.roomQ.put(room)
 
-                    anomaly.roomQ.put(room)
+        # Enemies
+        while not Universe.enemyQ.full():
+            # generate Stats for Enemy Ship
+            enemyShipInformation = gsp.generateShipInformation(Database)
+            # generate Enemys
+            enemyShip = msp.Ship(enemyShipInformation)
+
+            # Random Number
+            i = random.randint(0, 100)
+
+            # Enemy Probability
+            if i > Database.Universe.EnemyProbability:
+                enemyShip = None
+
+            Universe.enemyQ.put(enemyShip)

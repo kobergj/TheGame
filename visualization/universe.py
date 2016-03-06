@@ -10,12 +10,13 @@ def chooseNextDestination(Universe, Player):
     print '\n' * 100
     print "\n Choose Destination\n"
 
-    print '#### '*(len(Universe.Map[0]))
+    print ' ####'*(len(Universe.Map[0]))
 
     choiceList = [False]
 
     # Loop through Rows
     for row in Universe.Map:
+        print '#',
         # Each Point contains Anomaly Name
         for anomalyName in row:
             # Assume its Empty
@@ -29,7 +30,8 @@ def chooseNextDestination(Universe, Player):
 
                 # Check if Anomaly is current
                 if Player.currentPosition == anomalyName:
-                    to_print = to_print.replace('00', str(0))
+                    to_print = to_print.replace('00', '')
+                    # Add Location Arrow
                     to_print = '->' + to_print
 
                 # Check if Anomaly is reachable
@@ -49,9 +51,9 @@ def chooseNextDestination(Universe, Player):
 
             print to_print,
 
-        print '\n',
+        print '#\n',
 
-    print '#### '*(len(Universe.Map[0]))
+    print ' ####'*(len(Universe.Map[0]))
 
     currentAnomaly = Universe.anomalyList[Player.currentPosition]
 

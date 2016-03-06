@@ -13,29 +13,30 @@ import threading
 NUMBER_OF_ANOMALIES = 20
 
 MIN_COORDINATES = [0, 0]
-MAX_COORDINATES = [15, 15]
+MAX_COORDINATES = [10, 10]
 
-player_info = {'name': 'Dr.Play',
+PLAYER_INFO = {'name': 'Dr.Play',
                'startingCredits': 12
                }
 
-starting_ship_stats = {'cargoCapacity': 10,
+STARTING_SHIP_STATS = {'cargoCapacity': 10,
+
                        'speed': 2,
-                       'maxTravelDistance': 5,
+                       'maxTravelDistance': 4,
+
                        'spaceForRooms': 2,
+
                        'price': 0,
+
                        'attackPower': 22,
                        'shieldStrength': 10,
                        }
 
 # Initialize Player
-player = pyr.Player(player_info)
+player = pyr.Player(PLAYER_INFO)
 
-# Initialize switchShip
-startingShip = shp.Ship(starting_ship_stats)
-
-# Board Ship
-player.switchShip(startingShip)
+# Initialize Ship
+startingShip = shp.Ship(STARTING_SHIP_STATS)
 
 # generate Universe
 universe = uvs.Universe(MIN_COORDINATES, MAX_COORDINATES)
@@ -52,17 +53,22 @@ producerThread.start()
 
 # Fill Universe
 while len(universe.anomalyList) < NUMBER_OF_ANOMALIES:
+    # Get Anomaly
     anomaly = universe.anomalyQ.get()
-
+    # Add Anomaly
     universe.addAnomaly(anomaly)
 
 # Set starting Anomaly
 startingAnomaly = universe.anomalyList.keys()[0]
 
-# Travel to Starting Planet
+# Board Ship
+player.switchShip(startingShip)
+
+# Travel to Starting Anomaly
 player.travelTo(startingAnomaly)
 
 if __name__ == '__main__':
     # Start
     while True:
+        # Arrive at Anomaly
         ai.Arrive(player, universe)

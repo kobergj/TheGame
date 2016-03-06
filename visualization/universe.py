@@ -96,10 +96,10 @@ def chooseNextDestination(Universe, Player):
 
     if choice == '99':
         for anomaly in choiceList[1:]:
-            print "[%s] %s, distance: %s clicks, Cost: %s" % (choiceList.index(anomaly),
-                                                              anomaly,
-                                                              Player.currentShip.distances[anomaly],
-                                                              Player.currentShip.travelCosts[anomaly])
+            print "[%s] %s, Cost For Travel: %s" % (choiceList.index(anomaly),
+                                                    anomaly,
+                                                    Player.currentShip.travelCosts[anomaly]
+                                                    )
 
         choice = input()
 

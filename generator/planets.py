@@ -1,44 +1,14 @@
 import random
-import database.database as db
-
-# TODO: Replace
-MIN_NUMBER_GOODS_CONSUMED = db.Goods.MinNumberOfGoodsConsumed
-MAX_NUMBER_GOODS_CONSUMED = db.Goods.MaxNumberOfGoodsConsumed
-
-MIN_NUMBER_GOODS_PRODUCED = db.Goods.MinNumberOfGoodsProduced
-MAX_NUMBER_GOODS_PRODUCED = db.Goods.MaxNumberOfGoodsProduced
-
-MIN_SELL_PRICE = db.Goods.MinSellPrice
-MAX_SELL_PRICE = db.Goods.MaxSellPrice
-
-MIN_BUY_PRICE = db.Goods.MinBuyPrice
-MAX_BUY_PRICE = db.Goods.MaxBuyPrice
-
-POSSIBLE_GOODS = db.Goods.ListOfNames
 
 
-def generatePlanetList(numberOfPlanets):
-    planetList = list()
-    planetNamesList = list()
+def generatePlanetInformation(db):
+    planetName = generatePlanetName(db)
+    coordinates = generateCoordinates(db)
 
-    while len(planetList) < numberOfPlanets:
-        planet = generatePlanetInformation()
+    goodsConsumed = generateConsumedGoods(db)
+    goodsProduced = generateProducedGoods(db, goodsConsumed)
 
-        if planet['name'] not in planetNamesList:
-            planetList.append(planet)
-            planetNamesList.append(planet['name'])
-
-    return planetList
-
-
-def generatePlanetInformation():
-    planetName = generatePlanetName()
-    coordinates = generateCoordinates()
-
-    goodsConsumed = generateConsumedGoods()
-    goodsProduced = generateProducedGoods(goodsConsumed)
-
-    prices = generatePrices(goodsConsumed, goodsProduced)
+    prices = generatePrices(db, goodsConsumed, goodsProduced)
 
     planetInformation = {
         'name': planetName,
@@ -53,7 +23,7 @@ def generatePlanetInformation():
     return planetInformation
 
 
-def generatePlanetName():
+def generatePlanetName(db):
     possibleNames = db.Planets.ListOfNames
 
     planetName = random.choice(possibleNames)
@@ -61,7 +31,7 @@ def generatePlanetName():
     return planetName
 
 
-def generateCoordinates():
+def generateCoordinates(db):
     maxCoordinates = db.Universe.MaxCoordinates
     minCoordinates = db.Universe.MinCoordinates
 
@@ -74,10 +44,10 @@ def generateCoordinates():
     return coordinates
 
 
-def generateConsumedGoods():
-    possibleGoods = POSSIBLE_GOODS
+def generateConsumedGoods(db):
+    possibleGoods = db.Goods.ListOfNames
 
-    numberofGoodsConsumed = random.randint(MIN_NUMBER_GOODS_CONSUMED, MAX_NUMBER_GOODS_CONSUMED)
+    numberofGoodsConsumed = random.randint(db.Goods.MinNumberOfGoodsConsumed, db.Goods.MaxNumberOfGoodsConsumed)
 
     goodsConsumed = list()
 
@@ -90,10 +60,10 @@ def generateConsumedGoods():
     return goodsConsumed
 
 
-def generateProducedGoods(goodsConsumed):
-    possibleGoods = POSSIBLE_GOODS
+def generateProducedGoods(db, goodsConsumed):
+    possibleGoods = db.Goods.ListOfNames
 
-    numberOfGoodsProduced = random.randint(MIN_NUMBER_GOODS_PRODUCED, MAX_NUMBER_GOODS_PRODUCED)
+    numberOfGoodsProduced = random.randint(db.Goods.MinNumberOfGoodsProduced, db.Goods.MaxNumberOfGoodsProduced)
 
     goodsProduced = list()
 
@@ -107,12 +77,12 @@ def generateProducedGoods(goodsConsumed):
     return goodsProduced
 
 
-def generatePrices(goodsConsumed, goodsProduced):
+def generatePrices(db, goodsConsumed, goodsProduced):
     prices = dict()
     for good in goodsConsumed:
-        prices.update({good: random.randint(MIN_BUY_PRICE, MAX_BUY_PRICE)})
+        prices.update({good: random.randint(db.Goods.MinBuyPrice, db.Goods.MaxBuyPrice)})
 
     for good in goodsProduced:
-        prices.update({good: random.randint(MIN_SELL_PRICE, MAX_SELL_PRICE)})
+        prices.update({good: random.randint(db.Goods.MinSellPrice, db.Goods.MaxSellPrice)})
 
     return prices

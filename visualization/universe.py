@@ -1,8 +1,7 @@
-import database.database as db
-
 
 def chooseNextDestination(Universe, Player):
-    mapIdentifiers = db.Visualization.mapIdentifiers
+    # Where to store them best?
+    mapIdentifiers = Universe.mapIdentifiers
 
     print '\n' * 100
     print "\n Choose Destination\n"

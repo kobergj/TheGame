@@ -1,7 +1,7 @@
 import random
 
 
-def generateRoomInformation():
+def generateRoomInformation(db):
     # Name
     name = generateName()
 

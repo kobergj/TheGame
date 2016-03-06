@@ -1,26 +1,34 @@
-import models.anomalies as ans
 import math
+import Queue
 
 
 class Universe():
-    def __init__(self, universeInformations):
-        # Extract Anomaly Informations:
-        anomalyClasses = universeInformations['anomalyInformations']
+    # I guess this not right here...
+    mapIdentifiers = {'Empty': '',
+                      'Planet': '(00)',
+                      'Spacegate': '[00]',
+                      'Starbase': '$00$',
+                      }
+
+    def __init__(self, minCoordinates, maxCoordinates):
         # Init Anomaly List
         self.anomalyList = dict()
 
-        # Loop through Anomaly Classes
-        for anomalyClass, anomalyInformationList in anomalyClasses.iteritems():
-            # Loop through Anomalies
-            for anomalyInformation in anomalyInformationList:
-                # Create Anomaly
-                anomaly = ans.__dict__[anomalyClass](anomalyInformation)
-
-                # Append Anomaly to Anomaly List
-                self.anomalyList.update({anomaly.name: anomaly})
+        # Init Queue - One For all Anomalies?
+        self.anomalyQ = Queue.Queue(maxsize=10)
 
         # Draw Universe Map
-        self.Map = self.drawUniverseMap(universeInformations)
+        self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
+
+    def addAnomaly(self, Anomaly):
+        # Append to Anomaly List
+        self.anomalyList.update({Anomaly.name: Anomaly})
+
+        # update Map
+        x = Anomaly.coordinates[0]
+        y = Anomaly.coordinates[1]
+
+        self.Map[y][x] = Anomaly.name
 
     def updateDistances(self, Ship, currentCoordinates):
         # Reset Distances
@@ -45,9 +53,9 @@ class Universe():
 
         return distance
 
-    def drawUniverseMap(self, universeInformation):
-        universeExpansion_x = universeInformation['maxCoordinates'][0] - universeInformation['minCoordinates'][0]
-        universeExpansion_y = universeInformation['maxCoordinates'][1] - universeInformation['minCoordinates'][1]
+    def drawUniverseMap(self, minCoordinates, maxCoordinates):
+        universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
+        universeExpansion_y = maxCoordinates[1] - minCoordinates[1]
 
         universeMap = list()
 
@@ -58,9 +66,9 @@ class Universe():
             for i in range(universeExpansion_x + 1):
                 point_in_space = None
 
-                for anomaly in self.anomalyList.itervalues():
-                    if anomaly.coordinates == [j, i]:
-                        point_in_space = anomaly.name
+                # for anomaly in self.anomalyList.itervalues():
+                #     if anomaly.coordinates == [j, i]:
+                #         point_in_space = anomaly.name
 
                 row.append(point_in_space)
 

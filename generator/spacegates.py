@@ -1,22 +1,11 @@
 import random
-import database.database as db
 
 
-def generateSpacegateList(numberOfSpacegates):
-    spacegateList = list()
+def generateSpacegateInformation(db):
+    spacegateName = generateSpacegateName(db)
+    coordinates = generateCoordinates(db)
 
-    while len(spacegateList) < numberOfSpacegates:
-        spacegate = generateSpacegateInformation()
-        spacegateList.append(spacegate)
-
-    return spacegateList
-
-
-def generateSpacegateInformation():
-    spacegateName = generateSpacegateName()
-    coordinates = generateCoordinates()
-
-    costForUse = calculateCostForUse()
+    costForUse = calculateCostForUse(db)
 
     spacegateInformation = {
         'name': spacegateName,
@@ -28,7 +17,7 @@ def generateSpacegateInformation():
     return spacegateInformation
 
 
-def generateSpacegateName():
+def generateSpacegateName(db):
     name = random.choice(db.Spacegates.Identifiers)
 
     currentId = random.randint(1, 100)
@@ -41,7 +30,7 @@ def generateSpacegateName():
     return name
 
 
-def generateCoordinates():
+def generateCoordinates(db):
     maxCoordinates = db.Universe.MaxCoordinates
     minCoordinates = db.Universe.MinCoordinates
 
@@ -54,7 +43,7 @@ def generateCoordinates():
     return coordinates
 
 
-def calculateCostForUse():
+def calculateCostForUse(db):
     cost = db.Spacegates.CostForUse
 
     return cost

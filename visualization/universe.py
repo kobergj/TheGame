@@ -1,7 +1,7 @@
 
 def chooseNextDestination(Universe, Player):
     # Where to store them best?
-    mapIdentifiers = {'Empty':      '    ',
+    mapIdentifiers = {'Empty':      '----',
                       'Planet':     '(00)',
                       'Spacegate':  '[00]',
                       'Starbase':   '$00$',
@@ -10,7 +10,7 @@ def chooseNextDestination(Universe, Player):
     print '\n' * 100
     print "\n Choose Destination\n"
 
-    print '####'*(len(Universe.Map[0]))
+    print '#### '*(len(Universe.Map[0]))
 
     choiceList = [False]
 

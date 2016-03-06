@@ -20,6 +20,13 @@ class Anomaly():
     def getCoordinates(self, Coordinates):
         self.coordinates = Coordinates
 
+    def update(self, Universe):
+        # Get Enemy from Queue
+        newEnemy = self.enemyQ.get()
+        # Append to Enemy List
+        if newEnemy:
+            self.enemies.append(newEnemy)
+
 
 class Planet(Anomaly):
     # Buy and Sell Goods
@@ -69,6 +76,19 @@ class Spacegate(Anomaly):
 
         self.costForUse = spacegateInformation['costForUse']
 
-    def overrideDistances(self):
-        for dest in self.distances:
-            self.distances[dest] = 1
+        self.travelCostDict = {}
+
+    def updateTravelCostDict(self, anomalyList):
+        # Loop through Anomalies
+        for anomalyName in anomalyList:
+            # Only Append if not there
+            if anomalyName not in self.travelCostDict:
+                # Update
+                self.travelCostDict.update({anomalyName: 0})
+
+    def update(self, Universe):
+        # Update Anomaly
+        Anomaly.update(self, Universe)
+
+        # Update TravelCostDict
+        self.updateTravelCostDict(Universe.anomalyList.keys())

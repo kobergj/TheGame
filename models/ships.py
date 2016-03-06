@@ -61,28 +61,31 @@ class Ship():
         self.freeCargoSpace += cargoAmount
 
     # Sensor Bay Methods
-    def scanSector(self):
+    def scanSector(self, distances):
         # init travelCost Dict
         travelCostDict = dict()
         nearestDestination = None
 
         # Loop through Destinations
-        for destination in self.distances:
-            # Add if in Travel Distance
-            if self.distances[destination] <= self.maxTravelDistance:
-                travelCost = int(self.distances[destination] / self.speed)
+        for destination, distance in distances.iteritems():
+            # Check if in Travel Distance
+            if distance <= self.maxTravelDistance:
+                # Calculate Costs
+                travelCost = int(distance / self.speed)
+                # Update Dict
                 travelCostDict.update({destination: travelCost})
 
-            # update nearest
+            # update nearest - There is surely a better way for this
             if not nearestDestination:
                 nearestDestination = destination
-            elif self.distances[destination] <= self.distances[nearestDestination]:
-                if self.distances[destination] != 0.0:
+
+            elif distance <= distances[nearestDestination]:
+                if distance != 0.0:
                     nearestDestination = destination
 
         # Check For Reachable Destinations
         if len(travelCostDict) < 2:
-                travelCost = int(self.distances[nearestDestination] / self.speed)
+                travelCost = int(distances[nearestDestination] / self.speed)
                 travelCostDict.update({nearestDestination: travelCost})
 
         # update travelCosts

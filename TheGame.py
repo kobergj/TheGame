@@ -10,10 +10,10 @@ import database.database as db
 
 import threading
 
-NUMBER_OF_ANOMALIES = 50
+NUMBER_OF_ANOMALIES = 20
 
 MIN_COORDINATES = [0, 0]
-MAX_COORDINATES = [20, 20]
+MAX_COORDINATES = [15, 15]
 
 player_info = {'name': 'Dr.Play',
                'startingCredits': 12
@@ -21,7 +21,7 @@ player_info = {'name': 'Dr.Play',
 
 starting_ship_stats = {'cargoCapacity': 10,
                        'speed': 2,
-                       'maxTravelDistance': 12,
+                       'maxTravelDistance': 5,
                        'spaceForRooms': 2,
                        'price': 0,
                        'attackPower': 22,

@@ -10,7 +10,7 @@ import database.database as db
 
 import threading
 
-NUMBER_OF_ANOMALIES = 20
+NUMBER_OF_ANOMALIES = 50
 
 MIN_COORDINATES = [0, 0]
 MAX_COORDINATES = [20, 20]

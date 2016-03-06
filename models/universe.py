@@ -1,5 +1,6 @@
 import math
 import Queue
+import random
 
 
 class Universe():
@@ -17,11 +18,19 @@ class Universe():
         # Append to Anomaly List
         self.anomalyList.update({Anomaly.name: Anomaly})
 
-        # update Map
-        x = Anomaly.coordinates[0]
-        y = Anomaly.coordinates[1]
+        # Genrate Coordinates
+        x = random.randint(0, len(self.Map[0])-1)
+        y = random.randint(0, len(self.Map)-1)
+
+        # Check if already used
+        while self.Map[y][x]:
+            # Create New Ones
+            x = random.randint(0, len(self.Map[0])-1)
+            y = random.randint(0, len(self.Map)-1)
 
         self.Map[y][x] = Anomaly.name
+
+        Anomaly.getCoordinates([x, y])
 
     def updateDistances(self, Ship, currentCoordinates):
         # Reset Distances
@@ -54,9 +63,9 @@ class Universe():
 
         # Problems with negative Coordinates
         # Currently 2-Dims Only
-        for j in range(universeExpansion_y + 1):
+        for j in range(universeExpansion_y):
             row = list()
-            for i in range(universeExpansion_x + 1):
+            for i in range(universeExpansion_x):
                 point_in_space = None
 
                 # for anomaly in self.anomalyList.itervalues():

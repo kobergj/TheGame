@@ -38,7 +38,7 @@ class DynamicDatabase:
         Shieldbounds = [8, 14]
 
     class Spacegates:
-        IdentifiersList = ['SPG-#XX']
+        IdentifiersList = ['SPG-#']
 
         CostForUse = 0
 

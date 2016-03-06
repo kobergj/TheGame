@@ -1,24 +1,20 @@
 import visualization.starbases as viz
-import generator.ships as gsh
-import generator.rooms as gro
-import models.ships as msh
-import models.rooms as mro
 
 
 def Arrive(Starbase, Player):
-    # Generate Ship
-    ship = gsh.generateShipInformation()
+    # Get Ship
+    ship = Starbase.shipQ.get()
 
     # Attach Ship to Station
-    Starbase.changeShipForSale(msh.Ship(ship))
+    Starbase.changeShipForSale(ship)
 
     # Fill Room List
     while len(Starbase.roomsForSale) < Starbase.maxRoomsForSale:
-        # Create Room
-        room = gro.generateRoomInformation()
+        # Get Room
+        room = Starbase.roomQ.get()
 
         # Add Room
-        Starbase.addRoomForSale(mro.Room(room))
+        Starbase.addRoomForSale(room)
 
     while True:
         # Define Possible Actions

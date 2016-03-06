@@ -1,35 +1,48 @@
-import database.database as db
-
 
 def chooseNextDestination(Universe, Player):
-    mapIdentifiers = db.Visualization.mapIdentifiers
+    # Where to store them best?
+    mapIdentifiers = {'Empty':      '    ',
+                      'Planet':     '(00)',
+                      'Spacegate':  '[00]',
+                      'Starbase':   '$00$',
+                      }
 
     print '\n' * 100
     print "\n Choose Destination\n"
 
-    print '###'*(len(Universe.Map[0])*2-1)
+    print '#### '*(len(Universe.Map[0]))
 
     choiceList = [False]
 
+    # Loop through Rows
     for row in Universe.Map:
-        for name in row:
+        # Each Point contains Anomaly Name
+        for anomalyName in row:
+            # Assume its Empty
             to_print = mapIdentifiers['Empty']
 
-            if name:
-                anomaly = Universe.anomalyList[name]
+            if anomalyName:
+                # Load Anomaly
+                anomaly = Universe.anomalyList[anomalyName]
+                # Load Map Identifier
                 to_print = mapIdentifiers[anomaly.__class__.__name__]
 
-                if name in Player.currentShip.travelCosts:
-                    if Player.currentShip.distances[name] == 0.0:
-                        to_print = to_print.replace('00', str(0))
-                        to_print = '->' + to_print
-                    else:
-                        choiceList.append(name)
+                # Check if Anomaly is current
+                if Player.currentPosition == anomalyName:
+                    to_print = to_print.replace('00', str(0))
+                    to_print = '->' + to_print
 
-                        to_print = to_print.replace('00', str(len(choiceList)-1))
+                # Check if Anomaly is reachable
+                elif anomalyName in Player.currentShip.travelCosts:
+                    choiceList.append(anomalyName)
 
+                    to_print = to_print.replace('00', str(len(choiceList)-1))
+
+                # Not Reachable
                 else:
                     to_print = to_print.replace('00', '')
+
+                    to_print = ' ' + to_print + ' '
 
             while len(to_print) < 4:
                 to_print += ' '
@@ -38,7 +51,7 @@ def chooseNextDestination(Universe, Player):
 
         print '\n',
 
-    print '###'*(len(Universe.Map[0])*2-1)
+    print '#### '*(len(Universe.Map[0]))
 
     currentAnomaly = Universe.anomalyList[Player.currentPosition]
 

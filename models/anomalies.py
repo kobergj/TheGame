@@ -7,7 +7,7 @@ class Anomaly():
         # Identifier
         self.name = anomalieInformation['name']
         # Coordinates
-        self.coordinates = anomalieInformation['coordinates']
+        self.coordinates = None
         # Enemies in Orbit
         self.enemies = list()
         # Future Enemys
@@ -16,6 +16,9 @@ class Anomaly():
     def addEnemy(self, enemy):
 
         self.enemies.append(enemy)
+
+    def getCoordinates(self, Coordinates):
+        self.coordinates = Coordinates
 
 
 class Planet(Anomaly):
@@ -38,10 +41,12 @@ class Starbase(Anomaly):
         # Ship Bay
         self.shipForSale = None
         self.deprecatedShips = list()
+        self.shipQ = Queue.Queue(maxsize=3)
 
         # Room Merchant
         self.maxRoomsForSale = starbaseInformation['maxRoomsforSale']
         self.roomsForSale = dict()
+        self.roomQ = Queue.Queue(maxsize=5)
 
     def changeShipForSale(self, Ship):
         if self.shipForSale:

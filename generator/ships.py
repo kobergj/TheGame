@@ -1,8 +1,7 @@
 import random
-import database.database as db
 
 
-def generateShipInformation():
+def generateShipInformation(db):
     cargoCapacity = generateStat(db.Ships.Cargobounds)
     speed = generateStat(db.Ships.Speedbounds)
     maxTravelDistance = generateStat(db.Ships.Travelbounds)

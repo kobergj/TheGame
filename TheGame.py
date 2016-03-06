@@ -1,18 +1,19 @@
-import controller.universe_interactions as ui
 import controller.anomaly_interactions as ai
 
 import models.player as pyr
 import models.universe as uvs
 import models.ships as shp
 
-import generator.universe as guv
 import generator.producer as gpr
+
+import database.database as db
 
 import threading
 
-NUMBER_OF_PLANETS = 10
-NUMBER_OF_SPACEGATES = 4
-NUMBER_OF_STARBASES = 5
+NUMBER_OF_ANOMALIES = 50
+
+MIN_COORDINATES = [0, 0]
+MAX_COORDINATES = [20, 20]
 
 player_info = {'name': 'Dr.Play',
                'startingCredits': 12
@@ -20,10 +21,10 @@ player_info = {'name': 'Dr.Play',
 
 starting_ship_stats = {'cargoCapacity': 10,
                        'speed': 2,
-                       'maxTravelDistance': 4,
+                       'maxTravelDistance': 12,
                        'spaceForRooms': 2,
                        'price': 0,
-                       'attackPower': 4,
+                       'attackPower': 22,
                        'shieldStrength': 10,
                        }
 
@@ -36,28 +37,30 @@ startingShip = shp.Ship(starting_ship_stats)
 # Board Ship
 player.switchShip(startingShip)
 
-# generate Universe Information
-universeInfos = guv.generateUniverseInformation(NUMBER_OF_PLANETS,
-                                                NUMBER_OF_SPACEGATES,
-                                                NUMBER_OF_STARBASES
-                                                )
-
 # generate Universe
-universe = uvs.Universe(universeInfos)
+universe = uvs.Universe(MIN_COORDINATES, MAX_COORDINATES)
+
+# get Database
+database = db.DynamicDatabase()
 
 # Create Producer Thread
-producerThread = threading.Thread(target=gpr.Producer, args=(universe, ))
+producerThread = threading.Thread(name='ProducerThread', target=gpr.Producer, args=(database, universe))
 # Make Him a Daemon
 producerThread.daemon = True
-# Give Him a Name
-producerThread.name = 'ProducerThread'
 # Start Producer
 producerThread.start()
 
-# Set starting Planet
-startingPlanet = universeInfos['anomalyInformations']['Planet'][0]['name']
+# Fill Universe
+while len(universe.anomalyList) < NUMBER_OF_ANOMALIES:
+    anomaly = universe.anomalyQ.get()
+
+    universe.addAnomaly(anomaly)
+
+# Set starting Anomaly
+startingAnomaly = universe.anomalyList.keys()[0]
+
 # Travel to Starting Planet
-player.travelTo(startingPlanet)
+player.travelTo(startingAnomaly)
 
 if __name__ == '__main__':
     # Start

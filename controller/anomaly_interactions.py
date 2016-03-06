@@ -22,15 +22,15 @@ def Arrive(Player, Universe):
     # Choose Next Destination
     interact_with_anomaly = ui.ChooseDestination(Universe, Player)
 
-    # You have to fight ALL Enemies
-    for enemy in anomaly.enemies:
-        # Begin Fight
-        emy.beginFight(Player.currentShip, enemy)
-        # Remove Enemy
-        anomaly.enemies.remove(enemy)
-
     # Solution Suboptimal
     while interact_with_anomaly:
+
+        # You have to fight ALL Enemies
+        for enemy in anomaly.enemies:
+            # Begin Fight
+            emy.beginFight(Player.currentShip, enemy)
+            # Remove Enemy
+            anomaly.enemies.remove(enemy)
 
         # Must Find a better solution for this
         if anomaly.__class__.__name__ == 'Planet':

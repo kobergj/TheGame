@@ -1,52 +1,29 @@
 import random
-import database.database as db
 
 
-def generateStarbaseList(numberOfStarbases):
-    starbaseList = list()
+def generateStarbaseInformation(db):
+    starbaseName = generateStarbaseName(db)
 
-    while len(starbaseList) < numberOfStarbases:
-        starbase = generateStarbaseInformation()
-        starbaseList.append(starbase)
-
-    return starbaseList
-
-
-def generateStarbaseInformation():
-    starbaseName = generateStarbaseName()
-    coordinates = generateCoordinates()
-
-    maxRoomsforSale = generateMaxRoomsForSale()
+    maxRoomsforSale = generateMaxRoomsForSale(db)
 
     spacegateInformation = {
         'name': starbaseName,
-        'coordinates': coordinates,
+
         'maxRoomsforSale': maxRoomsforSale,
     }
 
     return spacegateInformation
 
 
-def generateStarbaseName():
+def generateStarbaseName(db):
     name = random.choice(db.Starbases.ListOfNames)
+
+    db.Starbases.ListOfNames.remove(name)
 
     return name
 
 
-def generateCoordinates():
-    maxCoordinates = db.Universe.MaxCoordinates
-    minCoordinates = db.Universe.MinCoordinates
-
-    coordinates = list()
-
-    for i in range(len(maxCoordinates)):
-        coordinate = random.randint(minCoordinates[i], maxCoordinates[i])
-        coordinates.append(coordinate)
-
-    return coordinates
-
-
-def generateMaxRoomsForSale():
+def generateMaxRoomsForSale(db):
     maxNumber = 3
 
     return maxNumber

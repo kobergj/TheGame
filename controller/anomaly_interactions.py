@@ -2,28 +2,48 @@ import controller.planet_interactions as pi
 import controller.spacegate_interactions as sgi
 import controller.starbase_interactions as sbi
 import controller.enemy_interactions as emy
+import controller.universe_interactions as ui
 
 
-def Arrive(Player, Anomaly):
+def Arrive(Player, Universe):
+    # Get Anomaly
+    anomaly = Universe.anomalyList[Player.currentPosition]
+
+    # scan Sector
+    Universe.updateDistances(Player.currentShip, anomaly.coordinates)
+    Player.currentShip.scanSector()
+
     # Get Enemy from Queue
-    newEnemy = Anomaly.enemyQ.get()
+    newEnemy = anomaly.enemyQ.get()
     # Append to Enemy List
     if newEnemy:
-        Anomaly.enemies.append(newEnemy)
+        anomaly.enemies.append(newEnemy)
+
+    # Choose Next Destination
+    interact_with_anomaly = ui.ChooseDestination(Universe, Player)
+
     # You have to fight ALL Enemies
-    for enemy in Anomaly.enemies:
+    for enemy in anomaly.enemies:
         # Begin Fight
         emy.beginFight(Player.currentShip, enemy)
+        # Remove Enemy
+        anomaly.enemies.remove(enemy)
 
-    # Must Find a better solution for this
-    if Anomaly.__class__.__name__ == 'Planet':
-        # Arrive at Planet
-        pi.Arrive(Anomaly, Player)
+    # Solution Suboptimal
+    while interact_with_anomaly:
 
-    elif Anomaly.__class__.__name__ == 'Spacegate':
-        # Arrive at Spacegate
-        sgi.Arrive(Anomaly, Player)
+        # Must Find a better solution for this
+        if anomaly.__class__.__name__ == 'Planet':
+            # Arrive at Planet
+            pi.Arrive(anomaly, Player)
 
-    elif Anomaly.__class__.__name__ == 'Starbase':
-        # Arrive at Starbase
-        sbi.Arrive(Anomaly, Player)
+        elif anomaly.__class__.__name__ == 'Spacegate':
+            # Arrive at Spacegate
+            sgi.Arrive(anomaly, Player)
+
+        elif anomaly.__class__.__name__ == 'Starbase':
+            # Arrive at Starbase
+            sbi.Arrive(anomaly, Player)
+
+        # Choose Next Destination
+        interact_with_anomaly = ui.ChooseDestination(Universe, Player)

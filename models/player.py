@@ -9,6 +9,8 @@ class Player():
         self.currentShip = None
         # List of Old Ships
         self.deprecatedShips = list()
+        # Current Postion
+        self.currentPosition = None
 
     def earnCredits(self, numberOfCredts):
         self.credits += numberOfCredts
@@ -27,3 +29,6 @@ class Player():
 
         # Attach Ship
         self.currentShip = Ship
+
+    def travelTo(self, Anomaly):
+        self.currentPosition = Anomaly

@@ -24,6 +24,8 @@ class Universe:
     MaxCoordinates = [10, 10]
     MinCoordinates = [0, 0]
 
+    EnemyProbability = 50
+
 
 class Ships:
     Cargobounds = [6, 15]

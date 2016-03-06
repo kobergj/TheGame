@@ -47,30 +47,19 @@ universe = uvs.Universe(universeInfos)
 
 # Create Producer Thread
 producerThread = threading.Thread(target=gpr.Producer, args=(universe, ))
+# Make Him a Daemon
 producerThread.daemon = True
+# Give Him a Name
 producerThread.name = 'ProducerThread'
-
 # Start Producer
 producerThread.start()
 
 # Set starting Planet
-next_destination_name = universeInfos['anomalyInformations']['Planet'][0]['name']
+startingPlanet = universeInfos['anomalyInformations']['Planet'][0]['name']
+# Travel to Starting Planet
+player.travelTo(startingPlanet)
 
 if __name__ == '__main__':
     # Start
     while True:
-        # Get Anomaly
-        anomaly = universe.anomalyList[next_destination_name]
-
-        # scan Sector
-        universe.updateDistances(player.currentShip, anomaly.coordinates)
-        player.currentShip.scanSector()
-
-        # Choose Next Destination
-        next_destination_name = ui.ChooseDestination(universe, player)
-
-        # Solution Suboptimal
-        while next_destination_name == 'land':
-            ai.Arrive(player, anomaly)
-            # Choose Next Destination
-            next_destination_name = ui.ChooseDestination(universe, player)
+        ai.Arrive(player, universe)

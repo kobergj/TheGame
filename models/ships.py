@@ -11,7 +11,7 @@ class Ship():
         self.price = shipStats['price']
 
         # Rooms
-        self.rooms = dict()
+        self.rooms = list()
         self.spaceForRooms = shipStats['spaceForRooms']
 
         # Initialize Cargobay
@@ -35,14 +35,14 @@ class Ship():
 
     # Room Operations
     def attachRoom(self, Room):
-        self.rooms.update({Room.name: Room})
+        self.rooms.append(Room)
 
         Room.powerUp(self)
 
     def detachRoom(self, Room):
         Room.powerDown(self)
 
-        del self.rooms[Room.name]
+        self.rooms.remove(Room)
 
     # CargoBay Methods
     def loadCargo(self, cargoId, cargoAmount):

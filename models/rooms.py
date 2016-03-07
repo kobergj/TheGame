@@ -5,11 +5,15 @@ class Room():
 
         self.price = roomInformation['price']
 
+        self.statBoosts = roomInformation['statBoosts']
+
     def powerUp(self, Ship):
-        pass
+        for stat, boost in self.statBoosts:
+            Ship.__dict__[stat] += boost
 
     def powerDown(self, Ship):
-        pass
+        for stat, boost in self.statBoosts:
+            Ship.__dict__[stat] -= boost
 
 
 class CargoBay(Room):

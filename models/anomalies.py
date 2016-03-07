@@ -47,7 +47,7 @@ class Starbase(Anomaly):
 
         # Room Merchant
         self.maxRoomsForSale = starbaseInformation['maxRoomsforSale']
-        self.roomsForSale = dict()
+        self.roomsForSale = list()
 
     def changeShipForSale(self, Ship):
         if self.shipForSale:
@@ -60,7 +60,7 @@ class Starbase(Anomaly):
         self.shipForSale = Ship
 
     def addRoomForSale(self, Room):
-        self.roomsForSale.update({Room.name: Room})
+        self.roomsForSale.append(Room)
 
     def update(self, Universe):
         Anomaly.update(self, Universe)

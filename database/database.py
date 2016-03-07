@@ -99,5 +99,22 @@ class DynamicDatabase:
 
         CostForUse = 0
 
+    class Rooms:
+        RoomNameParts = {
+            'cargoCapacity':        ['Cargo', 'Storage', 'Tool'],
+            'maxTravelDistance':    ['Sensor', 'Scanning', 'Energy'],
+            'attackPower':          ['Weapon', 'Gun', 'Torpedo'],
+            'shieldStrength':       ['Shield', 'Reactor', 'Armor'],
+
+            'roomType':             ['Bay', 'Array', 'Hub', 'Device', 'Room']
+            }
+
+        StatBoosts = {
+            'cargoCapacity':        [5, 10],
+            'maxTravelDistance':    [1, 4],
+            'attackPower':          [3, 6],
+            'shieldStrength':       [2, 6]
+        }
+
     class Starbases:
         ListOfNames = ['CC2', 'LaCathedral', 'TravelersInn', 'GlibberStation', 'MaggysDiner', 'Nine-Ty-Nine']

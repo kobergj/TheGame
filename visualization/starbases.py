@@ -77,10 +77,11 @@ def buyShip(Starbase, Player):
     to_print += "\nShip For Sale:"
 
     # Print Price
-    to_print += "\n Price: %s" % Player.currentShip.price
+    to_print += "\n Price: %s" % Starbase.shipForSale.price
 
     # Bad
-    statList = ['cargoCapacity', 'speed', 'maxTravelDistance', 'spaceForRooms']
+    statList = ['cargoCapacity', 'maintenanceCosts', 'maxTravelDistance', 'spaceForRooms', 'attackPower',
+                'shieldStrength']
 
     # Loop through Shipstats
     for stat in statList:

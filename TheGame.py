@@ -21,7 +21,7 @@ PLAYER_INFO = {'name': 'Dr.Play',
 
 STARTING_SHIP_STATS = {'cargoCapacity': 10,
 
-                       'speed': 2,
+                       'maintenanceCosts': 2,
                        'maxTravelDistance': 4,
 
                        'spaceForRooms': 2,

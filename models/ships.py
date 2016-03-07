@@ -25,7 +25,7 @@ class Ship():
 
         # Power Engines
         self.maxTravelDistance = shipStats['maxTravelDistance']
-        self.speed = shipStats['speed']
+        self.maintenanceCosts = shipStats['maintenanceCosts']
 
         # Load Weapons
         self.attackPower = shipStats['attackPower']
@@ -71,7 +71,7 @@ class Ship():
             # Check if in Travel Distance
             if distance <= self.maxTravelDistance:
                 # Calculate Costs
-                travelCost = int(distance / self.speed)
+                travelCost = int(distance * self.maintenanceCosts)
                 # Update Dict
                 travelCostDict.update({destination: travelCost})
 
@@ -85,7 +85,7 @@ class Ship():
 
         # Check For Reachable Destinations
         if len(travelCostDict) < 2:
-                travelCost = int(distances[nearestDestination] / self.speed)
+                travelCost = int(distances[nearestDestination] * self.maintenanceCosts)
                 travelCostDict.update({nearestDestination: travelCost})
 
         # update travelCosts
@@ -109,3 +109,16 @@ class Freighter(Ship):
     def overloadEnd(self):
         self.cargoCapacity -= self.overloadbonus
         self.speed += self.overloadmalus
+
+
+# Enemy
+class Enemy(Ship):
+    def __init__(self, enemyStats):
+        # Assign Basic Stats
+        Ship.__init__(self, enemyStats)
+
+        # Enemy Type
+        self.enemyType = enemyStats['Fraction']
+
+        # Loot
+        self.credits = enemyStats['creditStash']

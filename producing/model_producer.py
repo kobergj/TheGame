@@ -1,6 +1,8 @@
 import models.anomalies as mod
 import models.ships as msp
 import models.rooms as mro
+import models.universe as muv
+import models.player as mpl
 
 import generator.planets as gpl
 import generator.spacegates as gsg
@@ -25,8 +27,23 @@ ANOMALY_MODELS = {
 }
 
 
-def Producer(Database, Universe):
-    """Produces:
+def produceUniverse(MaxCoordinates, MinCoordinates=[0, 0]):
+    """Produces a Universe with the given Coordinates """
+    universe = muv.Universe(MinCoordinates, MaxCoordinates)
+
+    return universe
+
+
+def producePlayer(PlayerInfo):
+    """Produces a Player."""
+    player = mpl.Player(PlayerInfo)
+
+    return player
+
+
+def itemProducer(Database, Universe):
+    """Gets a Database to work on and a Universe to play with.
+        Produces:
             Planets
             Starbases
             Spacegates

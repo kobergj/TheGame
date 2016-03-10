@@ -29,6 +29,7 @@ def generateName(Database, Stats):
     name = ''
     for stat in Stats:
         name += random.choice(Database.Rooms.RoomNameParts[stat])
+        name += ' '
 
     name += random.choice(Database.Rooms.RoomNameParts['roomType'])
 

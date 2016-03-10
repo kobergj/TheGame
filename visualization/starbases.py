@@ -18,7 +18,7 @@ def starbaseArrival(Starbase, Player):
     # to_print += "\nShip For Sale:"
     # # Shipstats
     # for stat in
-    to_print += "\nRooms For Sale: %s" % Starbase.roomsForSale
+    to_print += "\nRooms For Sale: %s" % [room.name for room in Starbase.roomsForSale]
 
     # # Player Informations
     # to_print += "\n\nCurrent Shipstats:\n"

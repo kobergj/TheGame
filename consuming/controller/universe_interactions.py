@@ -1,4 +1,4 @@
-import visualization.universe as viz
+import consuming.visualization.universe as viz
 
 
 def ChooseDestination(Universe, Player):

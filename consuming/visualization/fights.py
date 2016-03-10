@@ -1,4 +1,4 @@
-import visualization.universe as vui
+import consuming.visualization.universe as vui
 
 
 def flushTerminal():

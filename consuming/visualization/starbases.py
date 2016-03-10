@@ -1,4 +1,4 @@
-import visualization.universe as uvs
+import consuming.visualization.universe as uvs
 
 
 def starbaseArrival(Starbase, Player):

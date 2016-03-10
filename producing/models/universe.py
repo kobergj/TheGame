@@ -6,7 +6,7 @@ import random
 class Universe():
     def __init__(self, minCoordinates, maxCoordinates):
         # Init Anomaly List
-        self.anomalyList = dict()
+        # self.anomalyList = dict()
 
         # Init Queues
         self.anomalyQ = Queue.Queue(maxsize=3)
@@ -19,7 +19,7 @@ class Universe():
 
     def addAnomaly(self, Anomaly):
         # Append to Anomaly List
-        self.anomalyList.update({Anomaly.name: Anomaly})
+        # self.anomalyList.update({Anomaly.name: Anomaly})
 
         # Genrate Coordinates
         x = random.randint(0, len(self.Map[0])-1)
@@ -31,7 +31,7 @@ class Universe():
             x = random.randint(0, len(self.Map[0])-1)
             y = random.randint(0, len(self.Map)-1)
 
-        self.Map[y][x] = Anomaly.name
+        self.Map[y][x] = Anomaly
 
         Anomaly.getCoordinates([x, y])
 
@@ -68,17 +68,15 @@ class Universe():
 
         # Problems with negative Coordinates
         # Currently 2-Dims Only
-        for j in range(universeExpansion_y):
-            row = list()
-            for i in range(universeExpansion_x):
+        for verticalSlice in range(universeExpansion_y):
+            # Vertical Slices through Space
+            verticalSlice = list()
+
+            for point_in_space in range(universeExpansion_x):
                 point_in_space = None
 
-                # for anomaly in self.anomalyList.itervalues():
-                #     if anomaly.coordinates == [j, i]:
-                #         point_in_space = anomaly.name
+                verticalSlice.append(point_in_space)
 
-                row.append(point_in_space)
-
-            universeMap.append(row)
+            universeMap.append(verticalSlice)
 
         return universeMap

@@ -1,4 +1,4 @@
-import visualization.planets as vizplnt
+import consuming.visualization.planets as vizplnt
 
 
 def Arrive(Planet, Player):

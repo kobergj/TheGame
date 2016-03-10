@@ -42,7 +42,7 @@ randomProducer = pro.randomProducer(database, universe)
 startingAnomaly = pro.produceAnomaly(database)
 
 # Craft Ship
-startingShip = pro.produceShip(STARTING_SHIP_STATS)
+startingShip = pro.produceShip(database, STARTING_SHIP_STATS)
 
 # Board Ship
 player.switchShip(startingShip)
@@ -58,13 +58,9 @@ if __name__ == '__main__':
     universe.addAnomaly(startingAnomaly)
 
     # Fill Universe
-    while len(universe.anomalyList) < NUMBER_OF_ANOMALIES:
-        # Get Anomaly
-        anomaly = pro.produceAnomaly()
-        # Add Anomaly
-        universe.addAnomaly(anomaly)
+    con.fillUniverse(universe, NUMBER_OF_ANOMALIES)
 
     # The Journey ...
     while True:
         # continues
-        con.Arrive(player, universe)
+        con.ArriveAtAnomaly(player, universe)

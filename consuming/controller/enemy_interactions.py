@@ -1,4 +1,4 @@
-import visualization.fights as viz
+import consuming.visualization.fights as viz
 
 import random
 

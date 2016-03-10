@@ -5,9 +5,6 @@ import random
 
 class Universe():
     def __init__(self, minCoordinates, maxCoordinates):
-        # Init Anomaly List
-        # self.anomalyList = dict()
-
         # Init Queues
         self.anomalyQ = Queue.Queue(maxsize=3)
         self.enemyQ = Queue.Queue(maxsize=3)
@@ -18,9 +15,6 @@ class Universe():
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
 
     def addAnomaly(self, Anomaly):
-        # Append to Anomaly List
-        # self.anomalyList.update({Anomaly.name: Anomaly})
-
         # Genrate Coordinates
         x = random.randint(0, len(self.Map[0])-1)
         y = random.randint(0, len(self.Map)-1)
@@ -38,12 +32,14 @@ class Universe():
     def generateDistanceDict(self, currentCoordinates):
         # Init Distance Dict
         distances = dict()
-        # Loop through Anomalies
-        for anomaly in self.anomalyList.itervalues():
-            # Calculate Distance
-            distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
-            # Update Distance Dist
-            distances.update({anomaly.name: distance})
+        # Loop through Slices
+        for verticalSlice in self.Map:
+            # Loop through Anomalies
+            for anomaly in verticalSlice:
+                # Calculate Distance
+                distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
+                # Update Distance Dist
+                distances.update({anomaly.name: distance})
 
         return distances
 
@@ -80,3 +76,11 @@ class Universe():
             universeMap.append(verticalSlice)
 
         return universeMap
+
+    def checkCoordinates(self, Coordinates):
+        verticalSlice = Coordinates[1]
+        pointInSpace = Coordinates[0]
+
+        anomaly = self.Map[verticalSlice][pointInSpace]
+
+        return anomaly

@@ -23,7 +23,7 @@ def fillUniverse(Universe, NumberOfAnomalies):
 
 def arriveAtAnomaly(Player, Universe):
     # Get Anomaly
-    anomaly = Universe.anomalyList[Player.currentPosition]
+    anomaly = Universe.callAnomaly(Player.currentPosition)
     # Update Anomaly
     anomaly.update(Universe)
 

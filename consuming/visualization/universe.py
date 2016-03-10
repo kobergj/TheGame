@@ -1,5 +1,37 @@
 
 def chooseNextDestination(Universe, Player):
+    print '\n' * 100
+    print "\n Choose Destination\n"
+
+    choiceList = drawMap(Universe, Player)
+
+    showOptions(Universe, Player)
+
+    choice = raw_input()
+
+    if choice == '':
+        choice = 0
+
+    if choice == '99':
+        for anomaly in choiceList[1:]:
+            print "[%s] %s, Cost For Travel: %s" % (choiceList.index(anomaly),
+                                                    anomaly,
+                                                    Player.currentShip.travelCosts[anomaly]
+                                                    )
+
+        choice = input()
+
+    choice = int(choice)
+
+    while choice not in range(len(choiceList)+1):
+        choice = invalidChoice(choice)
+
+    next_dest_coordinates = choiceList[choice]
+
+    return next_dest_coordinates
+
+
+def drawMap(Universe, Player):
     # Where to store them best?
     mapIdentifiers = {'Empty':      '    ',
                       'Planet':     '(00)',
@@ -7,36 +39,34 @@ def chooseNextDestination(Universe, Player):
                       'Starbase':   '$00$',
                       }
 
-    print '\n' * 100
-    print "\n Choose Destination\n"
-
     print ' ####'*(len(Universe.Map[0]))
 
     choiceList = [False]
 
-    # Loop through Rows
-    for row in Universe.Map:
+    # Loop through vertical Slices of Universe
+    for verticalSlice in Universe.Map:
         print '#',
-        # Each Point contains Anomaly Name
-        for anomalyName in row:
+        # Loop through Anomalies
+        for anomaly in verticalSlice:
             # Assume its Empty
             to_print = mapIdentifiers['Empty']
 
-            if anomalyName:
-                # Load Anomaly
-                anomaly = Universe.anomalyList[anomalyName]
+            if anomaly:
                 # Load Map Identifier
                 to_print = mapIdentifiers[anomaly.__class__.__name__]
 
                 # Check if Anomaly is current
-                if Player.currentPosition == anomalyName:
+                if Player.currentPosition == anomaly.coordinates:
                     to_print = to_print.replace('00', '')
                     # Add Location Arrow
                     to_print = '->' + to_print
 
-                # Check if Anomaly is reachable
-                elif anomalyName in Player.currentShip.travelCosts:
-                    choiceList.append(anomalyName)
+                # Get Costs For Travel
+                reachable = Player.currentShip.travelCosts[anomaly.name]
+
+                # Check if reachable
+                if reachable:
+                    choiceList.append(anomaly.coordinates)
 
                     to_print = to_print.replace('00', str(len(choiceList)-1))
 
@@ -55,9 +85,14 @@ def chooseNextDestination(Universe, Player):
 
     print ' ####'*(len(Universe.Map[0]))
 
-    currentAnomaly = Universe.anomalyList[Player.currentPosition]
+    return choiceList
+
+
+def showOptions(Universe, Player):
+    currentAnomaly = Universe.checkCoordinates(Player.currentPosition)
 
     if currentAnomaly.enemies:
+        # Possible Fight
         emyatk = str(currentAnomaly.enemies[0].attackPower)
         emydef = str(currentAnomaly.enemies[0].shieldStrength)
 
@@ -67,6 +102,7 @@ def chooseNextDestination(Universe, Player):
             fight_or_land += '+'
 
     else:
+        # Possible Interaction
         amyname = currentAnomaly.name
         amytype = currentAnomaly.__class__.__name__
 
@@ -88,29 +124,6 @@ def chooseNextDestination(Universe, Player):
 
     print "[ENTER] " + fight_or_land
     print "[99] -- Show TravelInfos --"
-
-    choice = raw_input()
-
-    if choice == '':
-        choice = 0
-
-    if choice == '99':
-        for anomaly in choiceList[1:]:
-            print "[%s] %s, Cost For Travel: %s" % (choiceList.index(anomaly),
-                                                    anomaly,
-                                                    Player.currentShip.travelCosts[anomaly]
-                                                    )
-
-        choice = input()
-
-    choice = int(choice)
-
-    while choice not in range(len(choiceList)+1):
-        choice = invalidChoice(choice)
-
-    next_dest = choiceList[choice]
-
-    return next_dest
 
 
 def invalidChoice(choice):

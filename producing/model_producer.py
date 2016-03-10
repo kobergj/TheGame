@@ -1,16 +1,18 @@
-import models.anomalies as mod
-import models.ships as msp
-import models.rooms as mro
-import models.universe as muv
-import models.player as mpl
+# Models
+import producing.models.anomalies as mod
+import producing.models.ships as msp
+import producing.models.rooms as mro
+import producing.models.universe as muv
+import producing.models.player as mpl
 
-import generator.planets as gpl
-import generator.spacegates as gsg
-import generator.starbases as gsb
+# Generators
+import producing.generator.planets as gpl
+import producing.generator.spacegates as gsg
+import producing.generator.starbases as gsb
+import producing.generator.ships as gsp
+import producing.generator.rooms as gro
 
-import generator.ships as gsp
-import generator.rooms as gro
-
+import threading
 import random
 
 
@@ -41,9 +43,73 @@ def producePlayer(PlayerInfo):
     return player
 
 
-def itemProducer(Database, Universe):
+def produceAnomaly(Database, anomalyInfo=None):
+    """Produces a Anomaly. Creates Random Stats if not given"""
+    while not anomalyInfo:
+        # Choose Anomaly Type
+        anomalyType = random.choice(Database.Universe.AnomalyTypes)
+
+        # Get Info Func
+        genInfo = ANOMALY_INFO_FUNCS[anomalyType]
+
+        # Get Info
+        anomalyInfo = genInfo(Database)
+
+    # Get Model
+    model = ANOMALY_MODELS[anomalyType]
+
+    # Create Anomaly
+    anomaly = model(anomalyInfo)
+
+    return anomaly
+
+
+def produceShip(Database, shipInfo=None):
+    """Produces a Ship. Creates Random Stats if not given"""
+    if not shipInfo:
+        # Generate Ship Info
+        shipInfo = gsp.generateShipInformation(Database)
+
+    # Create Ship
+    ship = msp.Ship(shipInfo)
+
+    return ship
+
+
+def produceRoom(Database, roomInfo=None):
+    """Produces a Room. Creates Random Stats if not given"""
+    if not roomInfo:
+        # Generate Room Info
+        roomInfo = gro.generateRoomInformation(Database)
+
+    # Create Room
+    room = mro.Room(roomInfo)
+
+    return room
+
+
+def produceEnemy(Database, enemyInfo=None):
+    """Produces an Enemy. Creates Random Stats if not given"""
+    if not enemyInfo:
+        # generate Enemy Information - For the moment only Ships
+        enemyInfo = gsp.generateShipInformation(Database)
+        # generate Enemy
+        enemy = msp.Ship(enemyInfo)
+
+    # Random Number
+    i = random.randint(0, 100)
+
+    # Enemy Probability
+    if i > Database.Universe.EnemyProbability:
+        # Lucky you are...
+        enemy = None
+
+    return enemy
+
+
+class randomProducer():
     """Gets a Database to work on and a Universe to play with.
-        Produces:
+        Randomly Produces:
             Planets
             Starbases
             Spacegates
@@ -54,55 +120,56 @@ def itemProducer(Database, Universe):
             Enemies"""
 
     # For the Moment Only One Universe per Producer
+    def __init__(self, Database, Universe):
+        # Create Producer Thread
+        self.producingThread = threading.Thread(
+            name='ProducingThread',
+            target=self.producingFunction,
+            args=(Database, Universe)
+            )
+        # Make Him a Daemon
+        self.producingThread.daemon = True
 
-    while True:
-        # Anomalies
-        while not Universe.anomalyQ.full():
-            # Choose Anomaly Type
-            anomalyType = random.choice(Database.Universe.AnomalyTypes)
+        # Set Kill Switch
+        self.dead = False
 
-            # Get Info Func
-            genInfo = ANOMALY_INFO_FUNCS[anomalyType]
-            # Get Info
-            anomalyInfo = genInfo(Database)
+    def startProducing(self):
+        self.producingThread.start()
 
-            if anomalyInfo:
-                # Get Model
-                model = ANOMALY_MODELS[anomalyType]
-                # Create Anomaly
-                anomaly = model(anomalyInfo)
+    def killProducer(self):
+        self.dead = True
+
+    def producingFunction(self, Database, Universe):
+
+        while not self.dead:
+            # Anomalies
+            while not Universe.anomalyQ.full():
+                # Produce Anomaly
+                anomaly = produceAnomaly(Database)
 
                 # Put In Q
                 Universe.anomalyQ.put(anomaly)
 
-        # Ships
-        while not Universe.shipQ.full():
-            shipinfo = gsp.generateShipInformation(Database)
+            # Ships
+            while not Universe.shipQ.full():
+                # Produce Ship
+                ship = produceShip(Database)
 
-            ship = msp.Ship(shipinfo)
+                # Put In Q
+                Universe.shipQ.put(ship)
 
-            Universe.shipQ.put(ship)
+            # Rooms
+            while not Universe.roomQ.full():
+                # Produce Room
+                room = produceRoom(Database)
 
-        # Rooms
-        while not Universe.roomQ.full():
-            roominfo = gro.generateRoomInformation(Database)
+                # Put in Q
+                Universe.roomQ.put(room)
 
-            room = mro.Room(roominfo)
+            # Enemies
+            while not Universe.enemyQ.full():
+                # Produce Enemy
+                enemy = produceEnemy(Database)
 
-            Universe.roomQ.put(room)
-
-        # Enemies
-        while not Universe.enemyQ.full():
-            # generate Stats for Enemy Ship
-            enemyShipInformation = gsp.generateShipInformation(Database)
-            # generate Enemys
-            enemyShip = msp.Ship(enemyShipInformation)
-
-            # Random Number
-            i = random.randint(0, 100)
-
-            # Enemy Probability
-            if i > Database.Universe.EnemyProbability:
-                enemyShip = None
-
-            Universe.enemyQ.put(enemyShip)
+                # Put in Q
+                Universe.enemyQ.put(enemy)

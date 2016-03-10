@@ -89,7 +89,7 @@ def drawMap(Universe, Player):
 
 
 def showOptions(Universe, Player):
-    currentAnomaly = Universe.checkCoordinates(Player.currentPosition)
+    currentAnomaly = Universe.callAnomaly(Player.currentPosition)
 
     if currentAnomaly.enemies:
         # Possible Fight

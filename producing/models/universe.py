@@ -36,10 +36,11 @@ class Universe():
         for verticalSlice in self.Map:
             # Loop through Anomalies
             for anomaly in verticalSlice:
-                # Calculate Distance
-                distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
-                # Update Distance Dist
-                distances.update({anomaly.name: distance})
+                if anomaly:
+                    # Calculate Distance
+                    distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
+                    # Update Distance Dist
+                    distances.update({anomaly.name: distance})
 
         return distances
 
@@ -77,7 +78,7 @@ class Universe():
 
         return universeMap
 
-    def checkCoordinates(self, Coordinates):
+    def callAnomaly(self, Coordinates):
         verticalSlice = Coordinates[1]
         pointInSpace = Coordinates[0]
 

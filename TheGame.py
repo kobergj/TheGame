@@ -47,9 +47,6 @@ startingShip = pro.produceShip(database, STARTING_SHIP_STATS)
 # Board Ship
 player.switchShip(startingShip)
 
-# Power Engines
-player.travelTo(startingAnomaly.name)
-
 if __name__ == '__main__':
     # Start Producer
     randomProducer.startProducing()
@@ -60,7 +57,10 @@ if __name__ == '__main__':
     # Fill Universe
     con.fillUniverse(universe, NUMBER_OF_ANOMALIES)
 
+    # Power Engines
+    player.travelTo(startingAnomaly.coordinates)
+
     # The Journey ...
     while True:
         # continues
-        con.ArriveAtAnomaly(player, universe)
+        con.arriveAtAnomaly(player, universe)

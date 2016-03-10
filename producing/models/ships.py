@@ -68,12 +68,14 @@ class Ship():
 
         # Loop through Destinations
         for destination, distance in distances.iteritems():
+            travelCost = None
             # Check if in Travel Distance
             if distance <= self.maxTravelDistance:
                 # Calculate Costs
                 travelCost = int(distance * self.maintenanceCosts)
-                # Update Dict
-                travelCostDict.update({destination: travelCost})
+
+            # Update Dict
+            travelCostDict.update({destination: travelCost})
 
             # update nearest - There is surely a better way for this
             if not nearestDestination:

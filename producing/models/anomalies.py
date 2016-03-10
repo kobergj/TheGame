@@ -97,7 +97,7 @@ class Spacegate(Anomaly):
                 # Only Append if not there
                 if anomaly:
                     # Update
-                    self.travelCostDict.update({anomaly.name: 0})
+                    self.travelCostDict.update({anomaly.name: 1})
 
     def update(self, Universe):
         # Update Anomaly

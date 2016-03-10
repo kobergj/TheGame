@@ -1,5 +1,3 @@
-import Queue
-
 
 class Anomaly():
     # Generic Anomaly in Space.
@@ -10,8 +8,6 @@ class Anomaly():
         self.coordinates = None
         # Enemies in Orbit
         self.enemies = list()
-        # Future Enemys
-        self.enemyQ = Queue.Queue(maxsize=5)
 
     def addEnemy(self, enemy):
 
@@ -19,6 +15,13 @@ class Anomaly():
 
     def getCoordinates(self, Coordinates):
         self.coordinates = Coordinates
+
+    def update(self, Universe):
+        # Get Enemy from Queue
+        newEnemy = Universe.enemyQ.get()
+        # Append to Enemy List
+        if newEnemy:
+            self.enemies.append(newEnemy)
 
 
 class Planet(Anomaly):
@@ -41,12 +44,10 @@ class Starbase(Anomaly):
         # Ship Bay
         self.shipForSale = None
         self.deprecatedShips = list()
-        self.shipQ = Queue.Queue(maxsize=3)
 
         # Room Merchant
         self.maxRoomsForSale = starbaseInformation['maxRoomsforSale']
-        self.roomsForSale = dict()
-        self.roomQ = Queue.Queue(maxsize=5)
+        self.roomsForSale = list()
 
     def changeShipForSale(self, Ship):
         if self.shipForSale:
@@ -59,7 +60,24 @@ class Starbase(Anomaly):
         self.shipForSale = Ship
 
     def addRoomForSale(self, Room):
-        self.roomsForSale.update({Room.name: Room})
+        self.roomsForSale.append(Room)
+
+    def update(self, Universe):
+        Anomaly.update(self, Universe)
+
+        # Get Ship
+        ship = Universe.shipQ.get()
+
+        # Attach Ship to Station
+        self.changeShipForSale(ship)
+
+        # Fill Room List
+        while len(self.roomsForSale) < self.maxRoomsForSale:
+            # Get Room
+            room = Universe.roomQ.get()
+
+            # Add Room
+            self.addRoomForSale(room)
 
 
 class Spacegate(Anomaly):
@@ -69,6 +87,19 @@ class Spacegate(Anomaly):
 
         self.costForUse = spacegateInformation['costForUse']
 
-    def overrideDistances(self):
-        for dest in self.distances:
-            self.distances[dest] = 1
+        self.travelCostDict = {}
+
+    def updateTravelCostDict(self, anomalyList):
+        # Loop through Anomalies
+        for anomalyName in anomalyList:
+            # Only Append if not there
+            if anomalyName not in self.travelCostDict:
+                # Update
+                self.travelCostDict.update({anomalyName: 0})
+
+    def update(self, Universe):
+        # Update Anomaly
+        Anomaly.update(self, Universe)
+
+        # Update TravelCostDict
+        self.updateTravelCostDict(Universe.anomalyList.keys())

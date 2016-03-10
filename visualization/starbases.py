@@ -18,7 +18,7 @@ def starbaseArrival(Starbase, Player):
     # to_print += "\nShip For Sale:"
     # # Shipstats
     # for stat in
-    to_print += "\nRooms For Sale: %s" % Starbase.roomsForSale.keys()
+    to_print += "\nRooms For Sale: %s" % [room.name for room in Starbase.roomsForSale]
 
     # # Player Informations
     # to_print += "\n\nCurrent Shipstats:\n"
@@ -77,10 +77,11 @@ def buyShip(Starbase, Player):
     to_print += "\nShip For Sale:"
 
     # Print Price
-    to_print += "\n Price: %s" % Player.currentShip.price
+    to_print += "\n Price: %s" % Starbase.shipForSale.price
 
     # Bad
-    statList = ['cargoCapacity', 'speed', 'maxTravelDistance', 'spaceForRooms']
+    statList = ['cargoCapacity', 'maintenanceCosts', 'maxTravelDistance', 'spaceForRooms', 'attackPower',
+                'shieldStrength']
 
     # Loop through Shipstats
     for stat in statList:
@@ -116,10 +117,15 @@ def buyShip(Starbase, Player):
 def buyRooms(Starbase, Player):
     to_print = ''
 
-    for room in Starbase.roomsForSale.values():
+    for room in Starbase.roomsForSale:
         to_print += "\n %s" % room.name
 
-        to_print += "\n  %s" % room.price
+        to_print += "\n  price: %s" % room.price
+
+        for stat, value in room.statBoosts.iteritems():
+            to_print += "\n  %s: +%s" % (stat, str(value))
+
+        to_print += '\n'
 
     print to_print
 

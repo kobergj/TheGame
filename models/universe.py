@@ -8,8 +8,11 @@ class Universe():
         # Init Anomaly List
         self.anomalyList = dict()
 
-        # Init Queue - One For all Anomalies?
+        # Init Queues
         self.anomalyQ = Queue.Queue(maxsize=3)
+        self.enemyQ = Queue.Queue(maxsize=3)
+        self.shipQ = Queue.Queue(maxsize=3)
+        self.roomQ = Queue.Queue(maxsize=3)
 
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
@@ -32,15 +35,17 @@ class Universe():
 
         Anomaly.getCoordinates([x, y])
 
-    def updateDistances(self, Ship, currentCoordinates):
-        # Reset Distances
-        Ship.distances = dict()
+    def generateDistanceDict(self, currentCoordinates):
+        # Init Distance Dict
+        distances = dict()
         # Loop through Anomalies
         for anomaly in self.anomalyList.itervalues():
             # Calculate Distance
             distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
             # Update Distance Dist
-            Ship.distances.update({anomaly.name: distance})
+            distances.update({anomaly.name: distance})
+
+        return distances
 
     def calculateDistance(self, point1, point2):
         distance = 0.0

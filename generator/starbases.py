@@ -2,6 +2,9 @@ import random
 
 
 def generateStarbaseInformation(db):
+    if not db.Starbases.ListOfNames:
+        return
+
     starbaseName = generateStarbaseName(db)
 
     maxRoomsforSale = generateMaxRoomsForSale(db)

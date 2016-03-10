@@ -1,22 +1,22 @@
 import random
 
 
-def generateShipInformation(db):
-    cargoCapacity = generateStat(db.Ships.Cargobounds)
-    speed = generateStat(db.Ships.Speedbounds)
-    maxTravelDistance = generateStat(db.Ships.Travelbounds)
-    spaceForRooms = generateStat(db.Ships.Roombounds)
-    attackPower = generateStat(db.Ships.Attackbounds)
-    shieldStrength = generateStat(db.Ships.Shieldbounds)
+def generateShipInformation(Database):
+    shipDB = Database.Ships.__dict__
 
-    shipStats = {'cargoCapacity':       cargoCapacity,
-                 'speed':               speed,
-                 'maxTravelDistance':   maxTravelDistance,
-                 'spaceForRooms':       spaceForRooms,
-                 'attackPower':         attackPower,
-                 'shieldStrength':      shieldStrength,
+    shipClass = random.choice(shipDB['ShipClasses'])
 
-                 }
+    boundDict = Database.Ships.__dict__[shipClass].bounds
+
+    shipStats = dict()
+
+    for stat, modifier in boundDict.iteritems():
+        minValue = shipDB[stat] + modifier[0]
+        maxValue = shipDB[stat] + modifier[1]
+
+        statValue = random.randint(minValue, maxValue)
+
+        shipStats.update({stat: statValue})
 
     # Calc Price
     shipPrice = calculateShipPrice(shipStats)
@@ -27,10 +27,10 @@ def generateShipInformation(db):
     return shipStats
 
 
-def generateStat(bounds):
-    stat = random.randint(bounds[0], bounds[1])
+# def generateStat(bounds):
+#     stat = random.randint(bounds[0], bounds[1])
 
-    return stat
+#     return stat
 
 
 def calculateShipPrice(shipStats):
@@ -38,6 +38,6 @@ def calculateShipPrice(shipStats):
     for value in shipStats.values():
         price += value * 10
 
-    price += random.randint(1-price, 200)
+    # price += random.randint(1-price, 200)
 
     return price

@@ -11,7 +11,7 @@ class Ship():
         self.price = shipStats['price']
 
         # Rooms
-        self.rooms = dict()
+        self.rooms = list()
         self.spaceForRooms = shipStats['spaceForRooms']
 
         # Initialize Cargobay
@@ -25,7 +25,7 @@ class Ship():
 
         # Power Engines
         self.maxTravelDistance = shipStats['maxTravelDistance']
-        self.speed = shipStats['speed']
+        self.maintenanceCosts = shipStats['maintenanceCosts']
 
         # Load Weapons
         self.attackPower = shipStats['attackPower']
@@ -35,14 +35,14 @@ class Ship():
 
     # Room Operations
     def attachRoom(self, Room):
-        self.rooms.update({Room.name: Room})
+        self.rooms.append(Room)
 
         Room.powerUp(self)
 
     def detachRoom(self, Room):
         Room.powerDown(self)
 
-        del self.rooms[Room.name]
+        self.rooms.remove(Room)
 
     # CargoBay Methods
     def loadCargo(self, cargoId, cargoAmount):
@@ -61,28 +61,31 @@ class Ship():
         self.freeCargoSpace += cargoAmount
 
     # Sensor Bay Methods
-    def scanSector(self):
+    def scanSector(self, distances):
         # init travelCost Dict
         travelCostDict = dict()
         nearestDestination = None
 
         # Loop through Destinations
-        for destination in self.distances:
-            # Add if in Travel Distance
-            if self.distances[destination] <= self.maxTravelDistance:
-                travelCost = int(self.distances[destination] / self.speed)
+        for destination, distance in distances.iteritems():
+            # Check if in Travel Distance
+            if distance <= self.maxTravelDistance:
+                # Calculate Costs
+                travelCost = int(distance * self.maintenanceCosts)
+                # Update Dict
                 travelCostDict.update({destination: travelCost})
 
-            # update nearest
+            # update nearest - There is surely a better way for this
             if not nearestDestination:
                 nearestDestination = destination
-            elif self.distances[destination] <= self.distances[nearestDestination]:
-                if self.distances[destination] != 0.0:
+
+            elif distance <= distances[nearestDestination]:
+                if distance != 0.0:
                     nearestDestination = destination
 
         # Check For Reachable Destinations
         if len(travelCostDict) < 2:
-                travelCost = int(self.distances[nearestDestination] / self.speed)
+                travelCost = int(distances[nearestDestination] * self.maintenanceCosts)
                 travelCostDict.update({nearestDestination: travelCost})
 
         # update travelCosts
@@ -106,3 +109,16 @@ class Freighter(Ship):
     def overloadEnd(self):
         self.cargoCapacity -= self.overloadbonus
         self.speed += self.overloadmalus
+
+
+# Enemy
+class Enemy(Ship):
+    def __init__(self, enemyStats):
+        # Assign Basic Stats
+        Ship.__init__(self, enemyStats)
+
+        # Enemy Type
+        self.enemyType = enemyStats['Fraction']
+
+        # Loot
+        self.credits = enemyStats['creditStash']

@@ -2,6 +2,9 @@ import random
 
 
 def generatePlanetInformation(db):
+    if not db.Planets.ListOfNames:
+        return
+
     planetName = generatePlanetName(db)
 
     goodsConsumed = generateConsumedGoods(db)

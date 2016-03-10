@@ -41,7 +41,7 @@ def beginFight(Ship, Enemy):
         if Enemy.shieldStrength <= 0:
             viz.fightWon()
 
-            return
+            return True
 
         # Fight or Flee
         fight = viz.showFightInfo(Ship, Enemy)

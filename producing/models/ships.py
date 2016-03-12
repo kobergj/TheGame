@@ -1,4 +1,4 @@
-# Contains Ship Data
+import math
 
 
 # Generic Ship. No special Abilites.
@@ -59,39 +59,6 @@ class Ship():
             del self.inCargo[cargoId]
 
         self.freeCargoSpace += cargoAmount
-
-    # Sensor Bay Methods
-    def scanSector(self, distances):
-        # init travelCost Dict
-        travelCostDict = dict()
-        nearestDestination = None
-
-        # Loop through Destinations
-        for destination, distance in distances.iteritems():
-            travelCost = None
-            # Check if in Travel Distance
-            if distance <= self.maxTravelDistance:
-                # Calculate Costs
-                travelCost = int(distance * self.maintenanceCosts)
-
-            # Update Dict
-            travelCostDict.update({destination: travelCost})
-
-            # update nearest - There is surely a better way for this
-            if not nearestDestination:
-                nearestDestination = destination
-
-            elif distance <= distances[nearestDestination]:
-                if distance != 0.0:
-                    nearestDestination = destination
-
-        # Check For Reachable Destinations
-        if len(travelCostDict) < 2:
-                travelCost = int(distances[nearestDestination] * self.maintenanceCosts)
-                travelCostDict.update({nearestDestination: travelCost})
-
-        # update travelCosts
-        self.travelCosts = travelCostDict
 
 
 # Freighter. Can be overloaded.

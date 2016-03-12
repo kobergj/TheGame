@@ -1,18 +1,58 @@
 import consuming.visualization.universe as viz
+import math
 
 
 def ChooseDestination(Universe, Player):
-    next_dest_coordinates = viz.chooseNextDestination(Universe, Player)
-
-    if next_dest_coordinates:
-        next_anomaly = Universe.callAnomaly(next_dest_coordinates)
+    # Set Current Position
+    activeCoordinates = Player.currentPosition
+    # Init get anomaly function
+    getAnomaly = Universe.callAnomaly
+    # Choose Next
+    while activeCoordinates:
+        # Call Anomaly
+        anomaly = getAnomaly(activeCoordinates)
+        # Reassign Active Coordinates
+        activeCoordinates = anomaly.coordinates
         # Calculate Costs
-        cost_for_travel = Player.currentShip.travelCosts[next_anomaly.name]
-        # Pay the Price
-        Player.spendCredits(cost_for_travel)
-        # Travel to Next Destination
-        Player.travelTo(next_anomaly.coordinates)
+        costForTravel = calculateTravelCosts(Player, anomaly)
+        # Reachable?
+        if costForTravel:
+            # Reassign Get Anomaly Func
+            getAnomaly = viz.chooseNextDestination(Universe, Player, activeCoordinates, costForTravel)
 
-        return
+    # Wanna Land?
+    if anomaly.coordinates == Player.currentPosition:
+        return True
 
-    return True
+    # Pay the Price
+    Player.spendCredits(costForTravel)
+    # Travel to Next Destination
+    Player.travelTo(anomaly.coordinates)
+
+    return
+
+
+def calculateTravelCosts(Player, Anomaly):
+    # Get Distance
+    distance = calculateDistance(Player.currentPosition, Anomaly.coordinates)
+
+    # Check if reachable
+    if distance <= Player.currentShip.maxTravelDistance:
+        # Calculate Costs
+        travelCosts = int(distance * Player.currentShip.maintenanceCosts)
+
+        return travelCosts
+
+
+def calculateDistance(point1, point2):
+    distance = 0.0
+    for i in range(len(point1)):
+        x = point1[i]
+        y = point2[i]
+
+        distance += (x - y)**2
+
+    distance = math.sqrt(distance)
+    distance = round(distance, 2)
+
+    return distance

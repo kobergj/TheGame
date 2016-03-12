@@ -1,4 +1,3 @@
-import math
 import Queue
 import random
 
@@ -14,6 +13,61 @@ class Universe():
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
 
+    def callNextAnomaly(self, currentPosition):
+        # Set starting Slice
+        startingSlice = currentPosition[1]
+        # Loop through bigger Slices
+        for verticalSlice in self.Map[startingSlice:]:
+            # Set starting point
+            startingPoint = currentPosition[0] + 1
+            # Check if in Range
+            if startingPoint > len(verticalSlice):
+                continue
+            # Loop through anomalies
+            for anomaly in verticalSlice[startingPoint:]:
+                # Check for anomaly
+                if anomaly:
+                    return anomaly
+
+        # No Anomaly Found, continue at beginning
+        for verticalSlice in self.Map:
+            # Loop through anomalies
+            for anomaly in verticalSlice:
+                # Check for anomaly
+                if anomaly:
+                    return anomaly
+
+    def callLastAnomaly(self, currentPosition):
+        # Set starting Slice
+        startingSlice = currentPosition[1] + 1
+        # Check if in Range
+        if startingSlice <= len(self.Map):
+            # Loop through Smaller Slices
+            for verticalSlice in reversed(self.Map[:startingSlice]):
+                # Set starting point
+                startingPoint = currentPosition[0]
+                # Loop through anomalies
+                for anomaly in reversed(verticalSlice[:startingPoint]):
+                    # Check for anomaly
+                    if anomaly:
+                        return anomaly
+
+        # No Anomaly Found, continue at End
+        for verticalSlice in reversed(self.Map):
+            # Loop through anomalies
+            for anomaly in reversed(verticalSlice):
+                # Check for anomaly
+                if anomaly:
+                    return anomaly
+
+    def callAnomaly(self, Coordinates):
+        verticalSlice = Coordinates[1]
+        pointInSpace = Coordinates[0]
+
+        anomaly = self.Map[verticalSlice][pointInSpace]
+
+        return anomaly
+
     def addAnomaly(self, Anomaly):
         # Genrate Coordinates
         x = random.randint(0, len(self.Map[0])-1)
@@ -28,34 +82,6 @@ class Universe():
         self.Map[y][x] = Anomaly
 
         Anomaly.getCoordinates([x, y])
-
-    def generateDistanceDict(self, currentCoordinates):
-        # Init Distance Dict
-        distances = dict()
-        # Loop through Slices
-        for verticalSlice in self.Map:
-            # Loop through Anomalies
-            for anomaly in verticalSlice:
-                if anomaly:
-                    # Calculate Distance
-                    distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
-                    # Update Distance Dist
-                    distances.update({anomaly.name: distance})
-
-        return distances
-
-    def calculateDistance(self, point1, point2):
-        distance = 0.0
-        for i in range(len(point1)):
-            x = point1[i]
-            y = point2[i]
-
-            distance += (x - y)**2
-
-        distance = math.sqrt(distance)
-        distance = round(distance, 2)
-
-        return distance
 
     def drawUniverseMap(self, minCoordinates, maxCoordinates):
         universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
@@ -77,11 +103,3 @@ class Universe():
             universeMap.append(verticalSlice)
 
         return universeMap
-
-    def callAnomaly(self, Coordinates):
-        verticalSlice = Coordinates[1]
-        pointInSpace = Coordinates[0]
-
-        anomaly = self.Map[verticalSlice][pointInSpace]
-
-        return anomaly

@@ -89,17 +89,19 @@ class Spacegate(Anomaly):
 
         self.travelCostDict = {}
 
-    def updateTravelCostDict(self, anomalyList):
-        # Loop through Anomalies
-        for anomalyName in anomalyList:
-            # Only Append if not there
-            if anomalyName not in self.travelCostDict:
-                # Update
-                self.travelCostDict.update({anomalyName: 0})
+    def updateTravelCostDict(self, UniverseMap):
+        # Loop through vertical Slice
+        for verticalSlice in UniverseMap:
+            # Loop through Anomalies
+            for anomaly in verticalSlice:
+                # Only Append if not there
+                if anomaly:
+                    # Update
+                    self.travelCostDict.update({anomaly.name: 1})
 
     def update(self, Universe):
         # Update Anomaly
         Anomaly.update(self, Universe)
 
         # Update TravelCostDict
-        self.updateTravelCostDict(Universe.anomalyList.keys())
+        self.updateTravelCostDict(Universe.Map)

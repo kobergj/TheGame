@@ -30,5 +30,5 @@ class Player():
         # Attach Ship
         self.currentShip = Ship
 
-    def travelTo(self, AnomalyName):
-        self.currentPosition = AnomalyName
+    def travelTo(self, Coordinates):
+        self.currentPosition = Coordinates

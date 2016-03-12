@@ -1,8 +1,8 @@
-import controller.planet_interactions as pi
-import controller.spacegate_interactions as sgi
-import controller.starbase_interactions as sbi
-import controller.enemy_interactions as emy
-import controller.universe_interactions as ui
+import consuming.controller.planet_interactions as pi
+import consuming.controller.spacegate_interactions as sgi
+import consuming.controller.starbase_interactions as sbi
+import consuming.controller.enemy_interactions as emy
+import consuming.controller.universe_interactions as ui
 
 
 LOCATION_OF_ARRIVING_FUNCS = {
@@ -12,9 +12,18 @@ LOCATION_OF_ARRIVING_FUNCS = {
 }
 
 
-def Arrive(Player, Universe):
+def fillUniverse(Universe, NumberOfAnomalies):
+
+    for i in range(NumberOfAnomalies):
+        # Get Anomaly
+        anomaly = Universe.anomalyQ.get()
+        # Add Anomaly
+        Universe.addAnomaly(anomaly)
+
+
+def arriveAtAnomaly(Player, Universe):
     # Get Anomaly
-    anomaly = Universe.anomalyList[Player.currentPosition]
+    anomaly = Universe.callAnomaly(Player.currentPosition)
     # Update Anomaly
     anomaly.update(Universe)
 

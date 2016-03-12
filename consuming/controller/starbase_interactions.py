@@ -1,4 +1,4 @@
-import visualization.starbases as viz
+import consuming.visualization.starbases as viz
 
 
 def Arrive(Starbase, Player):

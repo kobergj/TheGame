@@ -1,18 +1,11 @@
-import controller.anomaly_interactions as ai
+import consuming.model_consumer as con
 
-import models.player as pyr
-import models.universe as uvs
-import models.ships as shp
-
-import generator.producer as gpr
+import producing.model_producer as pro
 
 import database.database as db
 
-import threading
-
 NUMBER_OF_ANOMALIES = 20
 
-MIN_COORDINATES = [0, 0]
 MAX_COORDINATES = [15, 15]
 
 PLAYER_INFO = {'name': 'Dr.Play',
@@ -32,43 +25,42 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
                        'shieldStrength': 10,
                        }
 
-# Initialize Player
-player = pyr.Player(PLAYER_INFO)
 
-# Initialize Ship
-startingShip = shp.Ship(STARTING_SHIP_STATS)
-
-# generate Universe
-universe = uvs.Universe(MIN_COORDINATES, MAX_COORDINATES)
-
-# get Database
+# Boot Database
 database = db.DynamicDatabase()
 
-# Create Producer Thread
-producerThread = threading.Thread(name='ProducerThread', target=gpr.Producer, args=(database, universe))
-# Make Him a Daemon
-producerThread.daemon = True
-# Start Producer
-producerThread.start()
+# Assign Player
+player = pro.producePlayer(PLAYER_INFO)
 
-# Fill Universe
-while len(universe.anomalyList) < NUMBER_OF_ANOMALIES:
-    # Get Anomaly
-    anomaly = universe.anomalyQ.get()
-    # Add Anomaly
-    universe.addAnomaly(anomaly)
+# Generate Universe
+universe = pro.produceUniverse(MAX_COORDINATES)
 
-# Set starting Anomaly
-startingAnomaly = universe.anomalyList.keys()[0]
+# Initialize Producer
+randomProducer = pro.randomProducer(database, universe)
+
+# Set Starting Anomaly
+startingAnomaly = pro.produceAnomaly(database)
+
+# Craft Ship
+startingShip = pro.produceShip(database, STARTING_SHIP_STATS)
 
 # Board Ship
 player.switchShip(startingShip)
 
-# Travel to Starting Anomaly
-player.travelTo(startingAnomaly)
-
 if __name__ == '__main__':
-    # Start
+    # Start Producer
+    randomProducer.startProducing()
+
+    # Add Starting Anomaly
+    universe.addAnomaly(startingAnomaly)
+
+    # Fill Universe
+    con.fillUniverse(universe, NUMBER_OF_ANOMALIES)
+
+    # Power Engines
+    player.travelTo(startingAnomaly.coordinates)
+
+    # The Journey ...
     while True:
-        # Arrive at Anomaly
-        ai.Arrive(player, universe)
+        # continues
+        con.arriveAtAnomaly(player, universe)

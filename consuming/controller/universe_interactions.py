@@ -3,28 +3,22 @@ import math
 
 
 def ChooseDestination(Universe, Player):
-    # Set Current Position
-    activeCoordinates = Player.currentPosition
-    # Init get anomaly function
-    getAnomaly = Universe.callAnomaly
+    # Init
+    interact = viz.chooseNextDestination(Universe, Player)
     # Choose Next
-    while activeCoordinates:
-        # Call Anomaly
-        anomaly = getAnomaly(activeCoordinates)
-        # Reassign Active Coordinates
-        activeCoordinates = anomaly.coordinates
-        # Calculate Costs
-        costForTravel = calculateTravelCosts(Player, anomaly)
-        # Reachable?
-        if costForTravel:
-            # Reassign Get Anomaly Func
-            getAnomaly = viz.chooseNextDestination(Universe, Player, activeCoordinates, costForTravel)
+    while not interact:
+        interact, coordinates = loopThroughAnomalies(Universe, Player)
+
+    # Load destination Anomaly:
+    anomaly = Universe.callAnomaly(coordinates)
 
     # Wanna Land?
     if anomaly.coordinates == Player.currentPosition:
         return True
 
-    # Pay the Price
+    # Calc Travel Costs
+    costForTravel = calculateTravelCosts(Player, anomaly.coordinates)
+    # Pay
     Player.spendCredits(costForTravel)
     # Travel to Next Destination
     Player.travelTo(anomaly.coordinates)
@@ -32,9 +26,28 @@ def ChooseDestination(Universe, Player):
     return
 
 
-def calculateTravelCosts(Player, Anomaly):
+def loopThroughAnomalies(Universe, Player):
+
+    for verticalSlice in Universe.Map:
+
+        for anomaly in verticalSlice:
+
+            if anomaly:
+                # Calculate Costs
+                costForTravel = calculateTravelCosts(Player, anomaly.coordinates)
+
+                # Reachable?
+                if costForTravel is not None:
+                    # Reassign Get Anomaly Func
+                    interact = viz.chooseNextDestination(
+                        Universe, Player, anomaly.coordinates, costForTravel)
+                    if interact:
+                        return interact, anomaly.coordinates
+
+
+def calculateTravelCosts(Player, Coordinates):
     # Get Distance
-    distance = calculateDistance(Player.currentPosition, Anomaly.coordinates)
+    distance = calculateDistance(Player.currentPosition, Coordinates)
 
     # Check if reachable
     if distance <= Player.currentShip.maxTravelDistance:

@@ -4,8 +4,6 @@ import consuming.controller.starbase_interactions as sbi
 import consuming.controller.enemy_interactions as emy
 import consuming.controller.universe_interactions as ui
 
-import math
-
 LOCATION_OF_ARRIVING_FUNCS = {
     'Planet': pi.Arrive,
     'Starbase': sbi.Arrive,

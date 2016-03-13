@@ -13,58 +13,35 @@ class Universe():
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
 
-    def callNextAnomaly(self, currentPosition):
-        # Set starting Slice
-        startingSlice = currentPosition[1]
-        # Loop through bigger Slices
-        for verticalSlice in self.Map[startingSlice:]:
-            # Set starting point
-            startingPoint = currentPosition[0] + 1
-            # Check if in Range
-            if startingPoint > len(verticalSlice):
-                continue
-            # Loop through anomalies
-            for anomaly in verticalSlice[startingPoint:]:
-                # Check for anomaly
-                if anomaly:
-                    return anomaly
+        # Coordinates Cursors
+        self.curSlice = 0
+        self.curPoint = -1
 
-        # No Anomaly Found, continue at beginning
-        for verticalSlice in self.Map:
-            # Loop through anomalies
-            for anomaly in verticalSlice:
-                # Check for anomaly
-                if anomaly:
-                    return anomaly
+    def __iter__(self):
+        return self
 
-    def callLastAnomaly(self, currentPosition):
-        # Set starting Slice
-        startingSlice = currentPosition[1] + 1
-        # Check if in Range
-        if startingSlice <= len(self.Map):
-            # Loop through Smaller Slices
-            for verticalSlice in reversed(self.Map[:startingSlice]):
-                # Set starting point
-                startingPoint = currentPosition[0]
-                # Loop through anomalies
-                for anomaly in reversed(verticalSlice[:startingPoint]):
-                    # Check for anomaly
-                    if anomaly:
-                        return anomaly
+    def __getitem__(self, coordinates):
+        vSlice = coordinates[1]
+        point = coordinates[0]
 
-        # No Anomaly Found, continue at End
-        for verticalSlice in reversed(self.Map):
-            # Loop through anomalies
-            for anomaly in reversed(verticalSlice):
-                # Check for anomaly
-                if anomaly:
-                    return anomaly
+        return self.Map[vSlice][point]
 
-    def callAnomaly(self, Coordinates):
-        verticalSlice = Coordinates[1]
-        pointInSpace = Coordinates[0]
+    def next(self):
+        anomaly = None
 
-        anomaly = self.Map[verticalSlice][pointInSpace]
+        while not anomaly:
+            self.curPoint += 1
+
+            print self.curPoint, self.curSlice, ':', anomaly
+
+            if self.curPoint >= len(self.Map[0]):
+                self.curPoint = -1
+                self.curSlice += 1
+
+            if self.curSlice >= len(self.Map):
+                raise StopIteration
+
+            anomaly = self[[self.curPoint, self.curSlice]]
 
         return anomaly
 
@@ -103,3 +80,53 @@ class Universe():
             universeMap.append(verticalSlice)
 
         return universeMap
+
+    # def callNextAnomaly(self, currentPosition):
+    #     # Set starting Slice
+    #     startingSlice = currentPosition[1]
+    #     # Loop through bigger Slices
+    #     for verticalSlice in self.Map[startingSlice:]:
+    #         # Set starting point
+    #         startingPoint = currentPosition[0] + 1
+    #         # Loop through anomalies
+    #         for anomaly in verticalSlice[startingPoint:]:
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
+
+    #     # No Anomaly Found, continue at beginning
+    #     for verticalSlice in self.Map:
+    #         # Loop through anomalies
+    #         for anomaly in verticalSlice:
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
+
+    # def callLastAnomaly(self, currentPosition):
+    #     # Set starting Slice
+    #     startingSlice = currentPosition[1] + 1
+    #     # Loop through Smaller Slices
+    #     for verticalSlice in reversed(self.Map[:startingSlice]):
+    #         # Set starting point
+    #         startingPoint = currentPosition[0]
+    #         # Loop through anomalies
+    #         for anomaly in reversed(verticalSlice[:startingPoint]):
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
+
+    #     # No Anomaly Found, continue at End
+    #     for verticalSlice in reversed(self.Map):
+    #         # Loop through anomalies
+    #         for anomaly in reversed(verticalSlice):
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
+
+    # def callAnomaly(self, Coordinates):
+    #     verticalSlice = Coordinates[1]
+    #     pointInSpace = Coordinates[0]
+
+    #     anomaly = self.Map[verticalSlice][pointInSpace]
+
+    #     return anomaly

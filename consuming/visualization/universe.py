@@ -1,11 +1,14 @@
 
-def chooseNextDestination(Universe, Player, DestinationCoordinates, TravelCosts):
+def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=0):
     print '\n' * 100
     print "\n Choose Destination\n"
 
-    drawMap(Universe, Player, DestinationCoordinates)
+    if not ActiveCoordinates:
+        ActiveCoordinates = Player.currentPosition
 
-    showOptions(Universe, Player, DestinationCoordinates, TravelCosts)
+    drawMap(Universe, Player, ActiveCoordinates)
+
+    showOptions(Universe, Player, ActiveCoordinates, TravelCosts)
 
     choice = raw_input()
 
@@ -14,16 +17,16 @@ def chooseNextDestination(Universe, Player, DestinationCoordinates, TravelCosts)
 
         # Show Last Destination
         if choice == '1':
-            return Universe.callLastAnomaly
+            return
         # Show Next Destination
-        elif choice == '2':
-            return Universe.callNextAnomaly
+        # elif choice == '2':
+        #     return Universe.callNextAnomaly
 
         # Invalid Choice
         else:
             choice = invalidChoice(choice)
 
-    return
+    return True
 
 
 def drawMap(Universe, Player, ActiveCords):
@@ -77,16 +80,16 @@ def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):
     # Init Info String
     finalString = '[ENTER] '
     # genrate Information Sting
+    infoString = travelString(anomaly, TravelCosts)
+
+    # Override if Interaction Possible
     if anomaly.coordinates == Player.currentPosition:
         infoString = interactionString(anomaly)
-    else:
-        infoString = travelString(anomaly, TravelCosts)
 
     finalString += infoString
 
     print finalString
-    print "[1] Checkout Last Destination"
-    print "[2] Checkout Next Destination"
+    print "[1] Checkout Next Destination"
 
 
 def interactionString(Anomaly):
@@ -120,6 +123,8 @@ def interactionString(Anomaly):
 
         if amytype == 'Spacegate':
             fight_or_land += '- Cost For Use: %s' % str(Anomaly.costForUse)
+
+    return fight_or_land
 
 
 def travelString(Anomaly, TravelCosts):

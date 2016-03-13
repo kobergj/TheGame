@@ -20,23 +20,17 @@ def fillUniverse(Universe, NumberOfAnomalies):
         Universe.addAnomaly(anomaly)
 
 
-def arriveAtAnomaly(Player, Universe):
+def interactWithAnomaly(Player, Universe):
     # Get Anomaly
-    anomaly = Universe.callAnomaly(Player.currentPosition)
+    anomaly = Universe[Player.currentPosition]
     # Update Anomaly
     anomaly.update(Universe)
 
-    # get Distance Dict
-    # distanceDict = Universe.generateDistanceDict(anomaly.coordinates)
-
-    # Scan Sector
-    # Player.currentShip.scanSector(distanceDict)
-
     # Choose Next Destination
-    interact_with_anomaly = ui.ChooseDestination(Universe, Player)
+    landAtAnomaly = ui.chooseInteractionType(Universe, Player)
 
-    # start Anomaly Interaction
-    while interact_with_anomaly:
+    # Begin Landing Sequence
+    while landAtAnomaly:
         # Fight ALL Enemies First
         while anomaly.enemies:
             # Get Enemy
@@ -47,10 +41,10 @@ def arriveAtAnomaly(Player, Universe):
             if won:
                 # Kill Enemy
                 anomaly.enemies.remove(enemy)
-            # Choose next Destination
-            interact_with_anomaly = ui.ChooseDestination(Universe, Player)
+            # Still a chance to flee
+            landAtAnomaly = ui.chooseInteractionType(Universe, Player)
             # Check For Landing Sequence
-            if not interact_with_anomaly:
+            if not landAtAnomaly:
                 return
 
         # Get Anomaly Class
@@ -59,9 +53,8 @@ def arriveAtAnomaly(Player, Universe):
         arrive = LOCATION_OF_ARRIVING_FUNCS[anomalyClass]
         # Arrive
         arrive(anomaly, Player)
-
-        # Choose Next Destination
-        interact_with_anomaly = ui.ChooseDestination(Universe, Player)
+        # Done Shopping?
+        landAtAnomaly = ui.chooseInteractionType(Universe, Player)
 
     # def scanSector(self, distances):
     #     # init travelCost Dict

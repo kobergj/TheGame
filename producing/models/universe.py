@@ -13,9 +13,8 @@ class Universe():
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
 
-        # Coordinates Cursors
-        self.curSlice = 0
-        self.curPoint = -1
+        # Coordinates Cursor
+        self.coCursor = [-1, 0]
 
     def __iter__(self):
         return self
@@ -28,20 +27,18 @@ class Universe():
 
     def next(self):
         anomaly = None
-
+        # print self.coCursor
         while not anomaly:
-            self.curPoint += 1
+            self.coCursor[0] += 1
+            if self.coCursor[0] >= len(self.Map[self.coCursor[1]]):
+                self.coCursor[0] = -1
+                self.coCursor[1] += 1
 
-            print self.curPoint, self.curSlice, ':', anomaly
-
-            if self.curPoint >= len(self.Map[0]):
-                self.curPoint = -1
-                self.curSlice += 1
-
-            if self.curSlice >= len(self.Map):
+            if self.coCursor[1] >= len(self.Map):
+                self.coCursor = [-1, 0]
                 raise StopIteration
 
-            anomaly = self[[self.curPoint, self.curSlice]]
+            anomaly = self[self.coCursor]
 
         return anomaly
 

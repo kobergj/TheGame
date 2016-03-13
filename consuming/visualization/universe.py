@@ -76,7 +76,7 @@ def drawMap(Universe, Player, ActiveCords):
 
 def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):
     # Call Anomaly
-    anomaly = Universe.callAnomaly(DestinationCoordinates)
+    anomaly = Universe[DestinationCoordinates]
     # Init Info String
     finalString = '[ENTER] '
     # genrate Information Sting

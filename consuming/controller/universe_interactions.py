@@ -2,15 +2,17 @@ import consuming.visualization.universe as viz
 import math
 
 
-def ChooseDestination(Universe, Player):
+def chooseInteractionType(Universe, Player):
+    # Assign coordinates
+    coordinates = Player.currentPosition
     # Init
     interact = viz.chooseNextDestination(Universe, Player)
     # Choose Next
     while not interact:
         interact, coordinates = loopThroughAnomalies(Universe, Player)
 
-    # Load destination Anomaly:
-    anomaly = Universe.callAnomaly(coordinates)
+    # Load destination Anomaly
+    anomaly = Universe[coordinates]
 
     # Wanna Land?
     if anomaly.coordinates == Player.currentPosition:
@@ -23,26 +25,25 @@ def ChooseDestination(Universe, Player):
     # Travel to Next Destination
     Player.travelTo(anomaly.coordinates)
 
-    return
-
 
 def loopThroughAnomalies(Universe, Player):
+    try:
+        anomaly = Universe.next()
+    except StopIteration:
+        anomaly = Universe.next()
 
-    for verticalSlice in Universe.Map:
+    # Calculate Costs
+    costForTravel = calculateTravelCosts(Player, anomaly.coordinates)
 
-        for anomaly in verticalSlice:
+    # Reachable?
+    if costForTravel is not None:
+        # Choose next
+        interact = viz.chooseNextDestination(Universe, Player, anomaly.coordinates, costForTravel)
 
-            if anomaly:
-                # Calculate Costs
-                costForTravel = calculateTravelCosts(Player, anomaly.coordinates)
+        if interact:
+            return interact, anomaly.coordinates
 
-                # Reachable?
-                if costForTravel is not None:
-                    # Reassign Get Anomaly Func
-                    interact = viz.chooseNextDestination(
-                        Universe, Player, anomaly.coordinates, costForTravel)
-                    if interact:
-                        return interact, anomaly.coordinates
+    return None, None
 
 
 def calculateTravelCosts(Player, Coordinates):

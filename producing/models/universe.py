@@ -25,18 +25,32 @@ class Universe():
 
         return self.Map[vSlice][point]
 
-    def next(self):
+    def next(self, infinity=False):
+        # Init
         anomaly = None
-        # print self.coCursor
+
+        # Start Loop
         while not anomaly:
+            # Raise Point value of Cursor
             self.coCursor[0] += 1
+            # Ran out of points?
             if self.coCursor[0] >= len(self.Map[self.coCursor[1]]):
-                self.coCursor[0] = -1
+                # Reset
+                self.coCursor[0] = 0
+                # Raise Slice Value of Cursor
                 self.coCursor[1] += 1
 
+            # Ran out of Slices?
             if self.coCursor[1] >= len(self.Map):
-                self.coCursor = [-1, 0]
-                raise StopIteration
+
+                if not infinity:
+                    # Reset Cursor
+                    self.coCursor = [-1, 0]
+                    # Stop Iteration
+                    raise StopIteration
+
+                # Reset Cursor to Start
+                self.coCursor = [0, 0]
 
             anomaly = self[self.coCursor]
 

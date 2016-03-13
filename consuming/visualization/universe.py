@@ -15,12 +15,9 @@ def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=
     # Wait for Landing Sequence
     while choice != '':
 
-        # Show Last Destination
+        # Show Next Destination
         if choice == '1':
             return
-        # Show Next Destination
-        # elif choice == '2':
-        #     return Universe.callNextAnomaly
 
         # Invalid Choice
         else:

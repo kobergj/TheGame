@@ -5,9 +5,15 @@ import consuming.controller.enemy_interactions as emy
 import consuming.controller.universe_interactions as ui
 
 LOCATION_OF_ARRIVING_FUNCS = {
-    'Planet': pi.Arrive,
-    'Starbase': sbi.Arrive,
-    'Spacegate': sgi.Arrive,
+    'Planet':       pi.Arrive,
+    'Starbase':     sbi.Arrive,
+    'Spacegate':    sgi.Arrive,
+}
+
+LOCATION_OF_DEPARTING_FUNCS = {
+    'Planet':       pi.Depart,
+    'Starbase':     sbi.Depart,
+    'Spacegate':    sgi.Depart
 }
 
 
@@ -55,6 +61,10 @@ def interactWithAnomaly(Player, Universe):
         arrive(anomaly, Player)
         # Done Shopping?
         landAtAnomaly = ui.chooseInteractionType(Universe, Player)
+        # Get Depart Func
+        depart = LOCATION_OF_DEPARTING_FUNCS[anomalyClass]
+        # Depart
+        depart(anomaly, Player)
 
     # def scanSector(self, distances):
     #     # init travelCost Dict

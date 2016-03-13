@@ -4,6 +4,11 @@ def Arrive(Spacegate, Player):
     Player.spendCredits(Spacegate.costForUse)
 
     # Override travelcosts
-    Player.currentShip.travelCosts = Spacegate.travelCostDict
+    Spacegate.mockPlayersTravelDist(Player)
 
     return
+
+
+def Depart(Spacegate, Player):
+    # Get Travel Dist Back
+    Spacegate.returnPlayersTravelDist(Player)

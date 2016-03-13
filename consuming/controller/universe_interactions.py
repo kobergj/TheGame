@@ -27,10 +27,8 @@ def chooseInteractionType(Universe, Player):
 
 
 def loopThroughAnomalies(Universe, Player):
-    try:
-        anomaly = Universe.next()
-    except StopIteration:
-        anomaly = Universe.next()
+    # Get Anomaly
+    anomaly = Universe.next(infinity=True)
 
     # Calculate Costs
     costForTravel = calculateTravelCosts(Player, anomaly.coordinates)

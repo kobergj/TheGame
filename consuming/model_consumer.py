@@ -48,13 +48,6 @@ def fightEnemy(Player, Universe):
 
 
 def landAtAnomaly(Player, Anomaly):
-    # # Get Anomaly Class
-    # anomalyClass = Anomaly.__class__.__name__
-    # # Get Arriving Func
-    # arrive = LOCATION_OF_ARRIVING_FUNCS[anomalyClass]
-    # # Arrive
-    # arrive(Anomaly, Player)
-
     # land
     atAnomaly = True
 
@@ -64,19 +57,20 @@ def landAtAnomaly(Player, Anomaly):
         # Choose Section to Interact with
         section = av.chooseSection(Anomaly, Player, availableSections)
 
+        # Are there Iteractions?
         if len(section) != 0:
             # Go to Section
             atSection = True
 
             while atSection:
                 # Get Details for Interaction
-                sectionCallArgument = av.chooseInteraction(Anomaly, Player, section)
+                sectionCallArgument = av.chooseInteraction(Anomaly, Player, section, atSection)
 
                 # Execute
                 atSection = section(Anomaly, Player, sectionCallArgument)
 
         else:
-            section(Anomaly, Player)
+            atAnomaly = section(Anomaly, Player)
 
     return
 
@@ -94,14 +88,15 @@ def interactWithAnomaly(Player, Universe):
     while land and anomaly.enemies:
         land = fightEnemy(Player, Universe)
 
-    if land and not anomaly.enemies:
+    while land and not anomaly.enemies:
         # Land
         landAtAnomaly(Player, anomaly)
         # Done Shopping?
         land = ui.chooseInteractionType(Universe, Player)
-        # Extr Anomaly Class
-        anomalyClass = anomaly.__class__.__name__
-        # Get Depart Func
-        depart = LOCATION_OF_DEPARTING_FUNCS[anomalyClass]
-        # Depart
-        depart(anomaly, Player)
+
+    # Extr Anomaly Class
+    anomalyClass = anomaly.__class__.__name__
+    # Get Depart Func
+    depart = LOCATION_OF_DEPARTING_FUNCS[anomalyClass]
+    # Depart
+    depart(anomaly, Player)

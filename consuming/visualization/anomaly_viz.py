@@ -28,7 +28,7 @@ def chooseSection(Anomaly, Player, AvailableSections):
     return AvailableSections[choice]
 
 
-def chooseInteraction(Anomaly, Player, Section):
+def chooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
     # Margin
     print '\n'*100
     # Border
@@ -36,8 +36,11 @@ def chooseInteraction(Anomaly, Player, Section):
     # Gen Section Info
     secinfo = generateSectionInfoString(Section, Player)
     print secinfo
+    # Last Interaction
+    if LastInteractionInfo is not True:
+        print "%s: %s" % (Section.interactionType, LastInteractionInfo)
     # Gen Str
-    interactions = generateInteractionsString(Section)
+    interactions = generateInteractionsString(Section, LastInteractionInfo)
     print interactions
     # Await Choice
     choice = input()
@@ -85,7 +88,7 @@ def generateSectionsString(PossibleActions):
     return info
 
 
-def generateInteractionsString(Section):
+def generateInteractionsString(Section, LastInteractionInfo):
     # Gen Action String
     actStr = '[0] Back \n'
     # Loop

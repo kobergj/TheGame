@@ -1,7 +1,7 @@
 
 def getAvailableSections(Anomaly, Player):
     """Checks for possible Actions with Anomaly"""
-    sectionList = [Quit, Merchant]
+    sectionList = [Quit, Merchant, Spaceport]
 
     availableSections = list()
 
@@ -18,11 +18,14 @@ def getAvailableSections(Anomaly, Player):
     return availableSections
 
 
+# Anomaly Sections
 class AnomalySection:
     """ Each Section of the Anomaly Contains the Interaction Information.
         Currently Implemented:
 
-        Merchant - Buys Goods"""
+        Quit        - Quit Game
+        Merchant    - Buys Goods
+        Spaceport   - Depart from Anomaly"""
 
     def __init__(self, Anomaly, Player):
         # Needs A Init Method which assigns all needed Stats
@@ -32,7 +35,7 @@ class AnomalySection:
         # Corresponding Player Stats
         self.correspondingStats = {}
 
-    def __call__(self, Anomaly, Player, args):
+    def __call__(self, Anomaly, Player, args=None):
         # Needs A Call Method which executes the Interaction
         return
 
@@ -62,11 +65,16 @@ class AnomalySection:
 
 
 class Quit(AnomalySection):
-    def __call__(self, Anomaly, Player):
+    def __call__(self, Anomaly, Player, args=None):
         quit()
 
     def infoString(self):
         return 'Quit'
+
+
+class Spaceport(AnomalySection):
+    def infoString(self):
+        return 'Spaceport - Depart'
 
 
 class Merchant(AnomalySection):
@@ -85,17 +93,17 @@ class Merchant(AnomalySection):
             'In Cargo Bay':     Player.currentShip.inCargo
         }
 
-    def __call__(self, Anomaly, Player, GoodToBuy, Amount=1):
+    def __call__(self, Anomaly, Player, GoodToBuy):
 
         if not GoodToBuy:
             return
 
-        if Amount == 0:
-            return
+        # Currently One Good per buy
+        Amount = 1
 
         price = self.prices[GoodToBuy]
 
-        Player.spendCredits(price*Amount)
+        Player.spendCredits(price)
 
         Player.currentShip.loadCargo(GoodToBuy, Amount)
 

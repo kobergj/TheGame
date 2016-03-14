@@ -1,4 +1,3 @@
-import math
 
 
 # Generic Ship. No special Abilites.
@@ -19,9 +18,9 @@ class Ship():
         self.inCargo = dict()
         self.freeCargoSpace = shipStats['cargoCapacity']
 
-        # Initialize SensorBay
-        self.distances = dict()
-        self.travelCosts = dict()
+        # # Initialize SensorBay
+        # self.distances = dict()
+        # self.travelCosts = dict()
 
         # Power Engines
         self.maxTravelDistance = shipStats['maxTravelDistance']
@@ -32,6 +31,9 @@ class Ship():
 
         # activate Shields
         self.shieldStrength = shipStats['shieldStrength']
+
+        # Testing Stats
+        self.HappyCargoCap = ShipStat(shipStats['cargoCapacity'])
 
     # Room Operations
     def attachRoom(self, Room):
@@ -91,3 +93,31 @@ class Enemy(Ship):
 
         # Loot
         self.credits = enemyStats['creditStash']
+
+
+# Class For Ship Stats
+class ShipStat():
+    def __init__(self, StartValue=0):
+        # The Value of the Stat
+        self.value = StartValue
+        # Free Space For Mocking
+        self.tempValue = None
+
+    def __call__(self):
+        return self.value
+
+    def increment(self, Value):
+        self.value += Value
+
+    def decrease(self, Value):
+        self.value -= Value
+
+    def mock(self, TempValue):
+        # Save Current
+        self.tempValue = self.value
+        # Mock
+        self.value = TempValue
+
+    def deMock(self):
+        # Give Value Back
+        self.value = self.tempValue

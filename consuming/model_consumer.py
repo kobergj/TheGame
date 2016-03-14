@@ -55,9 +55,22 @@ def landAtAnomaly(Player, Anomaly):
     # # Arrive
     # arrive(Anomaly, Player)
 
-    # ac.Arrive(Anomaly, Player)
+    # land
+    atAnomaly = True
 
-    av.Arrival(Anomaly, Player)
+    while atAnomaly:
+        # Get List of Available Sections
+        availableSections = ac.getAvailableSections(Anomaly, Player)
+        # Choose Section to Interact with
+        section = av.chooseSection(Anomaly, Player, availableSections)
+        # Go to Section
+        atSection = True
+
+        while atSection:
+            # Get Details for Interaction
+            interactionDetails = av.chooseInteraction(Anomaly, Player, section)
+            # Execute
+            atSection = section(Anomaly, Player, *interactionDetails)
 
     return
 
@@ -72,15 +85,11 @@ def interactWithAnomaly(Player, Universe):
     land = ui.chooseInteractionType(Universe, Player)
 
     # Begin Landing Sequence
-    while land:
-        # Fight ALL Enemies First
-        while anomaly.enemies:
-            land = fightEnemy(Player, Universe)
+    while land and anomaly.enemies:
+        land = fightEnemy(Player, Universe)
 
-            if not land:
-                break
-
-        # Land?
+    if land and not anomaly.enemies:
+        # Land
         landAtAnomaly(Player, anomaly)
         # Done Shopping?
         land = ui.chooseInteractionType(Universe, Player)

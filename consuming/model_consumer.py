@@ -63,14 +63,20 @@ def landAtAnomaly(Player, Anomaly):
         availableSections = ac.getAvailableSections(Anomaly, Player)
         # Choose Section to Interact with
         section = av.chooseSection(Anomaly, Player, availableSections)
-        # Go to Section
-        atSection = True
 
-        while atSection:
-            # Get Details for Interaction
-            interactionDetails = av.chooseInteraction(Anomaly, Player, section)
-            # Execute
-            atSection = section(Anomaly, Player, *interactionDetails)
+        if len(section) != 0:
+            # Go to Section
+            atSection = True
+
+            while atSection:
+                # Get Details for Interaction
+                sectionCallArgument = av.chooseInteraction(Anomaly, Player, section)
+
+                # Execute
+                atSection = section(Anomaly, Player, sectionCallArgument)
+
+        else:
+            section(Anomaly, Player)
 
     return
 

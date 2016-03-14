@@ -1,7 +1,7 @@
 
 def getAvailableSections(Anomaly, Player):
     """Checks for possible Actions with Anomaly"""
-    sectionList = [Merchant]
+    sectionList = [Quit, Merchant]
 
     availableSections = list()
 
@@ -18,14 +18,63 @@ def getAvailableSections(Anomaly, Player):
     return availableSections
 
 
-class Merchant:
+class AnomalySection:
+    """ Each Section of the Anomaly Contains the Interaction Information.
+        Currently Implemented:
+
+        Merchant - Buys Goods"""
+
+    def __init__(self, Anomaly, Player):
+        # Needs A Init Method which assigns all needed Stats
+
+        # Interaction Type says what you can actualy DO with a Section
+        self.interactionType = 'Nothing'
+        # Corresponding Player Stats
+        self.correspondingStats = {}
+
+    def __call__(self, Anomaly, Player, args):
+        # Needs A Call Method which executes the Interaction
+        return
+
+    def __iter__(self):
+        # For iteration
+        return self
+
+    def __len__(self):
+        # Number of Possible Interactions
+        return 0
+
+    def __getitem__(self, i):
+        # i must be an integer
+        return None
+
+    def index(self, item):
+        # Corresponds to i
+        return 0
+
+    def next(self):
+        # Iterate Over possible Actions
+        raise StopIteration
+
+    def infoString(self):
+        # Generate a Information String
+        return 'None'
+
+
+class Quit(AnomalySection):
+    def __call__(self, Anomaly, Player):
+        quit()
+
+    def infoString(self):
+        return 'Quit'
+
+
+class Merchant(AnomalySection):
 
     def __init__(self, Anomaly, Player):
         self.goodsForSale = Anomaly.goodsProduced
 
         self.prices = Anomaly.prices
-
-        self.infoString = self.infoString()
 
         self.interactionType = 'Buy'
 
@@ -85,6 +134,6 @@ class Merchant:
         infoStr += 'Merchant - Sells '
 
         for good in self.goodsForSale:
-            infoStr += '%s@%s' % (good, self.prices[good])
+            infoStr += '%s@%s ' % (good, self.prices[good])
 
         return infoStr

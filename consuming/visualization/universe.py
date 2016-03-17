@@ -1,47 +1,40 @@
 
-def chooseNextDestination(Universe, Player):
+def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=0):
     print '\n' * 100
     print "\n Choose Destination\n"
 
-    choiceList = drawMap(Universe, Player)
+    if not ActiveCoordinates:
+        ActiveCoordinates = Player.currentPosition
 
-    showOptions(Universe, Player)
+    drawMap(Universe, Player, ActiveCoordinates)
+
+    showOptions(Universe, Player, ActiveCoordinates, TravelCosts)
 
     choice = raw_input()
 
-    if choice == '':
-        choice = 0
+    # Wait for Landing Sequence
+    while choice != '':
 
-    if choice == '99':
-        for anomaly in choiceList[1:]:
-            print "[%s] %s, Cost For Travel: %s" % (choiceList.index(anomaly),
-                                                    anomaly,
-                                                    Player.currentShip.travelCosts[anomaly]
-                                                    )
+        # Show Next Destination
+        if choice == '1':
+            return
 
-        choice = input()
+        # Invalid Choice
+        else:
+            choice = invalidChoice(choice)
 
-    choice = int(choice)
-
-    while choice not in range(len(choiceList)+1):
-        choice = invalidChoice(choice)
-
-    next_dest_coordinates = choiceList[choice]
-
-    return next_dest_coordinates
+    return True
 
 
-def drawMap(Universe, Player):
+def drawMap(Universe, Player, ActiveCords):
     # Where to store them best?
     mapIdentifiers = {'Empty':      '    ',
-                      'Planet':     '(00)',
-                      'Spacegate':  '[00]',
-                      'Starbase':   '$00$',
+                      'Planet':     '()',
+                      'Spacegate':  '[]',
+                      'Starbase':   '$$',
                       }
 
     print ' ####'*(len(Universe.Map[0]))
-
-    choiceList = [False]
 
     # Loop through vertical Slices of Universe
     for verticalSlice in Universe.Map:
@@ -55,29 +48,19 @@ def drawMap(Universe, Player):
                 # Load Map Identifier
                 to_print = mapIdentifiers[anomaly.__class__.__name__]
 
-                # Check if Anomaly is current
+                # Check if Anomaly is Current
                 if Player.currentPosition == anomaly.coordinates:
-                    to_print = to_print.replace('00', '')
+                    # to_print = to_print.replace('00', '')
                     # Add Location Arrow
                     to_print = '->' + to_print
-
-                # Get Costs For Travel
-                reachable = Player.currentShip.travelCosts[anomaly.name]
-
-                # Check if reachable
-                if reachable:
-                    choiceList.append(anomaly.coordinates)
-
-                    to_print = to_print.replace('00', str(len(choiceList)-1))
-
-                # Not Reachable
+                # Or Active
+                elif ActiveCords == anomaly.coordinates:
+                    # to_print = to_print.replace('00', '')
+                    # Add Location Arrow
+                    to_print = ' >' + to_print
+                # Or else
                 else:
-                    to_print = to_print.replace('00', '')
-
-                    to_print = ' ' + to_print + ' '
-
-            while len(to_print) < 4:
-                to_print += ' '
+                    to_print = '  ' + to_print  # + ' '
 
             print to_print,
 
@@ -85,45 +68,66 @@ def drawMap(Universe, Player):
 
     print ' ####'*(len(Universe.Map[0]))
 
-    return choiceList
+    return
 
 
-def showOptions(Universe, Player):
-    currentAnomaly = Universe.callAnomaly(Player.currentPosition)
+def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):
+    # Call Anomaly
+    anomaly = Universe[DestinationCoordinates]
+    # Init Info String
+    finalString = '[ENTER] '
+    # genrate Information Sting
+    infoString = travelString(anomaly, TravelCosts)
 
-    if currentAnomaly.enemies:
+    # Override if Interaction Possible
+    if anomaly.coordinates == Player.currentPosition:
+        infoString = interactionString(anomaly)
+
+    finalString += infoString
+
+    print finalString
+    print "[1] Checkout Next Destination"
+
+
+def interactionString(Anomaly):
+    if Anomaly.enemies:
         # Possible Fight
-        emyatk = str(currentAnomaly.enemies[0].attackPower)
-        emydef = str(currentAnomaly.enemies[0].shieldStrength)
+        emyatk = str(Anomaly.enemies[0].attackPower)
+        emydef = str(Anomaly.enemies[0].shieldStrength)
 
         fight_or_land = 'Fight - Atk: %s, Def: %s ' % (emyatk, emydef)
 
-        for enemy in currentAnomaly.enemies[1:]:
+        for enemy in Anomaly.enemies[1:]:
             fight_or_land += '+'
 
     else:
         # Possible Interaction
-        amyname = currentAnomaly.name
-        amytype = currentAnomaly.__class__.__name__
+        amyname = Anomaly.name
+        amytype = Anomaly.__class__.__name__
 
         fight_or_land = '%s %s ' % (amytype, amyname)
 
         if amytype == 'Planet':
             fight_or_land += '- Buys '
 
-            for good in currentAnomaly.goodsConsumed:
-                fight_or_land += '%s@%s ' % (good[:2], str(currentAnomaly.prices[good]))
+            for good in Anomaly.goodsConsumed:
+                fight_or_land += '%s@%s ' % (good[:2], str(Anomaly.prices[good]))
 
             fight_or_land += '- Sells: '
 
-            for good in currentAnomaly.goodsProduced:
-                fight_or_land += '%s@%s ' % (good[:2], str(currentAnomaly.prices[good]))
+            for good in Anomaly.goodsProduced:
+                fight_or_land += '%s@%s ' % (good[:2], str(Anomaly.prices[good]))
 
         if amytype == 'Spacegate':
-            fight_or_land += '- Cost For Use: %s' % str(currentAnomaly.costForUse)
+            fight_or_land += '- Cost For Use: %s' % str(Anomaly.costForUse)
 
-    print "[ENTER] " + fight_or_land
-    print "[99] -- Show TravelInfos --"
+    return fight_or_land
+
+
+def travelString(Anomaly, TravelCosts):
+    tr_string = 'Fly to %s. Costs: %s' % (Anomaly.name, str(TravelCosts))
+
+    return tr_string
 
 
 def invalidChoice(choice):

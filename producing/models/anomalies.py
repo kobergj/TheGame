@@ -87,21 +87,21 @@ class Spacegate(Anomaly):
 
         self.costForUse = spacegateInformation['costForUse']
 
-        self.travelCostDict = {}
+        self.travelDistance = 99
 
-    def updateTravelCostDict(self, UniverseMap):
-        # Loop through vertical Slice
-        for verticalSlice in UniverseMap:
-            # Loop through Anomalies
-            for anomaly in verticalSlice:
-                # Only Append if not there
-                if anomaly:
-                    # Update
-                    self.travelCostDict.update({anomaly.name: 1})
+        self.playersMaxTravelDist = None
+
+    def mockPlayersTravelDist(self, Player):
+        self.playersMaxTravelDist = Player.currentShip.maxTravelDistance
+
+        Player.currentShip.maxTravelDistance = self.travelDistance
+
+    def returnPlayersTravelDist(self, Player):
+        Player.currentShip.maxTravelDistance = self.playersMaxTravelDist
 
     def update(self, Universe):
         # Update Anomaly
         Anomaly.update(self, Universe)
 
         # Update TravelCostDict
-        self.updateTravelCostDict(Universe.Map)
+        # self.updateTravelCostDict(Universe.Map)

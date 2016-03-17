@@ -1,4 +1,3 @@
-import math
 import Queue
 import random
 
@@ -14,6 +13,49 @@ class Universe():
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
 
+        # Coordinates Cursor
+        self.coCursor = [-1, 0]
+
+    def __iter__(self):
+        return self
+
+    def __getitem__(self, coordinates):
+        vSlice = coordinates[1]
+        point = coordinates[0]
+
+        return self.Map[vSlice][point]
+
+    def next(self, infinity=False):
+        # Init
+        anomaly = None
+
+        # Start Loop
+        while not anomaly:
+            # Raise Point value of Cursor
+            self.coCursor[0] += 1
+            # Ran out of points?
+            if self.coCursor[0] >= len(self.Map[self.coCursor[1]]):
+                # Reset
+                self.coCursor[0] = 0
+                # Raise Slice Value of Cursor
+                self.coCursor[1] += 1
+
+            # Ran out of Slices?
+            if self.coCursor[1] >= len(self.Map):
+
+                if not infinity:
+                    # Reset Cursor
+                    self.coCursor = [-1, 0]
+                    # Stop Iteration
+                    raise StopIteration
+
+                # Reset Cursor to Start
+                self.coCursor = [0, 0]
+
+            anomaly = self[self.coCursor]
+
+        return anomaly
+
     def addAnomaly(self, Anomaly):
         # Genrate Coordinates
         x = random.randint(0, len(self.Map[0])-1)
@@ -28,34 +70,6 @@ class Universe():
         self.Map[y][x] = Anomaly
 
         Anomaly.getCoordinates([x, y])
-
-    def generateDistanceDict(self, currentCoordinates):
-        # Init Distance Dict
-        distances = dict()
-        # Loop through Slices
-        for verticalSlice in self.Map:
-            # Loop through Anomalies
-            for anomaly in verticalSlice:
-                if anomaly:
-                    # Calculate Distance
-                    distance = self.calculateDistance(currentCoordinates, anomaly.coordinates)
-                    # Update Distance Dist
-                    distances.update({anomaly.name: distance})
-
-        return distances
-
-    def calculateDistance(self, point1, point2):
-        distance = 0.0
-        for i in range(len(point1)):
-            x = point1[i]
-            y = point2[i]
-
-            distance += (x - y)**2
-
-        distance = math.sqrt(distance)
-        distance = round(distance, 2)
-
-        return distance
 
     def drawUniverseMap(self, minCoordinates, maxCoordinates):
         universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
@@ -78,10 +92,52 @@ class Universe():
 
         return universeMap
 
-    def callAnomaly(self, Coordinates):
-        verticalSlice = Coordinates[1]
-        pointInSpace = Coordinates[0]
+    # def callNextAnomaly(self, currentPosition):
+    #     # Set starting Slice
+    #     startingSlice = currentPosition[1]
+    #     # Loop through bigger Slices
+    #     for verticalSlice in self.Map[startingSlice:]:
+    #         # Set starting point
+    #         startingPoint = currentPosition[0] + 1
+    #         # Loop through anomalies
+    #         for anomaly in verticalSlice[startingPoint:]:
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
 
-        anomaly = self.Map[verticalSlice][pointInSpace]
+    #     # No Anomaly Found, continue at beginning
+    #     for verticalSlice in self.Map:
+    #         # Loop through anomalies
+    #         for anomaly in verticalSlice:
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
 
-        return anomaly
+    # def callLastAnomaly(self, currentPosition):
+    #     # Set starting Slice
+    #     startingSlice = currentPosition[1] + 1
+    #     # Loop through Smaller Slices
+    #     for verticalSlice in reversed(self.Map[:startingSlice]):
+    #         # Set starting point
+    #         startingPoint = currentPosition[0]
+    #         # Loop through anomalies
+    #         for anomaly in reversed(verticalSlice[:startingPoint]):
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
+
+    #     # No Anomaly Found, continue at End
+    #     for verticalSlice in reversed(self.Map):
+    #         # Loop through anomalies
+    #         for anomaly in reversed(verticalSlice):
+    #             # Check for anomaly
+    #             if anomaly:
+    #                 return anomaly
+
+    # def callAnomaly(self, Coordinates):
+    #     verticalSlice = Coordinates[1]
+    #     pointInSpace = Coordinates[0]
+
+    #     anomaly = self.Map[verticalSlice][pointInSpace]
+
+    #     return anomaly

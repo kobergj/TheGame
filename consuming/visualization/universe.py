@@ -29,9 +29,9 @@ def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=
 def drawMap(Universe, Player, ActiveCords):
     # Where to store them best?
     mapIdentifiers = {'Empty':      '    ',
-                      'Planet':     '(00)',
-                      'Spacegate':  '[00]',
-                      'Starbase':   '$00$',
+                      'Planet':     '()',
+                      'Spacegate':  '[]',
+                      'Starbase':   '$$',
                       }
 
     print ' ####'*(len(Universe.Map[0]))
@@ -50,17 +50,17 @@ def drawMap(Universe, Player, ActiveCords):
 
                 # Check if Anomaly is Current
                 if Player.currentPosition == anomaly.coordinates:
-                    to_print = to_print.replace('00', '')
-                    # Add Location Arrow
-                    to_print = ' >' + to_print
-                # Or Active
-                elif ActiveCords == anomaly.coordinates:
-                    to_print = to_print.replace('00', '')
+                    # to_print = to_print.replace('00', '')
                     # Add Location Arrow
                     to_print = '->' + to_print
-
-            while len(to_print) < 4:
-                to_print += ' '
+                # Or Active
+                elif ActiveCords == anomaly.coordinates:
+                    # to_print = to_print.replace('00', '')
+                    # Add Location Arrow
+                    to_print = ' >' + to_print
+                # Or else
+                else:
+                    to_print = '  ' + to_print  # + ' '
 
             print to_print,
 

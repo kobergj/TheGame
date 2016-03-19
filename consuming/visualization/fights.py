@@ -6,13 +6,24 @@ def flushTerminal():
 
 
 def showFightInfo(Ship, Enemy):
-    to_print = ''
+    longInfo = """
+        You:    Attack Power: ATTACK    Defense: CURRENTHP/MAXHP
+                            -- vs --
+        Enemy:  Attack Power: EMATK     Defense: EMCDEF/EMMAXDEF
+    """
+    
 
-    to_print += 'You: Atk:%s HP:%s' % (str(Ship.attackPower()), str(Ship.shieldStrength()))
-    to_print += '\nvs.\n'
-    to_print += 'Enemy: Atk:%s HP:%s' % (str(Enemy.attackPower()), str(Enemy.shieldStrength()))
+    longInfo = longInfo.replace('ATTACK', str(Ship.attackPower()))
+    longInfo = longInfo.replace('CURRENTHP',str(Ship.shieldStrength()))
+    longInfo = longInfo.replace('MAXHP', str(Ship.shieldStrength.startValue))
 
-    to_print += '\n'*2
+    longInfo = longInfo.replace('EMATK', str(Enemy.attackPower()))
+    longInfo = longInfo.replace('EMCDEF', str(Enemy.shieldStrength()))
+    longInfo = longInfo.replace('EMMAXDEF', str(Enemy.shieldStrength.startValue))
+
+    print longInfo
+
+    to_print = '\n' * 2
     to_print += '[ENTER] Fight!'
 
     to_print += '\n'
@@ -30,47 +41,62 @@ def showFightInfo(Ship, Enemy):
 
 
 def endOfRound(Ship, Enemy, PlayersDice, EnemiesDice):
-    print '--' * 20
-
-    to_print = ''
-
-    to_print += 'You threw a %s' % PlayersDice
-
-    to_print += '\n'
-
-    to_print += 'Enemy threw a %s' % EnemiesDice
-
-    to_print += '\n'
-
     players_atk = Ship.attackPower() + PlayersDice
     enemies_atk = Enemy.attackPower() + EnemiesDice
 
+    flushTerminal()
+
+    print '--' * 40
+
+    longInfo = """
+        You threw a PLAYERSDICE -- Enemy threw a ENEMIESDICE
+
+        You PLAYERATK - ENEMYATK Enemy
+
+        LOOSERTAKES DAMAGE Damage Points
+    """
+
+    longInfo = longInfo.replace('PLAYERSDICE', str(PlayersDice))
+
+    longInfo = longInfo.replace('ENEMIESDICE', str(EnemiesDice))
+
+    longInfo = longInfo.replace('PLAYERATK', str(players_atk))
+
+    longInfo = longInfo.replace('ENEMYATK', str(enemies_atk))
+
     damage = players_atk - enemies_atk
 
-    if damage > 0:
-        to_print += 'You win '
+    if damage >= 0:
+        looser = 'Enemy takes'
     else:
-        to_print += 'You loose '
+        looser = 'You take'
 
-    to_print += '%s:%s' % (str(players_atk), str(enemies_atk))
+    longInfo = longInfo.replace('LOOSERTAKES', str(looser))
 
-    to_print += '\n'
+    longInfo = longInfo.replace('DAMAGE', str(abs(damage)))
 
-    if damage > 0:
-        to_print += 'Enemy looses '
-    else:
-        to_print += 'You loose '
+    print longInfo
 
-    to_print += '%s Hit Points' % str(abs(damage))
-
-    print to_print
-
-    print '--' * 20
+    print '--' * 40
 
 
-def fightWon():
-    print 'Congratz. Fight Won.'
-    print 'Press Enter to Continue'
+def fightWon(Ship, Enemy):
+    fightWonInfo = """
+    
+    Congratz. Fight Won.
+
+    Rewards:
+        Credits: CREDITAMOUNT
+        Goods: GOODS
+
+    Press Enter to Continue
+
+    """
+    fightWonInfo = fightWonInfo.replace('CREDITAMOUNT', str(Enemy.lootableCredits))
+
+    fightWonInfo = fightWonInfo.replace('GOODS', str(Enemy.inCargo))
+
+    print fightWonInfo
 
     raw_input()
 

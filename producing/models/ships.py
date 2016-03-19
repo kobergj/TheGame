@@ -45,7 +45,7 @@ class Ship():
         self.rooms.remove(Room)
 
     # CargoBay Methods
-    def loadCargo(self, cargoId, cargoAmount):
+    def loadCargo(self, cargoId, cargoAmount=1):
         if cargoId in self.inCargo:
             self.inCargo[cargoId] += cargoAmount
         else:
@@ -53,7 +53,7 @@ class Ship():
 
         self.cargoCapacity.addBoost(cargoAmount*-1)
 
-    def unloadCargo(self, cargoId, cargoAmount):
+    def unloadCargo(self, cargoId, cargoAmount=1):
         self.inCargo[cargoId] -= cargoAmount
         if self.inCargo[cargoId] <= 0:
             del self.inCargo[cargoId]
@@ -87,9 +87,10 @@ class Enemy(Ship):
         Ship.__init__(self, enemyStats)
 
         # Enemy Type
-        self.enemyType = enemyStats['Fraction']
+        # self.enemyType = enemyStats['Fraction']
 
         # Loot
-        self.credits = enemyStats['creditStash']
+        self.lootableCredits = 0
 
-
+    def addMoreCredits(self, Amount):
+        self.lootableCredits += Amount

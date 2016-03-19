@@ -21,8 +21,8 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
 
                        'price': 0,
 
-                       'attackPower': 22,
-                       'shieldStrength': 10,
+                       'attackPower': 7,
+                       'shieldStrength': 15,
                        }
 
 

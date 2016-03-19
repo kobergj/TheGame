@@ -8,6 +8,8 @@ def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=
 
     drawMap(Universe, Player, ActiveCoordinates)
 
+    anomalyInfo(Universe, Player, ActiveCoordinates)
+
     showOptions(Universe, Player, ActiveCoordinates, TravelCosts)
 
     choice = raw_input()
@@ -69,6 +71,49 @@ def drawMap(Universe, Player, ActiveCords):
     print ' ####'*(len(Universe.Map[0]))
 
     return
+
+
+def anomalyInfo(Universe, Player, ActiveCoordinates):
+    anomaly = Universe[ActiveCoordinates]
+    # Possible Interaction
+    amyname = anomaly.name
+    amytype = anomaly.__class__.__name__
+
+    information = '%s %s ' % (amytype, amyname)
+
+    for enemy in anomaly.enemies:
+        information += 'X'
+
+    information += ' '
+
+    # Buys It Goods?
+    try:
+        buy_information = '- Buys '
+
+        for good in anomaly.goodsConsumed:
+            buy_information += '%s@%s ' % (good[:2], str(anomaly.prices[good]))
+
+        buy_information += ' '
+
+        information += buy_information
+    except AttributeError:
+        pass
+
+    # Sells it Goods?
+    try:
+        sell_information = '- Sells: '
+
+        for good in anomaly.goodsProduced:
+            sell_information += '%s@%s ' % (good[:2], str(anomaly.prices[good]))
+
+        sell_information += ' '
+
+        information += sell_information
+
+    except AttributeError:
+        pass
+
+    print information
 
 
 def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):

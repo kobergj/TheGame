@@ -20,8 +20,6 @@ class AnomalyInteraction():
     def __init__(self, Universe, Player):
         # Get Anomaly
         anomaly = Universe[Player.currentPosition]
-        # Update Anomaly
-        anomaly.update(Universe)
 
         # Interact Flag
         self.interact = False
@@ -31,6 +29,7 @@ class AnomalyInteraction():
         # Start at Current Anomaly
         Universe.coCursor = [Player.currentPosition[0]-1, Player.currentPosition[1]]
 
+        # Choose what to do next
         while not self.interact:
             # Get a Anomaly
             anomaly = Universe.next(infinity=True)
@@ -43,33 +42,56 @@ class AnomalyInteraction():
 
         # Want to Land?
         if anomaly.coordinates == Player.currentPosition:
-            # Fight Enemies First
-            while anomaly.enemies:
-                # Get Enemy
-                enemy = anomaly.enemies.pop(0)
-                # Fight
-                self.fight(enemy, Player)
 
             # Interact with Anomaly
             while not self.departFromAnomaly:
                 # Land At Anomaly
-                self.departFromAnomaly = self.land(anomaly, Player)
+                try:
+                    self.departFromAnomaly = self.land(anomaly, Player)
+                except FleeError:
+                    self.departFromAnomaly = True
+        else:
+            # Update Anomaly
+            anomaly.update(Universe)
+            # Depart
+            self.depart(anomaly, Player)
 
-        # Depart
-        self.depart(anomaly, Player)
+
 
 
     def fight(self, Enemy, Player):
         # Begin Fight
-        emy.beginFight(Player.currentShip, Enemy)
+        won = emy.beginFight(Player.currentShip, Enemy)
+
+        return won
 
     def land(self, Anomaly, Player):
+        # Fight Enemies First
+        while Anomaly.enemies:
+            # Get Enemy
+            enemy = Anomaly.enemies[0]
+            # Fight
+            won = self.fight(enemy, Player)
+            # Check For Sucess
+            if not won:
+                # Enemy Gets repaired
+                enemy.shieldStrength.reset()
+                raise FleeError
+
+            # Get Credits
+            Player.earnCredits(enemy.lootableCredits)
+            # Loot Wreck
+            for good, amount in enemy.inCargo.iteritems():
+                Player.currentShip.loadCargo(good, amount)
+            # Kill Enemy
+            Anomaly.enemies.remove(enemy)
+
         # Get List of Available Sections
         availableSections = ac.getAvailableSections(Anomaly, Player)
         # Choose Section to Interact with
         section = av.chooseSection(Anomaly, Player, availableSections)
 
-        # Are there Iteractions?
+        # Are there any further Interactions?
         if len(section) != 0:
             # Go to Section
             atSection = True
@@ -81,6 +103,10 @@ class AnomalyInteraction():
                 # Execute
                 atSection = section(Anomaly, Player, sectionCallArgument)
 
+                # Reinitialize Section
+                try: section.__init__(Anomaly, Player)
+                except AttributeError: atSection = False
+
             return
 
         else:
@@ -89,7 +115,17 @@ class AnomalyInteraction():
 
 
     def depart(self, Anomaly, Player):
+        # Calc Travel Cost
+        costForTravel = calculateTravelCosts(Player, Anomaly.coordinates)
+        # Pay
+        Player.spendCredits(costForTravel)
+        # Travel
         Player.travelTo(Anomaly.coordinates)
+
+        # Demock Stats
+        Player.currentShip.maxTravelDistance.demock()
+        Player.currentShip.maintenanceCosts.demock()
+
 
 
 def calculateTravelCosts(Player, Coordinates):
@@ -116,3 +152,6 @@ def calculateDistance(point1, point2):
     distance = round(distance, 2)
 
     return distance
+
+class FleeError(Exception):
+    pass

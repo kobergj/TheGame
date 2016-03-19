@@ -18,14 +18,25 @@ def chooseSection(Anomaly, Player, AvailableSections):
     print options
 
     # Await Choice
-    choice = input()
+    choice = raw_input()
 
-    # Not Valid Choice
-    while choice not in range(len(AvailableSections)):
-        print "Sorry %s not valid" % choice
-        choice = input()
+    while True:
 
-    return AvailableSections[choice]
+        if choice == '':
+            return AvailableSections[1]
+
+        try:
+            choice = int(choice)
+
+            # Not Valid Choice
+            if choice not in range(len(AvailableSections)):
+                raise ValueError
+
+            return AvailableSections[choice]
+
+        except ValueError:
+            print "Sorry %s not valid" % choice
+            choice = raw_input()
 
 
 def chooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
@@ -43,17 +54,38 @@ def chooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
     interactions = generateInteractionsString(Section, LastInteractionInfo)
     print interactions
     # Await Choice
-    choice = input()
+    choice = raw_input()
 
-    # Not Valid Choice
-    while choice not in range(len(Section)+1):
-        print "Sorry %s not valid" % choice
-        choice = input()
+    while True:
+        if choice == '':
+            number = Section.index(LastInteractionInfo)
+            return Section[number]
 
-    if choice == 0:
-        return
+        try:
+            formatedChoice = int(choice)
 
-    return Section[choice-1]
+            if formatedChoice not in range(len(Section)+1):
+                raise ValueError
+
+            if formatedChoice == 0:
+                return
+
+            return Section[formatedChoice-1]
+
+        except ValueError:
+            print "Sorry %s not valid" % choice
+            choice = raw_input()
+
+
+    # # Not Valid Choice
+    # while choice not in range(len(Section)+1):
+    #     print "Sorry %s not valid" % choice
+    #     choice = input()
+
+    # if choice == 0:
+    #     return
+
+    # return Section[choice-1]
 
 
 def generateInfoString(Anomaly, Player):
@@ -178,14 +210,14 @@ def generateInfoString(Anomaly, Player):
     return longInfo
 
 
-def generateSectionInfoString(Section, Player):
-    secInfo = 'Current Stats: \n'
+# def generateSectionInfoString(Section, Player):
+#     secInfo = 'Current Stats: \n'
 
-    for info in Section.correspondingStats:
-        value = Section.correspondingStats[info]
-        secInfo += " %s: %s \n" % (info, value)
+#     for info in Section.correspondingStats:
+#         value = Section.correspondingStats[info]
+#         secInfo += " %s: %s \n" % (info, value)
 
-    return secInfo
+#     return secInfo
 
 
 def generateSectionsString(PossibleActions):
@@ -194,7 +226,12 @@ def generateSectionsString(PossibleActions):
     # Option Information
 
     for interaction in PossibleActions:
-        info += '\n[%s] %s' % (PossibleActions.index(interaction), interaction.infoString())
+        number = PossibleActions.index(interaction)
+
+        if number == 1:
+            number = 'ENTER'
+
+        info += '\n[%s] %s' % (str(number), interaction.infoString())
 
     return info
 
@@ -204,8 +241,13 @@ def generateInteractionsString(Section, LastInteractionInfo):
     actStr = '[0] Back \n'
     # Loop
     for interaction, info in Section:
-        actStr += '[' + str(Section.index(interaction)+1) + '] '
+        number = str(Section.index(interaction)+1)
+        if LastInteractionInfo == interaction:
+            number = 'ENTER'
+        actStr += '[' + number + '] '
+
         actStr += Section.interactionType + ' ' + interaction
+
         actStr += ' for ' + str(info) + '\n'
 
     return actStr

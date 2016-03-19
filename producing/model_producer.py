@@ -94,7 +94,17 @@ def produceEnemy(Database, enemyInfo=None):
         # generate Enemy Information - For the moment only Ships
         enemyInfo = gsp.generateShipInformation(Database)
         # generate Enemy
-        enemy = msp.Ship(enemyInfo)
+        enemy = msp.Enemy(enemyInfo)
+
+    # Add Loot Credits
+    creds_to_loot = enemy.attackPower() + enemy.shieldStrength()
+    enemy.addMoreCredits(creds_to_loot)
+
+    # Loot Goods
+    for i in range(random.randint(1, 5)):
+        good_to_loot = random.choice(Database.Goods.ListOfNames)
+
+        enemy.loadCargo(good_to_loot)
 
     # Random Number
     i = random.randint(0, 100)

@@ -1,7 +1,7 @@
 
 def getAvailableSections(Anomaly, Player):
     """Checks for possible Actions with Anomaly"""
-    sectionList = [Quit, Merchant, Trader, EquipmentDealer, Spaceport]
+    sectionList = [Quit, Merchant, Trader, EquipmentDealer, Gateport, Spaceport]
 
     availableSections = list()
 
@@ -92,6 +92,9 @@ class Merchant(AnomalySection):
     def __init__(self, Anomaly, Player):
         self.mainList = Anomaly.goodsProduced
 
+        if Player.currentShip.cargoCapacity() <= 0:
+            raise AttributeError
+
         self.prices = Anomaly.prices
 
         self.interactionType = 'Buy'
@@ -106,11 +109,14 @@ class Merchant(AnomalySection):
         # Currently One Good per buy
         Amount = 1
 
+        if Player.currentShip.cargoCapacity() <= 0:
+            return
+
+        Player.currentShip.loadCargo(GoodToBuy, Amount)
+
         price = self.prices[GoodToBuy]
 
         Player.spendCredits(price)
-
-        Player.currentShip.loadCargo(GoodToBuy, Amount)
 
         return GoodToBuy
 
@@ -196,6 +202,9 @@ class EquipmentDealer(AnomalySection):
     def __init__(self, Anomaly, Player):
         self.mainList = Anomaly.roomsForSale
 
+        if not Anomaly.roomsForSale:
+            raise AttributeError
+
         self.interactionType = 'Buy'
 
         self.cursor = -1
@@ -208,6 +217,10 @@ class EquipmentDealer(AnomalySection):
         Player.spendCredits(RoomToBuy.price)
 
         Player.currentShip.attachRoom(RoomToBuy)
+
+        Anomaly.roomsForSale.remove(RoomToBuy)
+
+        return True
 
     def index(self, roomName):
         for room in self.mainList:
@@ -242,5 +255,25 @@ class EquipmentDealer(AnomalySection):
         return infoStr
 
 
-# class OperationsOffice(AnomalySection):
-#         self.mainList = 
+class Gateport(AnomalySection):
+    def __init__(self, Anomaly, Player):
+        self.mainList = list()
+
+        self.costForUse = Anomaly.costForUse
+
+        self.interactionType = 'Travel'
+
+        self.cursor = -1
+
+    def __call__(self, Anomaly, Player):
+        Player.spendCredits(self.costForUse)
+
+        Player.currentShip.maxTravelDistance.mock(9999999)
+        Player.currentShip.maintenanceCosts.mock(0.00000001)
+
+    def infoString(self):
+        infoStr = ''
+
+        infoStr += 'Gate Port - Jump to Anywhere in Space'
+
+        return infoStr

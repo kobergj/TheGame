@@ -25,13 +25,11 @@ def beginFight(Ship, Enemy):
             # Player won round
             Enemy.shieldStrength.addBoost(damage*-1)
 
-            fight = viz.endOfRound(Ship, Enemy, players_dice, enemies_dice)
-
         elif enemies_atk > players_atk:
             # Enemy wins round
             Ship.shieldStrength.addBoost(damage*-1)
 
-            fight = viz.endOfRound(Ship, Enemy, players_dice, enemies_dice)
+        fight = viz.endOfRound(Ship, Enemy, players_dice, enemies_dice)
 
         if Ship.shieldStrength() <= 0:
             viz.fightLost()
@@ -39,7 +37,7 @@ def beginFight(Ship, Enemy):
             quit()
 
         if Enemy.shieldStrength() <= 0:
-            viz.fightWon()
+            viz.fightWon(Ship, Enemy)
 
             return True
 

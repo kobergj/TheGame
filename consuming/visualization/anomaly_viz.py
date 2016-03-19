@@ -4,18 +4,18 @@ def chooseSection(Anomaly, Player, AvailableSections):
     print '\n' * 100
 
     # Border
-    print '--' * 20
+    print '--' * 40
 
     # Information Screen
-    information = generateInfoString(Anomaly, Player)
+    information = generateInfoString(Anomaly, Player, AvailableSections=AvailableSections)
     print information
 
-    # Border
-    print '--' * 20
-
     # Option Screen
-    options = generateSectionsString(AvailableSections)
-    print options
+    # options = generateSectionsString(AvailableSections)
+    # print options
+
+    # Border
+    print '--' * 40
 
     # Await Choice
     choice = raw_input()
@@ -23,7 +23,7 @@ def chooseSection(Anomaly, Player, AvailableSections):
     while True:
 
         if choice == '':
-            return AvailableSections[1]
+            return AvailableSections[-1]
 
         try:
             choice = int(choice)
@@ -43,23 +43,26 @@ def chooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
     # Margin
     print '\n'*100
     # Border
-    print '--' * 20
+    print '--' * 40
+
     # Gen Section Info
-    secinfo = generateInfoString(Anomaly, Player)
+    secinfo = generateInfoString(Anomaly, Player, Section, LastInteractionInfo)
     print secinfo
-    # Last Interaction
-    if LastInteractionInfo is not True:
-        print "%s: %s" % (Section.interactionType, LastInteractionInfo)
-    # Gen Str
-    interactions = generateInteractionsString(Section, LastInteractionInfo)
-    print interactions
+
+    # Border
+    print '--' * 40
+
     # Await Choice
     choice = raw_input()
 
     while True:
         if choice == '':
-            number = Section.index(LastInteractionInfo)
-            return Section[number]
+            if LastInteractionInfo != True:
+                number = Section.index(LastInteractionInfo)
+
+                return Section[number]
+
+            return
 
         try:
             formatedChoice = int(choice)
@@ -88,7 +91,7 @@ def chooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
     # return Section[choice-1]
 
 
-def generateInfoString(Anomaly, Player):
+def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, AvailableSections=None):
     # Anomaly Type
     anomalyType = Anomaly.__class__.__name__
     # Init
@@ -97,16 +100,18 @@ def generateInfoString(Anomaly, Player):
     info += "\n You are at %s %s" % (anomalyType, Anomaly.name)
 
     longInfo = """
-    You are at ANOMALYTYPE ANOMALYNAME
-    Current Stats:
-     Credits: CREDS
-     Attack:  ATTACK                        Defense: DEFENSE
-     Maximum Travel Distance: TRAVELDIST Maintenance Costs: MAINTCOST
+        Current Stats:
+            Credits: CREDS
+            Attack:  ATTACK    Defense: DEFCURR/DEFMAX
+            Maximum Travel Distance: TRAVELDIST
+            Maintenance Costs: MAINTCOST
 
-     Cargo Bay: CURRENTCARGO/MAXCARGO -> INCARGO
+            Cargo Bay: CURRENTCARGO/MAXCARGO -> INCARGO
 
-     Rooms: CURRENTROOMS/MAXROOMS
-            ROOMS
+            Rooms:  CURRENTROOMS/MAXROOMS
+                    ROOMS
+
+        You are at ANOMALYTYPE ANOMALYNAME
     """
 
     # cargoBay = ''
@@ -127,7 +132,9 @@ def generateInfoString(Anomaly, Player):
 
     longInfo = longInfo.replace('ATTACK', str(Player.currentShip.attackPower()))
 
-    longInfo = longInfo.replace('DEFENSE', str(Player.currentShip.shieldStrength()))
+    longInfo = longInfo.replace('DEFCURR', str(Player.currentShip.shieldStrength()))
+
+    longInfo = longInfo.replace('DEFMAX', str(Player.currentShip.shieldStrength()))
 
     longInfo = longInfo.replace('TRAVELDIST', str(Player.currentShip.maxTravelDistance()))
 
@@ -146,9 +153,20 @@ def generateInfoString(Anomaly, Player):
 
     longInfo = longInfo.replace('ROOMS', roomString)
 
+    # Add Options
+    if Section == True:
+        longInfo += generateSectionsString(AvailableSections)
+    else:
+        longInfo += '\n\n\n'
+
     # Add Goods Produced
     try:
-        goodsSaleInfo = "Goods For Sale: \n         "
+        infoExtension = """
+        Merchant - Sells Goods:
+            GOODSFORSALEINFO
+        """
+
+        goodsSaleInfo = ''
         for good in Anomaly.goodsProduced:
             goodsInfo = "< GOODNAME: GOODPRICE >  "
 
@@ -158,14 +176,26 @@ def generateInfoString(Anomaly, Player):
 
             goodsSaleInfo += goodsInfo
 
-        longInfo += goodsSaleInfo
+        infoExtension = infoExtension.replace('GOODSFORSALEINFO', goodsSaleInfo)
+
+        longInfo += infoExtension
+
+        if Section.__class__.__name__ == 'Merchant':
+            longInfo += generateInteractionsString(Section, LastInteractionInfo)
+        else:
+            longInfo += '\n\n'
 
     except AttributeError:
         pass
 
     # Add Goods Consumed
     try:
-        goodsBuyInfo = "\n    Goods Wanted: \n        "
+        infoExtension = """
+        Trader - Buys Goods:
+            GOODSBUYINFO
+        """
+
+        goodsBuyInfo = ''
         for good in Anomaly.goodsConsumed:
             goodsInfo = "< GOODNAME: GOODPRICE >  "
 
@@ -175,7 +205,14 @@ def generateInfoString(Anomaly, Player):
 
             goodsBuyInfo += goodsInfo
 
-        longInfo += goodsBuyInfo
+        infoExtension = infoExtension.replace('GOODSBUYINFO', goodsBuyInfo)
+
+        longInfo += infoExtension
+
+        if Section.__class__.__name__ == 'Trader':
+            longInfo += generateInteractionsString(Section, LastInteractionInfo)
+        else:
+            longInfo += '\n\n'
 
     except AttributeError:
         pass
@@ -183,9 +220,9 @@ def generateInfoString(Anomaly, Player):
 
     # Add Rooms For Sale
     try:
-        roomSaleInfo = """Rooms For Sale: \n"""
+        roomSaleInfo = """      Equipment Dealer - Sells Rooms: \n"""
         for room in Anomaly.roomsForSale:
-            roomInfo = """      ROOMNAME: Price: PRICE """
+            roomInfo = """              ROOMNAME: Price: PRICE """
 
             roomInfo = roomInfo.replace('ROOMNAME', room.name)
 
@@ -203,6 +240,9 @@ def generateInfoString(Anomaly, Player):
             roomSaleInfo += roomInfo
 
         longInfo += roomSaleInfo
+
+        if Section.__class__.__name__ == 'EquipmentDealer':
+            longInfo += generateInteractionsString(Section, LastInteractionInfo)
 
     except AttributeError:
         pass
@@ -222,32 +262,41 @@ def generateInfoString(Anomaly, Player):
 
 def generateSectionsString(PossibleActions):
     # Init
-    info = ''
+    info = '\n          '
     # Option Information
 
     for interaction in PossibleActions:
         number = PossibleActions.index(interaction)
 
-        if number == 1:
+        if number == len(PossibleActions)-1:
             number = 'ENTER'
 
-        info += '\n[%s] %s' % (str(number), interaction.infoString())
+        info += '/ [%s] %s /' % (str(number), interaction.__class__.__name__)
+
+    info += '\n \n'
 
     return info
 
 
 def generateInteractionsString(Section, LastInteractionInfo):
     # Gen Action String
-    actStr = '[0] Back \n'
+    actStr = """
+            / [0] Back /"""
+
+    if LastInteractionInfo == True:
+        actStr = actStr.replace('0', 'ENTER')
     # Loop
     for interaction, info in Section:
         number = str(Section.index(interaction)+1)
         if LastInteractionInfo == interaction:
             number = 'ENTER'
-        actStr += '[' + number + '] '
+        actStr += '/ [' + number + '] '
 
         actStr += Section.interactionType + ' ' + interaction
 
-        actStr += ' for ' + str(info) + '\n'
+        # actStr += ' for ' + str(info) + ' /'
+        actStr += ' /'
+
+    actStr += '\n'
 
     return actStr

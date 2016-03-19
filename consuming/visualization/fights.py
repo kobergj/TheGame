@@ -10,6 +10,8 @@ def showFightInfo(Ship, Enemy):
         You:    Attack Power: ATTACK    Defense: CURRENTHP/MAXHP
                             -- vs --
         Enemy:  Attack Power: EMATK     Defense: EMCDEF/EMMAXDEF
+
+            [ENTER] Fight!      [1] Flee..
     """
     
 
@@ -23,13 +25,12 @@ def showFightInfo(Ship, Enemy):
 
     print longInfo
 
-    to_print = '\n' * 2
-    to_print += '[ENTER] Fight!'
+    # to_print += '[ENTER] Fight!'
 
-    to_print += '\n'
-    to_print += '[1] Flee...'
+    # to_print += '\n'
+    # to_print += '[1] Flee...'
 
-    print to_print
+    # print to_print
 
     choice = raw_input()
 
@@ -82,15 +83,13 @@ def endOfRound(Ship, Enemy, PlayersDice, EnemiesDice):
 
 def fightWon(Ship, Enemy):
     fightWonInfo = """
-    
-    Congratz. Fight Won.
+        Congratz. Fight Won.
 
-    Rewards:
-        Credits: CREDITAMOUNT
-        Goods: GOODS
+        Rewards:
+            Credits: CREDITAMOUNT
+            Goods: GOODS
 
-    Press Enter to Continue
-
+        Press Enter to Continue
     """
     fightWonInfo = fightWonInfo.replace('CREDITAMOUNT', str(Enemy.lootableCredits))
 

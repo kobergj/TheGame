@@ -126,7 +126,7 @@ def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):
 
     # Override if Interaction Possible
     if anomaly.coordinates == Player.currentPosition:
-        infoString = interactionString(anomaly)
+        infoString = 'Land'
 
     finalString += infoString
 

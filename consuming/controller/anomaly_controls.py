@@ -1,7 +1,7 @@
 
 def getAvailableSections(Anomaly, Player):
     """Checks for possible Actions with Anomaly"""
-    sectionList = [Quit, Merchant, Spaceport]
+    sectionList = [Quit, Merchant, EquipmentDealer, Spaceport]
 
     availableSections = list()
 
@@ -22,18 +22,21 @@ def getAvailableSections(Anomaly, Player):
 class AnomalySection:
     """ Each Section of the Anomaly Contains the Interaction Information.
         Currently Implemented:
+        Quit            - Quit Game
 
-        Quit        - Quit Game
-        Merchant    - Buys Goods
-        Spaceport   - Depart from Anomaly"""
+        Merchant        - Sells Goods
+        EquipmentDealer - Sells Rooms
+
+        Spaceport       - Depart from Anomaly
+        """
 
     def __init__(self, Anomaly, Player):
         # Needs A Init Method which assigns all needed Stats
 
         # Interaction Type says what you can actualy DO with a Section
         self.interactionType = 'Nothing'
-        # Corresponding Player Stats
-        self.correspondingStats = {}
+        # Main List object. For Example List of Goods, Rooms, Ships, etc..
+        self.mainList = list()
 
     def __call__(self, Anomaly, Player, args=None):
         # Needs A Call Method which executes the Interaction
@@ -44,24 +47,30 @@ class AnomalySection:
         return self
 
     def __len__(self):
-        # Number of Possible Interactions
-        return 0
+        return len(self.mainList)
 
     def __getitem__(self, i):
-        # i must be an integer
-        return None
+        return self.mainList[i]
 
     def index(self, item):
-        # Corresponds to i
-        return 0
+        return self.mainList.index(item)
 
     def next(self):
-        # Iterate Over possible Actions
-        raise StopIteration
+        self.cursor += 1
+
+        if self.cursor >= len(self.mainList):
+            # Reset Cursor
+            self.cursor = -1
+            raise StopIteration
+
+        item = self.mainList[self.cursor]
+
+        return item, None
 
     def infoString(self):
         # Generate a Information String
         return 'None'
+
 
 
 class Quit(AnomalySection):
@@ -80,18 +89,13 @@ class Spaceport(AnomalySection):
 class Merchant(AnomalySection):
 
     def __init__(self, Anomaly, Player):
-        self.goodsForSale = Anomaly.goodsProduced
+        self.mainList = Anomaly.goodsProduced
 
         self.prices = Anomaly.prices
 
         self.interactionType = 'Buy'
 
         self.cursor = -1
-
-        self.correspondingStats = {
-            'Cargo Capacity':   Player.currentShip.cargoCapacity,
-            'In Cargo Bay':     Player.currentShip.inCargo
-        }
 
     def __call__(self, Anomaly, Player, GoodToBuy):
 
@@ -109,27 +113,15 @@ class Merchant(AnomalySection):
 
         return GoodToBuy
 
-    def __iter__(self):
-        return self
-
-    def __len__(self):
-        return len(self.goodsForSale)
-
-    def __getitem__(self, i):
-        return self.goodsForSale[i]
-
-    def index(self, good):
-        return self.goodsForSale.index(good)
-
     def next(self):
         self.cursor += 1
 
-        if self.cursor >= len(self.goodsForSale):
+        if self.cursor >= len(self.mainList):
             # Reset Cursor
             self.cursor = -1
             raise StopIteration
 
-        good = self.goodsForSale[self.cursor]
+        good = self.mainList[self.cursor]
 
         price = self.prices[good]
 
@@ -141,7 +133,56 @@ class Merchant(AnomalySection):
 
         infoStr += 'Merchant - Sells '
 
-        for good in self.goodsForSale:
+        for good in self.mainList:
             infoStr += '%s@%s ' % (good, self.prices[good])
+
+        return infoStr
+
+class EquipmentDealer(AnomalySection):
+    def __init__(self, Anomaly, Player):
+        self.mainList = Anomaly.roomsForSale
+
+        self.interactionType = 'Buy'
+
+        self.cursor = -1
+
+    def __call__(self, Anomaly, Player, RoomToBuy):
+
+        if not RoomToBuy:
+            return
+
+        Player.spendCredits(RoomToBuy.price)
+
+        Player.currentShip.attachRoom(RoomToBuy)
+
+    def index(self, roomName):
+        for room in self.mainList:
+            if room.name == roomName:
+                break
+
+        return self.mainList.index(room)
+
+    def next(self):
+        self.cursor += 1
+
+        if self.cursor >= len(self.mainList):
+            # Reset Cursor
+            self.cursor = -1
+            raise StopIteration
+
+        room = self.mainList[self.cursor]
+
+        price = room.price
+
+        return room.name, price
+
+
+    def infoString(self):
+        infoStr = ''
+
+        infoStr += 'Equipment Dealer - Sells Rooms'
+
+        # for good in self.mainList:
+        #     infoStr += '%s@%s ' % (good, self.prices[good])
 
         return infoStr

@@ -8,9 +8,9 @@ def flushTerminal():
 def showFightInfo(Ship, Enemy):
     to_print = ''
 
-    to_print += 'You: Atk:%s HP:%s' % (str(Ship.attackPower), str(Ship.shieldStrength))
+    to_print += 'You: Atk:%s HP:%s' % (str(Ship.attackPower()), str(Ship.shieldStrength()))
     to_print += '\nvs.\n'
-    to_print += 'Enemy: Atk:%s HP:%s' % (str(Enemy.attackPower), str(Enemy.shieldStrength))
+    to_print += 'Enemy: Atk:%s HP:%s' % (str(Enemy.attackPower()), str(Enemy.shieldStrength()))
 
     to_print += '\n'*2
     to_print += '[ENTER] Fight!'
@@ -42,8 +42,8 @@ def endOfRound(Ship, Enemy, PlayersDice, EnemiesDice):
 
     to_print += '\n'
 
-    players_atk = Ship.attackPower + PlayersDice
-    enemies_atk = Enemy.attackPower + EnemiesDice
+    players_atk = Ship.attackPower() + PlayersDice
+    enemies_atk = Enemy.attackPower() + EnemiesDice
 
     damage = players_atk - enemies_atk
 

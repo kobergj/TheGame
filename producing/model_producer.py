@@ -1,7 +1,7 @@
 # Models
 import producing.models.anomalies as mod
 import producing.models.ships as msp
-import producing.models.rooms as mro
+import producing.models.ship_content as mro
 import producing.models.universe as muv
 import producing.models.player as mpl
 

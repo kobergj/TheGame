@@ -49,9 +49,9 @@ def calculateTravelCosts(Player, Coordinates):
     distance = calculateDistance(Player.currentPosition, Coordinates)
 
     # Check if reachable
-    if distance <= Player.currentShip.maxTravelDistance:
+    if distance <= Player.currentShip.maxTravelDistance():
         # Calculate Costs
-        travelCosts = int(distance * Player.currentShip.maintenanceCosts)
+        travelCosts = int(distance * Player.currentShip.maintenanceCosts())
 
         return travelCosts
 

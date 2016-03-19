@@ -27,7 +27,8 @@ def generateRoomInformation(Database):
 
 def generateName(Database, Stats):
     name = ''
-    for stat in Stats:
+    for statInfo in Stats:
+        stat = statInfo[0]
         name += random.choice(Database.Rooms.RoomNameParts[stat])
         name += ' '
 
@@ -37,7 +38,7 @@ def generateName(Database, Stats):
 
 
 def generateStats(Database, RoomLevel):
-    statBoosts = dict()
+    statBoosts = list()
 
     for i in range(RoomLevel):
         stat = random.choice(Database.Rooms.StatBoosts.keys())
@@ -46,7 +47,7 @@ def generateStats(Database, RoomLevel):
 
         boost = random.randint(*boostBounds)
 
-        statBoosts.update({stat: boost})
+        statBoosts.append([stat, boost])
 
     return statBoosts
 
@@ -54,7 +55,7 @@ def generateStats(Database, RoomLevel):
 def generatePrice(stats):
     price = 0
 
-    for stat, value in stats.iteritems():
+    for stat, value in stats:
         price += (value*20)
 
     return price

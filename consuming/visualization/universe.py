@@ -92,8 +92,8 @@ def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):
 def interactionString(Anomaly):
     if Anomaly.enemies:
         # Possible Fight
-        emyatk = str(Anomaly.enemies[0].attackPower)
-        emydef = str(Anomaly.enemies[0].shieldStrength)
+        emyatk = str(Anomaly.enemies[0].attackPower())
+        emydef = str(Anomaly.enemies[0].shieldStrength())
 
         fight_or_land = 'Fight - Atk: %s, Def: %s ' % (emyatk, emydef)
 

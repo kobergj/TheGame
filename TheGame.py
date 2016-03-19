@@ -4,7 +4,7 @@ import producing.model_producer as pro
 
 import database.database as db
 
-NUMBER_OF_ANOMALIES = 20
+NUMBER_OF_ANOMALIES = 25
 
 MAX_COORDINATES = [15, 15]
 

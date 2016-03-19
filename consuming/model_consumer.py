@@ -88,6 +88,9 @@ class AnomalyInteraction():
             # Kill Enemy
             Anomaly.enemies.remove(enemy)
 
+        # You get repaired When you land
+        Player.currentShip.shieldStrength.reset()
+
         # Get List of Available Sections
         availableSections = ac.getAvailableSections(Anomaly, Player)
         # Choose Section to Interact with

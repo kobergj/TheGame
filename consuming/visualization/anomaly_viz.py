@@ -134,7 +134,7 @@ def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, 
 
     longInfo = longInfo.replace('DEFCURR', str(Player.currentShip.shieldStrength()))
 
-    longInfo = longInfo.replace('DEFMAX', str(Player.currentShip.shieldStrength()))
+    longInfo = longInfo.replace('DEFMAX', str(Player.currentShip.shieldStrength.startValue))
 
     longInfo = longInfo.replace('TRAVELDIST', str(Player.currentShip.maxTravelDistance()))
 
@@ -149,7 +149,7 @@ def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, 
         roomString += room.name + '  '
         for stat in room.statBoosts:
             roomString += stat.statName + ' ' + str(stat.startValue) + '  '
-        roomString += '\n            '
+        roomString += '\n                    '
 
     longInfo = longInfo.replace('ROOMS', roomString)
 

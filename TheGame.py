@@ -63,4 +63,5 @@ if __name__ == '__main__':
     # The Journey ...
     while True:
         # continues
-        con.interactWithAnomaly(player, universe)
+        # con.interactWithAnomaly(player, universe)
+        con.AnomalyInteraction(universe, player)

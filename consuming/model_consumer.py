@@ -1,24 +1,11 @@
-import consuming.controller.planet_interactions as pi
-import consuming.controller.spacegate_interactions as sgi
-import consuming.controller.starbase_interactions as sbi
-import consuming.controller.enemy_interactions as emy
-import consuming.controller.universe_interactions as ui
 
 import consuming.controller.anomaly_controls as ac
+import consuming.controller.enemy_interactions as emy
+
 import consuming.visualization.anomaly_viz as av
+import consuming.visualization.universe as uv
 
-
-LOCATION_OF_ARRIVING_FUNCS = {
-    'Planet':       pi.Arrive,
-    'Starbase':     sbi.Arrive,
-    'Spacegate':    sgi.Arrive,
-}
-
-LOCATION_OF_DEPARTING_FUNCS = {
-    'Planet':       pi.Depart,
-    'Starbase':     sbi.Depart,
-    'Spacegate':    sgi.Depart
-}
+import math
 
 
 def fillUniverse(Universe, NumberOfAnomalies):
@@ -29,29 +16,54 @@ def fillUniverse(Universe, NumberOfAnomalies):
         # Add Anomaly
         Universe.addAnomaly(anomaly)
 
+class AnomalyInteraction():
+    def __init__(self, Universe, Player):
+        # Get Anomaly
+        anomaly = Universe[Player.currentPosition]
+        # Update Anomaly
+        anomaly.update(Universe)
 
-def fightEnemy(Player, Universe):
-    # Get Anomaly
-    anomaly = Universe[Player.currentPosition]
-    # Get Enemy
-    enemy = anomaly.enemies[0]
-    # Begin Fight
-    won = emy.beginFight(Player.currentShip, enemy)
-    # Check For Winner
-    if won:
-        # Kill Enemy
-        anomaly.enemies.remove(enemy)
-    # Still a chance to flee
-    landAtAnomaly = ui.chooseInteractionType(Universe, Player)
+        # Interact Flag
+        self.interact = False
+        # Next Destination Coordinates
+        self.departFromAnomaly = False
 
-    return landAtAnomaly
+        # Start at Current Anomaly
+        Universe.coCursor = [Player.currentPosition[0]-1, Player.currentPosition[1]]
+
+        while not self.interact:
+            # Get a Anomaly
+            anomaly = Universe.next(infinity=True)
+            # Calc Price
+            costForTravel = calculateTravelCosts(Player, anomaly.coordinates)
+            # Reachable?
+            if costForTravel is not None:
+                # Await choice
+                self.interact = uv.chooseNextDestination(Universe, Player, anomaly.coordinates)
+
+        # Want to Land?
+        if anomaly.coordinates == Player.currentPosition:
+            # Fight Enemies First
+            while anomaly.enemies:
+                # Get Enemy
+                enemy = anomaly.enemies.pop(0)
+                # Fight
+                self.fight(enemy, Player)
+
+            # Interact with Anomaly
+            while not self.departFromAnomaly:
+                # Land At Anomaly
+                self.departFromAnomaly = self.land(anomaly, Player)
+
+        # Depart
+        self.depart(anomaly, Player)
 
 
-def landAtAnomaly(Player, Anomaly):
-    # land
-    atAnomaly = True
+    def fight(self, Enemy, Player):
+        # Begin Fight
+        emy.beginFight(Player.currentShip, Enemy)
 
-    while atAnomaly:
+    def land(self, Anomaly, Player):
         # Get List of Available Sections
         availableSections = ac.getAvailableSections(Anomaly, Player)
         # Choose Section to Interact with
@@ -69,34 +81,38 @@ def landAtAnomaly(Player, Anomaly):
                 # Execute
                 atSection = section(Anomaly, Player, sectionCallArgument)
 
+            return
+
         else:
-            atAnomaly = section(Anomaly, Player)
+            section(Anomaly, Player)
+            return True
 
-    return
+
+    def depart(self, Anomaly, Player):
+        Player.travelTo(Anomaly.coordinates)
 
 
-def interactWithAnomaly(Player, Universe):
-    # Get Anomaly
-    anomaly = Universe[Player.currentPosition]
-    # Update Anomaly
-    anomaly.update(Universe)
+def calculateTravelCosts(Player, Coordinates):
+    # Get Distance
+    distance = calculateDistance(Player.currentPosition, Coordinates)
 
-    # Choose Next Destination
-    land = ui.chooseInteractionType(Universe, Player)
+    # Check if reachable
+    if distance <= Player.currentShip.maxTravelDistance():
+        # Calculate Costs
+        travelCosts = int(distance * Player.currentShip.maintenanceCosts())
 
-    # Begin Landing Sequence
-    while land and anomaly.enemies:
-        land = fightEnemy(Player, Universe)
+        return travelCosts
 
-    while land and not anomaly.enemies:
-        # Land
-        landAtAnomaly(Player, anomaly)
-        # Done Shopping?
-        land = ui.chooseInteractionType(Universe, Player)
 
-    # Extr Anomaly Class
-    anomalyClass = anomaly.__class__.__name__
-    # Get Depart Func
-    depart = LOCATION_OF_DEPARTING_FUNCS[anomalyClass]
-    # Depart
-    depart(anomaly, Player)
+def calculateDistance(point1, point2):
+    distance = 0.0
+    for i in range(len(point1)):
+        x = point1[i]
+        y = point2[i]
+
+        distance += (x - y)**2
+
+    distance = math.sqrt(distance)
+    distance = round(distance, 2)
+
+    return distance

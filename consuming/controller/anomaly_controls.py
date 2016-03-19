@@ -1,7 +1,7 @@
 
 def getAvailableSections(Anomaly, Player):
     """Checks for possible Actions with Anomaly"""
-    sectionList = [Quit, Merchant, EquipmentDealer, Spaceport]
+    sectionList = [Quit, Merchant, Trader, EquipmentDealer, Spaceport]
 
     availableSections = list()
 
@@ -25,6 +25,7 @@ class AnomalySection:
         Quit            - Quit Game
 
         Merchant        - Sells Goods
+        Trader          - Buys Goods
         EquipmentDealer - Sells Rooms
 
         Spaceport       - Depart from Anomaly
@@ -78,7 +79,7 @@ class Quit(AnomalySection):
         quit()
 
     def infoString(self):
-        return 'Quit'
+        return 'Graveyard - Quit'
 
 
 class Spaceport(AnomalySection):
@@ -131,10 +132,63 @@ class Merchant(AnomalySection):
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Merchant - Sells '
+        infoStr += 'Merchant - Buy Goods Here'
 
-        for good in self.mainList:
-            infoStr += '%s@%s ' % (good, self.prices[good])
+        return infoStr
+
+
+class Trader(AnomalySection):
+
+    def __init__(self, Anomaly, Player):
+        sharedGoods = set(Anomaly.goodsConsumed).intersection(set(Player.currentShip.inCargo.keys()))
+
+        if not sharedGoods:
+            raise AttributeError
+
+        # Build Main List
+        self.mainList = list(sharedGoods)
+
+        self.prices = Anomaly.prices
+
+        self.interactionType = 'Sell'
+
+        self.cursor = -1
+
+    def __call__(self, Anomaly, Player, GoodToSell):
+
+        if not GoodToSell:
+            return
+
+        # Currently One Good per buy
+        Amount = 1
+
+        price = self.prices[GoodToSell]
+
+        Player.earnCredits(price)
+
+        Player.currentShip.unloadCargo(GoodToSell, Amount)
+
+        return GoodToSell
+
+    def next(self):
+        self.cursor += 1
+
+        if self.cursor >= len(self.mainList):
+            # Reset Cursor
+            self.cursor = -1
+            raise StopIteration
+
+        good = self.mainList[self.cursor]
+
+        price = self.prices[good]
+
+        return good, price
+
+    # I think this belongs to viz. Need a better Solution here
+    def infoString(self):
+        infoStr = ''
+
+        infoStr += 'Trader - Sell Goods Here'
 
         return infoStr
 
@@ -186,3 +240,7 @@ class EquipmentDealer(AnomalySection):
         #     infoStr += '%s@%s ' % (good, self.prices[good])
 
         return infoStr
+
+
+# class OperationsOffice(AnomalySection):
+#         self.mainList = 

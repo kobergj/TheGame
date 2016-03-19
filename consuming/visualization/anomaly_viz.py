@@ -68,14 +68,10 @@ def generateInfoString(Anomaly, Player):
     You are at ANOMALYTYPE ANOMALYNAME
     Current Stats:
      Credits: CREDS
+     Attack:  ATTACK                        Defense: DEFENSE
+     Maximum Travel Distance: TRAVELDIST Maintenance Costs: MAINTCOST
 
-     Attack:  ATTACK        Defense: DEFENSE
-
-     Maximum Travel Distance: TRAVELDIST 
-     Maintenance Costs: MAINTCOST
-
-     Cargo Bay: CURRENTCARGO/MAXCARGO
-            INCARGO
+     Cargo Bay: CURRENTCARGO/MAXCARGO -> INCARGO
 
      Rooms: CURRENTROOMS/MAXROOMS
             ROOMS
@@ -91,7 +87,7 @@ def generateInfoString(Anomaly, Player):
 
     longInfo = longInfo.replace('CREDS', str(Player.credits))
 
-    longInfo = longInfo.replace('CURRENTCARGO', str(Player.currentShip.cargoCapacity()))
+    longInfo = longInfo.replace('CURRENTCARGO', str(Player.currentShip.cargoCapacity.startValue - Player.currentShip.cargoCapacity()))
 
     longInfo = longInfo.replace('MAXCARGO', str(Player.currentShip.cargoCapacity.startValue))
 
@@ -105,7 +101,7 @@ def generateInfoString(Anomaly, Player):
 
     longInfo = longInfo.replace('MAINTCOST', str(Player.currentShip.maintenanceCosts()))
 
-    longInfo = longInfo.replace('CURRENTROOMS', str(Player.currentShip.spaceForRooms()))
+    longInfo = longInfo.replace('CURRENTROOMS', str(Player.currentShip.spaceForRooms.startValue - Player.currentShip.spaceForRooms()))
 
     longInfo = longInfo.replace('MAXROOMS', str(Player.currentShip.spaceForRooms.startValue))
 
@@ -114,9 +110,70 @@ def generateInfoString(Anomaly, Player):
         roomString += room.name + '  '
         for stat in room.statBoosts:
             roomString += stat.statName + ' ' + str(stat.startValue) + '  '
-        roomString += '\n'
+        roomString += '\n            '
 
     longInfo = longInfo.replace('ROOMS', roomString)
+
+    # Add Goods Produced
+    try:
+        goodsSaleInfo = "Goods For Sale: \n         "
+        for good in Anomaly.goodsProduced:
+            goodsInfo = "< GOODNAME: GOODPRICE >  "
+
+            goodsInfo = goodsInfo.replace('GOODNAME', good)
+
+            goodsInfo = goodsInfo.replace('GOODPRICE', str(Anomaly.prices[good]))
+
+            goodsSaleInfo += goodsInfo
+
+        longInfo += goodsSaleInfo
+
+    except AttributeError:
+        pass
+
+    # Add Goods Consumed
+    try:
+        goodsBuyInfo = "\n    Goods Wanted: \n        "
+        for good in Anomaly.goodsConsumed:
+            goodsInfo = "< GOODNAME: GOODPRICE >  "
+
+            goodsInfo = goodsInfo.replace('GOODNAME', good)
+
+            goodsInfo = goodsInfo.replace('GOODPRICE', str(Anomaly.prices[good]))
+
+            goodsBuyInfo += goodsInfo
+
+        longInfo += goodsBuyInfo
+
+    except AttributeError:
+        pass
+
+
+    # Add Rooms For Sale
+    try:
+        roomSaleInfo = """Rooms For Sale: \n"""
+        for room in Anomaly.roomsForSale:
+            roomInfo = """      ROOMNAME: Price: PRICE """
+
+            roomInfo = roomInfo.replace('ROOMNAME', room.name)
+
+            roomInfo = roomInfo.replace('PRICE', str(room.price))
+
+            for statBoost in room.statBoosts:
+                roomInfo += "/ STATNAME: STATVALUE "
+
+                roomInfo = roomInfo.replace('STATNAME', statBoost.statName)
+
+                roomInfo = roomInfo.replace('STATVALUE', str(statBoost.startValue))
+
+            roomInfo += '\n'
+
+            roomSaleInfo += roomInfo
+
+        longInfo += roomSaleInfo
+
+    except AttributeError:
+        pass
 
     return longInfo
 

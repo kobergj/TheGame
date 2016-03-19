@@ -1,14 +1,14 @@
 
-def Arrive(Spacegate, Player):
-    # Pay Fee
-    Player.spendCredits(Spacegate.costForUse)
+# def Arrive(Spacegate, Player):
+#     # Pay Fee
+#     Player.spendCredits(Spacegate.costForUse)
 
-    # Override travelcosts
-    Spacegate.mockPlayersTravelDist(Player)
+#     # Override travelcosts
+#     Spacegate.mockPlayersTravelDist(Player)
 
-    return
+#     return
 
 
-def Depart(Spacegate, Player):
-    # Get Travel Dist Back
-    Spacegate.returnPlayersTravelDist(Player)
+# def Depart(Spacegate, Player):
+#     # Get Travel Dist Back
+#     Spacegate.returnPlayersTravelDist(Player)

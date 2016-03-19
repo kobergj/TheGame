@@ -1,60 +1,60 @@
-import consuming.visualization.starbases as viz
+# import consuming.visualization.starbases as viz
 
 
-def Arrive(Starbase, Player):
-    while True:
-        # Define Possible Actions
-        possibleActions = {'quit': Quit,
-                           'inspectShip': InspectShip,
-                           'inspectRooms': InspectRooms,
-                           'depart': Depart
-                           }
+# def Arrive(Starbase, Player):
+#     while True:
+#         # Define Possible Actions
+#         possibleActions = {'quit': Quit,
+#                            'inspectShip': InspectShip,
+#                            'inspectRooms': InspectRooms,
+#                            'depart': Depart
+#                            }
 
-        # Await Player Choice
-        choice = viz.starbaseArrival(Starbase, Player)
+#         # Await Player Choice
+#         choice = viz.starbaseArrival(Starbase, Player)
 
-        # Execute Choice
-        killSwitch = possibleActions[choice](Starbase, Player)
+#         # Execute Choice
+#         killSwitch = possibleActions[choice](Starbase, Player)
 
-        if killSwitch:
-            return
-
-
-def Depart(Planet, Player):
-    return True
+#         if killSwitch:
+#             return
 
 
-def Quit(Planet, Player):
-    quit()
+# def Depart(Planet, Player):
+#     return True
 
 
-def InspectShip(Starbase, Player):
-    # Define Possible Actions
-    possibleActions = {'refuse': RefuseShip,
-                       'accept': AcceptShip
-                       }
-
-    # Await Players Choice
-    choice = viz.buyShip(Starbase, Player)
-    print choice
-
-    # Execute Choice
-    possibleActions[choice](Starbase, Player)
+# def Quit(Planet, Player):
+#     quit()
 
 
-def RefuseShip(Starbase, Player):
-    pass
+# def InspectShip(Starbase, Player):
+#     # Define Possible Actions
+#     possibleActions = {'refuse': RefuseShip,
+#                        'accept': AcceptShip
+#                        }
+
+#     # Await Players Choice
+#     choice = viz.buyShip(Starbase, Player)
+#     print choice
+
+#     # Execute Choice
+#     possibleActions[choice](Starbase, Player)
 
 
-def AcceptShip(Starbase, Player):
-    # Spend Credits
-    Player.spendCredits(Player.currentShip.price)
-
-    # Switch Ship
-    Player.switchShip(Starbase.shipForSale)
-
-    Starbase.shipForSale = None
+# def RefuseShip(Starbase, Player):
+#     pass
 
 
-def InspectRooms(Starbase, Player):
-    viz.buyRooms(Starbase, Player)
+# def AcceptShip(Starbase, Player):
+#     # Spend Credits
+#     Player.spendCredits(Player.currentShip.price)
+
+#     # Switch Ship
+#     Player.switchShip(Starbase.shipForSale)
+
+#     Starbase.shipForSale = None
+
+
+# def InspectRooms(Starbase, Player):
+#     viz.buyRooms(Starbase, Player)

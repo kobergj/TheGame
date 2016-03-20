@@ -92,52 +92,34 @@ class Universe():
 
         return universeMap
 
-    # def callNextAnomaly(self, currentPosition):
-    #     # Set starting Slice
-    #     startingSlice = currentPosition[1]
-    #     # Loop through bigger Slices
-    #     for verticalSlice in self.Map[startingSlice:]:
-    #         # Set starting point
-    #         startingPoint = currentPosition[0] + 1
-    #         # Loop through anomalies
-    #         for anomaly in verticalSlice[startingPoint:]:
-    #             # Check for anomaly
-    #             if anomaly:
-    #                 return anomaly
+    def update(self):
+        for anomaly in self:
+            # Get Enemy from Queue
+            newEnemy = self.enemyQ.get()
+            # Append to Enemy List
+            if newEnemy:
+                anomaly.enemies.append(newEnemy)
 
-    #     # No Anomaly Found, continue at beginning
-    #     for verticalSlice in self.Map:
-    #         # Loop through anomalies
-    #         for anomaly in verticalSlice:
-    #             # Check for anomaly
-    #             if anomaly:
-    #                 return anomaly
+            try:
+                # Get Ship
+                ship = self.shipQ.get()
 
-    # def callLastAnomaly(self, currentPosition):
-    #     # Set starting Slice
-    #     startingSlice = currentPosition[1] + 1
-    #     # Loop through Smaller Slices
-    #     for verticalSlice in reversed(self.Map[:startingSlice]):
-    #         # Set starting point
-    #         startingPoint = currentPosition[0]
-    #         # Loop through anomalies
-    #         for anomaly in reversed(verticalSlice[:startingPoint]):
-    #             # Check for anomaly
-    #             if anomaly:
-    #                 return anomaly
+                # Attach Ship to Station
+                anomaly.changeShipForSale(ship)
+            except AttributeError:
+                pass
 
-    #     # No Anomaly Found, continue at End
-    #     for verticalSlice in reversed(self.Map):
-    #         # Loop through anomalies
-    #         for anomaly in reversed(verticalSlice):
-    #             # Check for anomaly
-    #             if anomaly:
-    #                 return anomaly
+            try:
+                # Delete One Room
+                if anomaly.roomsForSale:
+                    anomaly.roomsForSale.pop(0)
 
-    # def callAnomaly(self, Coordinates):
-    #     verticalSlice = Coordinates[1]
-    #     pointInSpace = Coordinates[0]
+                # Fill Room List
+                while len(anomaly.roomsForSale) < anomaly.maxRoomsForSale:
+                    # Get Room
+                    room = self.roomQ.get()
 
-    #     anomaly = self.Map[verticalSlice][pointInSpace]
-
-    #     return anomaly
+                    # Add Room
+                    anomaly.addRoomForSale(room)
+            except AttributeError:
+                pass

@@ -20,7 +20,7 @@ class DynamicDatabase:
                        'Uranus', 'BingoPlanet', 'CrappyWorld']
 
     class Universe:
-        EnemyProbability = 50
+        EnemyProbability = 10
 
         AnomalyTypes = ['Planet', 'Planet', 'Planet', 'Spacegate', 'Starbase', 'Starbase']
 

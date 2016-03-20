@@ -12,7 +12,6 @@ class Ship():
 
         # Initialize Cargobay
         self.cargoCapacity = cont.Stat(shipStats['cargoCapacity'])
-        self.freeCargoSpace = cont.Stat(shipStats['cargoCapacity'])
 
         # Power Engines
         self.maxTravelDistance = cont.Stat(shipStats['maxTravelDistance'])
@@ -24,11 +23,9 @@ class Ship():
         # activate Shields
         self.shieldStrength = cont.Stat(shipStats['shieldStrength'])
 
-        # Testing Stats
+        # Rooms & Goods
         self.rooms = list()
         self.inCargo = dict()
-        # self.CargoBay = self.cont.CargoBay()
-        # self.HappyCargoCap = ShipStat(shipStats['cargoCapacity'])
 
     # Room Operations
     def attachRoom(self, Room):
@@ -39,10 +36,16 @@ class Ship():
         for statBoost in Room.statBoosts:
             statBoost(self)
 
-    def detachRoom(self, Room):
-        Room.powerDown(self)
+        Room.active = True
 
-        self.rooms.remove(Room)
+    def detachRoom(self, Room, remove=False):
+        for statBoost in Room.statBoosts:
+            statBoost.remove(self)
+
+        Room.active = False
+
+        if remove:
+            self.rooms.remove(Room)
 
     # CargoBay Methods
     def loadCargo(self, cargoId, cargoAmount=1):

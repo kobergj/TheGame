@@ -13,15 +13,19 @@ def fillUniverse(Universe, NumberOfAnomalies):
     for i in range(NumberOfAnomalies):
         # Get Anomaly
         anomaly = Universe.anomalyQ.get()
-        # First Update
-        anomaly.update(Universe)
         # Add Anomaly
         Universe.addAnomaly(anomaly)
+
+    # First Update
+    # Universe.update(Universe)
 
 class AnomalyInteraction():
     def __init__(self, Universe, Player):
         # Get Anomaly
         anomaly = Universe[Player.currentPosition]
+
+        # Update
+        Universe.update()
 
         # Interact Flag
         self.interact = False
@@ -53,10 +57,6 @@ class AnomalyInteraction():
                 except FleeError:
                     self.departFromAnomaly = True
         else:
-            # Get Current Anomaly
-            current_anomaly = Universe[Player.currentPosition]
-            # Update
-            current_anomaly.update(Universe)
             # Depart
             self.depart(anomaly, Player)
 

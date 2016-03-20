@@ -6,7 +6,7 @@ def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=
     if not ActiveCoordinates:
         ActiveCoordinates = Player.currentPosition
 
-    drawMap(Universe, Player, ActiveCoordinates)
+    drawMap(Universe, Player, ActiveCoordinates, TravelCosts)
 
     anomalyInfo(Universe, Player, ActiveCoordinates)
 
@@ -28,47 +28,85 @@ def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=
     return True
 
 
-def drawMap(Universe, Player, ActiveCords):
-    # Where to store them best?
-    mapIdentifiers = {'Empty':      '    ',
-                      'Planet':     '()',
-                      'Spacegate':  '[]',
-                      'Starbase':   '$$',
+def drawMap(Universe, Player, ActiveCords, TravelCosts):
+    # Where to store them best? 7   ' A12D12'
+    mapIdentifiers = {'Empty':      '       ',
+                      'Planet':[    '  /Pl\ ',
+                                    '  \__/ ',
+                                    # '   ()  '
+                                ],
+                      'Spacegate':[ '  /Sg\ ',
+                                    '  \__/ ',
+                                    # '   []  '
+                                ],
+                      'Starbase':[  '  /Sb\ ',
+                                    '  \__/ ',
+                                    # '   $$  '
+                                ]
                       }
 
-    print ' ####'*(len(Universe.Map[0]))
+    print '#######'*(len(Universe.Map[0])) + '##'
 
     # Loop through vertical Slices of Universe
     for verticalSlice in Universe.Map:
-        print '#',
+        first_row = '# '
+        second_row = '# '
+        # third_row = '# '
         # Loop through Anomalies
         for anomaly in verticalSlice:
             # Assume its Empty
-            to_print = mapIdentifiers['Empty']
+            first_line = mapIdentifiers['Empty']
+            second_line = mapIdentifiers['Empty']
+            # third_line = mapIdentifiers['Empty']
 
             if anomaly:
                 # Load Map Identifier
-                to_print = mapIdentifiers[anomaly.__class__.__name__]
+                anomalyType = anomaly.__class__.__name__
 
-                # Check if Anomaly is Current
+                first_line = mapIdentifiers[anomalyType][0]
+                second_line = mapIdentifiers[anomalyType][1]
+                # third_line = mapIdentifiers[anomalyType][2]
+
+                # Check if Anomaly is Active
+                if ActiveCords == anomaly.coordinates:
+                    first_line = first_line.replace(' /', '->')
+                    first_line = first_line.replace('\ ', '<-')
+
+                    # Third Line Goods For Sell
+                    # try:
+                    #     availableGoods = anomaly.goodsConsumed
+                    #     third_line = ''
+                    #     for good in availableGoods:
+                    #         price = anomaly.prices[good]
+
+                    #         third_line += '%s%s' % (good[:2], str(price))
+                    # except AttributeError:
+                    #     third_line = mapIdentifiers['Empty']
+
                 if Player.currentPosition == anomaly.coordinates:
-                    # to_print = to_print.replace('00', '')
-                    # Add Location Arrow
-                    to_print = '->' + to_print
-                # Or Active
-                elif ActiveCords == anomaly.coordinates:
-                    # to_print = to_print.replace('00', '')
-                    # Add Location Arrow
-                    to_print = ' >' + to_print
-                # Or else
-                else:
-                    to_print = '  ' + to_print  # + ' '
+                    second_line = second_line.replace('__', 'XX')
 
-            print to_print,
+                while len(first_line) < 7:
+                    first_line += ' '
 
-        print '#\n',
+                while len(second_line) < 7:
+                    second_line += ' '
 
-    print ' ####'*(len(Universe.Map[0]))
+                # while len(third_line) < 7:
+                #     third_line += ' '
+
+            first_row += first_line
+            second_row += second_line
+            # third_row += third_line
+
+        first_row += '#'
+        second_row += '#'
+
+        print first_row
+        print second_row
+        # print third_row
+
+    print '#######'*(len(Universe.Map[0])) + '##'
 
     return
 

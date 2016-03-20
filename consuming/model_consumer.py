@@ -16,8 +16,6 @@ def fillUniverse(Universe, NumberOfAnomalies):
         # Add Anomaly
         Universe.addAnomaly(anomaly)
 
-    # First Update
-    # Universe.update(Universe)
 
 class AnomalyInteraction():
     def __init__(self, Universe, Player):

@@ -249,9 +249,6 @@ class EquipmentDealer(AnomalySection):
 
         infoStr += 'Equipment Dealer - Sells Rooms'
 
-        # for good in self.mainList:
-        #     infoStr += '%s@%s ' % (good, self.prices[good])
-
         return infoStr
 
 

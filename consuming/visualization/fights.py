@@ -25,13 +25,6 @@ def showFightInfo(Ship, Enemy):
 
     print longInfo
 
-    # to_print += '[ENTER] Fight!'
-
-    # to_print += '\n'
-    # to_print += '[1] Flee...'
-
-    # print to_print
-
     choice = raw_input()
 
     while choice not in ['', '1']:

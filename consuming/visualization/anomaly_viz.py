@@ -10,10 +10,6 @@ def chooseSection(Anomaly, Player, AvailableSections):
     information = generateInfoString(Anomaly, Player, AvailableSections=AvailableSections)
     print information
 
-    # Option Screen
-    # options = generateSectionsString(AvailableSections)
-    # print options
-
     # Border
     print '--' * 40
 
@@ -80,17 +76,6 @@ def chooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
             choice = raw_input()
 
 
-    # # Not Valid Choice
-    # while choice not in range(len(Section)+1):
-    #     print "Sorry %s not valid" % choice
-    #     choice = input()
-
-    # if choice == 0:
-    #     return
-
-    # return Section[choice-1]
-
-
 def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, AvailableSections=None):
     # Anomaly Type
     anomalyType = Anomaly.__class__.__name__
@@ -113,10 +98,6 @@ def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, 
 
         You are at ANOMALYTYPE ANOMALYNAME
     """
-
-    # cargoBay = ''
-    # for good, amount in Player.currentShip.inCargo.iteritems():
-    #     cargoBay += "%s: %s " % (str(good), str(amount))
 
     longInfo = longInfo.replace('ANOMALYTYPE', anomalyType)
 
@@ -248,16 +229,6 @@ def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, 
         pass
 
     return longInfo
-
-
-# def generateSectionInfoString(Section, Player):
-#     secInfo = 'Current Stats: \n'
-
-#     for info in Section.correspondingStats:
-#         value = Section.correspondingStats[info]
-#         secInfo += " %s: %s \n" % (info, value)
-
-#     return secInfo
 
 
 def generateSectionsString(PossibleActions):

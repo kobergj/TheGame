@@ -35,11 +35,11 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
                                     '  \__/ ',
                                     # '   ()  '
                                 ],
-                      'Spacegate':[ '  /Sg\ ',
+                      'Spacegate':[ '  /SG\ ',
                                     '  \__/ ',
                                     # '   []  '
                                 ],
-                      'Starbase':[  '  /Sb\ ',
+                      'Starbase':[  '  /SB\ ',
                                     '  \__/ ',
                                     # '   $$  '
                                 ]

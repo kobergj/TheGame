@@ -1,66 +1,67 @@
-
+import producing.models.ship_content as cont
 
 # Generic Ship. No special Abilites.
 class Ship():
     def __init__(self, shipStats):
-        # Assign Stats - Dict Or Direct Assign? -> Go For Direct
-        # self.stats = shipStats
-
+        # Stats
         # Price
-        self.price = shipStats['price']
+        self.price = cont.Stat(shipStats['price'])
 
         # Rooms
-        self.rooms = list()
-        self.spaceForRooms = shipStats['spaceForRooms']
+        self.spaceForRooms = cont.Stat(shipStats['spaceForRooms'])
 
         # Initialize Cargobay
-        self.cargoCapacity = shipStats['cargoCapacity']
-        self.inCargo = dict()
-        self.freeCargoSpace = shipStats['cargoCapacity']
-
-        # # Initialize SensorBay
-        # self.distances = dict()
-        # self.travelCosts = dict()
+        self.cargoCapacity = cont.Stat(shipStats['cargoCapacity'])
 
         # Power Engines
-        self.maxTravelDistance = shipStats['maxTravelDistance']
-        self.maintenanceCosts = shipStats['maintenanceCosts']
+        self.maxTravelDistance = cont.Stat(shipStats['maxTravelDistance'])
+        self.maintenanceCosts = cont.Stat(shipStats['maintenanceCosts'])
 
         # Load Weapons
-        self.attackPower = shipStats['attackPower']
+        self.attackPower = cont.Stat(shipStats['attackPower'])
 
         # activate Shields
-        self.shieldStrength = shipStats['shieldStrength']
+        self.shieldStrength = cont.Stat(shipStats['shieldStrength'])
 
-        # Testing Stats
-        self.HappyCargoCap = ShipStat(shipStats['cargoCapacity'])
+        # Rooms & Goods
+        self.rooms = list()
+        self.inCargo = dict()
 
     # Room Operations
     def attachRoom(self, Room):
         self.rooms.append(Room)
 
-        Room.powerUp(self)
+        self.spaceForRooms.addBoost(-1)
 
-    def detachRoom(self, Room):
-        Room.powerDown(self)
+        for statBoost in Room.statBoosts:
+            statBoost(self)
 
-        self.rooms.remove(Room)
+        Room.active = True
+
+    def detachRoom(self, Room, remove=False):
+        for statBoost in Room.statBoosts:
+            statBoost.remove(self)
+
+        Room.active = False
+
+        if remove:
+            self.rooms.remove(Room)
 
     # CargoBay Methods
-    def loadCargo(self, cargoId, cargoAmount):
+    def loadCargo(self, cargoId, cargoAmount=1):
         if cargoId in self.inCargo:
             self.inCargo[cargoId] += cargoAmount
         else:
             self.inCargo.update({cargoId: cargoAmount})
 
-        self.freeCargoSpace -= cargoAmount
+        self.cargoCapacity.addBoost(cargoAmount*-1)
 
-    def unloadCargo(self, cargoId, cargoAmount):
+    def unloadCargo(self, cargoId, cargoAmount=1):
         self.inCargo[cargoId] -= cargoAmount
         if self.inCargo[cargoId] <= 0:
             del self.inCargo[cargoId]
 
-        self.freeCargoSpace += cargoAmount
+        self.cargoCapacity.addBoost(cargoAmount)
 
 
 # Freighter. Can be overloaded.
@@ -89,35 +90,10 @@ class Enemy(Ship):
         Ship.__init__(self, enemyStats)
 
         # Enemy Type
-        self.enemyType = enemyStats['Fraction']
+        # self.enemyType = enemyStats['Fraction']
 
         # Loot
-        self.credits = enemyStats['creditStash']
+        self.lootableCredits = 0
 
-
-# Class For Ship Stats
-class ShipStat():
-    def __init__(self, StartValue=0):
-        # The Value of the Stat
-        self.value = StartValue
-        # Free Space For Mocking
-        self.tempValue = None
-
-    def __call__(self):
-        return self.value
-
-    def increment(self, Value):
-        self.value += Value
-
-    def decrease(self, Value):
-        self.value -= Value
-
-    def mock(self, TempValue):
-        # Save Current
-        self.tempValue = self.value
-        # Mock
-        self.value = TempValue
-
-    def deMock(self):
-        # Give Value Back
-        self.value = self.tempValue
+    def addMoreCredits(self, Amount):
+        self.lootableCredits += Amount

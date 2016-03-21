@@ -16,13 +16,6 @@ class Anomaly():
     def getCoordinates(self, Coordinates):
         self.coordinates = Coordinates
 
-    def update(self, Universe):
-        # Get Enemy from Queue
-        newEnemy = Universe.enemyQ.get()
-        # Append to Enemy List
-        if newEnemy:
-            self.enemies.append(newEnemy)
-
 
 class Planet(Anomaly):
     # Buy and Sell Goods
@@ -62,23 +55,6 @@ class Starbase(Anomaly):
     def addRoomForSale(self, Room):
         self.roomsForSale.append(Room)
 
-    def update(self, Universe):
-        Anomaly.update(self, Universe)
-
-        # Get Ship
-        ship = Universe.shipQ.get()
-
-        # Attach Ship to Station
-        self.changeShipForSale(ship)
-
-        # Fill Room List
-        while len(self.roomsForSale) < self.maxRoomsForSale:
-            # Get Room
-            room = Universe.roomQ.get()
-
-            # Add Room
-            self.addRoomForSale(room)
-
 
 class Spacegate(Anomaly):
     # Jump Anywhere for lower travel Cost
@@ -90,18 +66,3 @@ class Spacegate(Anomaly):
         self.travelDistance = 99
 
         self.playersMaxTravelDist = None
-
-    def mockPlayersTravelDist(self, Player):
-        self.playersMaxTravelDist = Player.currentShip.maxTravelDistance
-
-        Player.currentShip.maxTravelDistance = self.travelDistance
-
-    def returnPlayersTravelDist(self, Player):
-        Player.currentShip.maxTravelDistance = self.playersMaxTravelDist
-
-    def update(self, Universe):
-        # Update Anomaly
-        Anomaly.update(self, Universe)
-
-        # Update TravelCostDict
-        # self.updateTravelCostDict(Universe.Map)

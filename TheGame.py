@@ -4,7 +4,7 @@ import producing.model_producer as pro
 
 import database.database as db
 
-NUMBER_OF_ANOMALIES = 20
+NUMBER_OF_ANOMALIES = 25
 
 MAX_COORDINATES = [15, 15]
 
@@ -21,8 +21,8 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
 
                        'price': 0,
 
-                       'attackPower': 22,
-                       'shieldStrength': 10,
+                       'attackPower': 7,
+                       'shieldStrength': 15,
                        }
 
 
@@ -63,4 +63,4 @@ if __name__ == '__main__':
     # The Journey ...
     while True:
         # continues
-        con.interactWithAnomaly(player, universe)
+        con.AnomalyInteraction(universe, player)

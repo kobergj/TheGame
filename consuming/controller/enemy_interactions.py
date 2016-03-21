@@ -15,31 +15,29 @@ def beginFight(Ship, Enemy):
         # Enemies Dice
         enemies_dice = random.randint(1, 6)
         # Players Atk
-        players_atk = Ship.attackPower + players_dice
+        players_atk = Ship.attackPower() + players_dice
         # Enemies Atk
-        enemies_atk = Enemy.attackPower + enemies_dice
+        enemies_atk = Enemy.attackPower() + enemies_dice
         # Damage
         damage = abs(players_atk - enemies_atk)
 
         if players_atk > enemies_atk:
             # Player won round
-            Enemy.shieldStrength -= damage
-
-            fight = viz.endOfRound(Ship, Enemy, players_dice, enemies_dice)
+            Enemy.shieldStrength.addBoost(damage*-1)
 
         elif enemies_atk > players_atk:
             # Enemy wins round
-            Ship.shieldStrength -= damage
+            Ship.shieldStrength.addBoost(damage*-1)
 
-            fight = viz.endOfRound(Ship, Enemy, players_dice, enemies_dice)
+        fight = viz.endOfRound(Ship, Enemy, players_dice, enemies_dice)
 
-        if Ship.shieldStrength <= 0:
+        if Ship.shieldStrength() <= 0:
             viz.fightLost()
 
             quit()
 
-        if Enemy.shieldStrength <= 0:
-            viz.fightWon()
+        if Enemy.shieldStrength() <= 0:
+            viz.fightWon(Ship, Enemy)
 
             return True
 

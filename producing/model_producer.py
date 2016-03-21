@@ -1,7 +1,7 @@
 # Models
 import producing.models.anomalies as mod
 import producing.models.ships as msp
-import producing.models.rooms as mro
+import producing.models.ship_content as mro
 import producing.models.universe as muv
 import producing.models.player as mpl
 
@@ -94,7 +94,17 @@ def produceEnemy(Database, enemyInfo=None):
         # generate Enemy Information - For the moment only Ships
         enemyInfo = gsp.generateShipInformation(Database)
         # generate Enemy
-        enemy = msp.Ship(enemyInfo)
+        enemy = msp.Enemy(enemyInfo)
+
+    # Add Loot Credits
+    creds_to_loot = enemy.attackPower() + enemy.shieldStrength()
+    enemy.addMoreCredits(creds_to_loot)
+
+    # Loot Goods
+    for i in range(random.randint(1, 5)):
+        good_to_loot = random.choice(Database.Goods.ListOfNames)
+
+        enemy.loadCargo(good_to_loot)
 
     # Random Number
     i = random.randint(0, 100)

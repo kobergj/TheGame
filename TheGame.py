@@ -4,6 +4,8 @@ import producing.model_producer as pro
 
 import database.database as db
 
+import logbook.configuration as log
+
 NUMBER_OF_ANOMALIES = 25
 
 MAX_COORDINATES = [15, 15]
@@ -25,6 +27,8 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
                        'shieldStrength': 15,
                        }
 
+# Init Log
+log.initLogBook()
 
 # Boot Database
 database = db.DynamicDatabase()
@@ -63,4 +67,7 @@ if __name__ == '__main__':
     # The Journey ...
     while True:
         # continues
-        con.AnomalyInteraction(universe, player)
+        # con.AnomalyInteraction(universe, player)
+        game = con.mainGame()
+
+        game.logic(universe, player)

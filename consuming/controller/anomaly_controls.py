@@ -1,3 +1,4 @@
+import logbook.configuration as log
 
 def getAvailableSections(Anomaly, Player):
     """Checks for possible Actions with Anomaly"""
@@ -83,6 +84,9 @@ class Quit(AnomalySection):
 
 
 class Spaceport(AnomalySection):
+    def __call__(self, Anomaly, Player, args=None):
+        raise log.DepartError
+
     def infoString(self):
         return 'Spaceport - Depart'
 

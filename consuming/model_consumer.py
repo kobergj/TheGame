@@ -1,3 +1,4 @@
+import logbook.configuration as log
 
 import consuming.controller.anomaly_controls as ac
 import consuming.controller.enemy_interactions as emy
@@ -19,10 +20,10 @@ def fillUniverse(Universe, NumberOfAnomalies):
 
 class AnomalyInteraction():
     def __init__(self, Universe, Player):
-        # Get Anomaly
+        log.log('Get Anomaly')
         anomaly = Universe[Player.currentPosition]
 
-        # Update
+        log.log('Update Universe')
         Universe.update()
 
         # Interact Flag
@@ -41,7 +42,7 @@ class AnomalyInteraction():
             costForTravel = calculateTravelCosts(Player, anomaly.coordinates)
             # Reachable?
             if costForTravel is not None:
-                # Await choice
+                log.log('Await Interaction Flag')
                 self.interact = uv.chooseNextDestination(Universe, Player, anomaly.coordinates)
 
         # Want to Land?
@@ -156,5 +157,145 @@ def calculateDistance(point1, point2):
 
     return distance
 
-class FleeError(Exception):
-    pass
+## TESTING TEMPLATE ##
+
+class mainGame:
+
+    def __init__(self):
+        pass
+
+    def logic(self, Universe, Player):
+
+        atAnomaly = False
+
+        while not atAnomaly:
+            atAnomaly = self.UniverseScreen(Universe, Player)
+
+            anomaly = Universe[Player.currentPosition]
+
+        self.TravelScreen(anomaly, Player)
+
+        while anomaly.enemies:
+            try: self.EnemyScreen(anomaly, Player)
+            except log.FleeError: atAnomaly = False 
+
+        while atAnomaly:
+            try: self.AnomalyScreen(anomaly, Player)
+            except log.DepartError: atAnomaly = False
+
+
+    def TravelScreen(self, Anomaly, Player):
+        """No "Screen" at the moment :) 
+            Player travels to Anomaly"""
+        # Calc Travel Cost
+        costForTravel = calculateTravelCosts(Player, Anomaly.coordinates)
+        # Pay
+        Player.spendCredits(costForTravel)
+        # Travel
+        Player.travelTo(Anomaly.coordinates)
+
+        # Demock Stats
+        Player.currentShip.maxTravelDistance.demock()
+        Player.currentShip.maintenanceCosts.demock()
+
+
+    def AnomalyScreen(self, Anomaly, Player):
+        """One Interaction with an Anomaly.
+            Raises DepartError if Player wants to depart"""
+        # You get repaired When you land
+        Player.currentShip.shieldStrength.reset()
+
+        log.log('Get List of Available Sections')
+        availableSections = ac.getAvailableSections(Anomaly, Player)
+
+        log.log('Choose Section to Interact with')
+        section = av.chooseSection(Anomaly, Player, availableSections)
+
+        # Go to Section
+        atSection = True
+
+        while atSection:
+            log.log('Choose Details for Interaction with %s' % str(section))
+            sectionCallArgument = av.chooseInteraction(Anomaly, Player, section, atSection)
+
+            log.log('Execute with args %s' % str(sectionCallArgument))
+            atSection = section(Anomaly, Player, sectionCallArgument)
+
+            # Reinitialize Section
+            try: section.__init__(Anomaly, Player)
+            except AttributeError: atSection = False
+
+
+    def EnemyScreen(self, Anomaly, Player):
+        """Enters the Enemy Screen. Raises an FleeError if Player flees"""
+        # Get Enemy
+        enemy = Anomaly.enemies[0]
+
+        log.log('begin Fight')
+        won = emy.beginFight(Player.currentShip, enemy)
+
+        # Check For Sucess
+        if not won:
+            # Enemy Gets repaired
+            enemy.shieldStrength.reset()
+
+            log.log('Player flew')
+            raise log.FleeError
+
+        # Get Credits
+        Player.earnCredits(enemy.lootableCredits)
+
+        # Loot Wreck
+        for good, amount in enemy.inCargo.iteritems():
+            Player.currentShip.loadCargo(good, amount)
+
+        log.log('Fight won. Killing Enemy')
+        Anomaly.enemies.remove(enemy)
+
+
+    def UniverseScreen(self, Universe, Player, home=False):
+        """Show Universe Screen. Uses next Available Cords except home.
+            Returns True if Player wants to Travel/Land, None else."""
+        if home:
+            # Start at Current Anomaly
+            Universe.coCursor = [Player.currentPosition[0]-1, Player.currentPosition[1]]
+
+        # Get a Anomaly
+        anomaly = Universe.next(infinity=True)
+        # Calc Price
+        costForTravel = calculateTravelCosts(Player, anomaly.coordinates)
+        # Reachable?
+        if costForTravel is not None:
+            log.log('Await Interaction Flag')
+            travel = uv.chooseNextDestination(Universe, Player, anomaly.coordinates)
+            return travel
+
+
+
+
+
+class calculation:
+
+    def calculateDistance(point1, point2):
+        distance = 0.0
+        for i in range(len(point1)):
+            x = point1[i]
+            y = point2[i]
+
+            distance += (x - y)**2
+
+        distance = math.sqrt(distance)
+        distance = round(distance, 2)
+
+        return distance
+
+    def calculateTravelCosts(Player, Coordinates):
+        # Get Distance
+        distance = calculateDistance(Player.currentPosition, Coordinates)
+
+        # Check if reachable
+        if distance <= Player.currentShip.maxTravelDistance():
+            # Calculate Costs
+            travelCosts = int(distance * Player.currentShip.maintenanceCosts())
+
+            return travelCosts

@@ -33,12 +33,12 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
                                     '  \__/ ',
                                     # '   ()  '
                                 ],
-                      'Spacegate':[ '  /SG\ ',
-                                    '  \__/ ',
+                      'Spacegate':[ '   SG  ',
+                                    '  /__\ ',
                                     # '   []  '
                                 ],
-                      'Starbase':[  '  /SB\ ',
-                                    '  \__/ ',
+                      'Starbase':[  '  |SB| ',
+                                    '  |__| ',
                                     # '   $$  '
                                 ]
                       }
@@ -69,8 +69,12 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
                 # Check if Anomaly is Active
                 if ActiveCords == anomaly.coordinates:
                     log.log('Active %s %s' % (anomaly.name, str(anomaly.coordinates)))
-                    first_line = first_line.replace(' /', '->')
+                    first_line = first_line.replace('   ', ' ->')
+                    first_line = first_line.replace('  /', ' ->')
+                    first_line = first_line.replace('  |', ' ->')
                     first_line = first_line.replace('\ ', '<-')
+                    first_line = first_line.replace('| ', '<-')
+                    first_line = first_line.replace('  ', '<-')
 
                     # Third Line Goods For Sell
                     # try:

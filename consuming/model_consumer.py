@@ -35,7 +35,7 @@ class Journey:
             first = False
 
             if travel:
-                log.log('Traveling to %s' % str(anomaly))
+                log.log('Traveling to %(name)s' % anomaly.__dict__)
                 self.Travel(anomaly, Player)
                 log.log('Update Universe')
                 Universe.update()
@@ -145,14 +145,14 @@ class Journey:
         log.log('Getting next Anomaly from %s' % ActiveCoordinates)
         anomaly = Universe.next(infinity=True, start=ActiveCoordinates)
 
-        log.log('Calculate Travel Costs to %s' % str(anomaly))
+        log.log('Calculate Travel Costs to %(name)s' % anomaly.__dict__)
         distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
         costForTravel = self.calculateTravelCosts(Player, distance)
 
         # Reachable?
         if costForTravel is not None:
             log.log('Await Interaction Flag')
-            travel = uv.chooseNextDestination(Universe, Player, anomaly.coordinates)
+            travel = uv.chooseNextDestination(Universe, Player, anomaly.coordinates, costForTravel)
             return anomaly, travel
 
         return anomaly, False

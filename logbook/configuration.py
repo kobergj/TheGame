@@ -2,7 +2,8 @@ import logging
 
 def initLogBook():
 
-    logging.basicConfig(filename='logbook/basic.log', level=logging.INFO)
+    logging.basicConfig(filename='logbook/basic.log', level=logging.INFO,
+                        filemode='w', format='%(asctime)s, %(message)s')
 
     logging.warning('-- -- LOGBOOK INITIALIZED -- --')
 

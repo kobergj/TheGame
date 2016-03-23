@@ -40,7 +40,7 @@ class AnomalySection:
         # Main List object. For Example List of Goods, Rooms, Ships, etc..
         self.mainList = list()
 
-    def __call__(self, Anomaly, Player, args=None):
+    def __call__(self, Anomaly, Player, *args):
         # Needs A Call Method which executes the Interaction
         return
 
@@ -76,7 +76,7 @@ class AnomalySection:
 
 
 class Quit(AnomalySection):
-    def __call__(self, Anomaly, Player, args=None):
+    def __call__(self, Anomaly, Player, *args):
         quit()
 
     def infoString(self):
@@ -84,8 +84,8 @@ class Quit(AnomalySection):
 
 
 class Spaceport(AnomalySection):
-    def __call__(self, Anomaly, Player, args=None):
-        raise log.DepartError
+    def __call__(self, Anomaly, Player, *args):
+        Player.depart()
 
     def infoString(self):
         return 'Spaceport - Depart'
@@ -266,7 +266,7 @@ class Gateport(AnomalySection):
 
         self.cursor = -1
 
-    def __call__(self, Anomaly, Player):
+    def __call__(self, Anomaly, Player, *args):
         Player.spendCredits(self.costForUse)
 
         Player.currentShip.maxTravelDistance.mock(9999999)

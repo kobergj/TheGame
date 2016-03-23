@@ -55,19 +55,10 @@ if __name__ == '__main__':
     # Start Producer
     randomProducer.startProducing()
 
-    # Add Starting Anomaly
-    universe.addAnomaly(startingAnomaly)
-
-    # Fill Universe
-    con.fillUniverse(universe, NUMBER_OF_ANOMALIES)
-
-    # Power Engines
-    player.travelTo(startingAnomaly.coordinates)
+    # Start Main Game
+    journey = con.Journey(universe, player, startingAnomaly, NUMBER_OF_ANOMALIES)
 
     # The Journey ...
     while True:
         # continues
-        # con.AnomalyInteraction(universe, player)
-        game = con.mainGame()
-
-        game.logic(universe, player)
+        journey(universe, player)

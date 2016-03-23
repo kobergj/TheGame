@@ -1,3 +1,5 @@
+import logbook.configuration as log
+
 
 class Player():
     def __init__(self, playerInfo):
@@ -11,6 +13,14 @@ class Player():
         self.deprecatedShips = list()
         # Current Postion
         self.currentPosition = None
+        # At Anomaly?
+        self.atAnomaly = False
+
+    def land(self):
+        self.atAnomaly = True
+
+    def depart(self):
+        self.atAnomaly = False
 
     def earnCredits(self, numberOfCredts):
         self.credits += numberOfCredts
@@ -31,4 +41,5 @@ class Player():
         self.currentShip = Ship
 
     def travelTo(self, Coordinates):
+        log.log('Player travelled to %s' % str(Coordinates))
         self.currentPosition = Coordinates

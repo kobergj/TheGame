@@ -1,10 +1,8 @@
+import logbook.configuration as log
 
-def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=0):
+def chooseNextDestination(Universe, Player, ActiveCoordinates, TravelCosts=0):
     print '\n' * 100
     print "\n Choose Destination\n"
-
-    if not ActiveCoordinates:
-        ActiveCoordinates = Player.currentPosition
 
     drawMap(Universe, Player, ActiveCoordinates, TravelCosts)
 
@@ -19,7 +17,7 @@ def chooseNextDestination(Universe, Player, ActiveCoordinates=None, TravelCosts=
 
         # Show Next Destination
         if choice == '1':
-            return
+            return False
 
         # Invalid Choice
         else:
@@ -35,12 +33,12 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
                                     '  \__/ ',
                                     # '   ()  '
                                 ],
-                      'Spacegate':[ '  /SG\ ',
-                                    '  \__/ ',
+                      'Spacegate':[ '   SG  ',
+                                    '  /__\ ',
                                     # '   []  '
                                 ],
-                      'Starbase':[  '  /SB\ ',
-                                    '  \__/ ',
+                      'Starbase':[  '  |SB| ',
+                                    '  |__| ',
                                     # '   $$  '
                                 ]
                       }
@@ -48,6 +46,7 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
     print '#######'*(len(Universe.Map[0])) + '##'
 
     # Loop through vertical Slices of Universe
+    log.log('drawing Map')
     for verticalSlice in Universe.Map:
         first_row = '# '
         second_row = '# '
@@ -69,8 +68,13 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
 
                 # Check if Anomaly is Active
                 if ActiveCords == anomaly.coordinates:
-                    first_line = first_line.replace(' /', '->')
+                    log.log('Active %s %s' % (anomaly.name, str(anomaly.coordinates)))
+                    first_line = first_line.replace('   ', ' ->')
+                    first_line = first_line.replace('  /', ' ->')
+                    first_line = first_line.replace('  |', ' ->')
                     first_line = first_line.replace('\ ', '<-')
+                    first_line = first_line.replace('| ', '<-')
+                    first_line = first_line.replace('  ', '<-')
 
                     # Third Line Goods For Sell
                     # try:
@@ -84,6 +88,7 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
                     #     third_line = mapIdentifiers['Empty']
 
                 if Player.currentPosition == anomaly.coordinates:
+                    log.log('Current %s' % str(anomaly.coordinates))
                     second_line = second_line.replace('__', 'XX')
 
                 while len(first_line) < 7:

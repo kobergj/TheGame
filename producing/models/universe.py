@@ -1,6 +1,6 @@
 import Queue
 import random
-
+import logbook.configuration as log
 
 class Universe():
     def __init__(self, minCoordinates, maxCoordinates):
@@ -25,16 +25,19 @@ class Universe():
 
         return self.Map[vSlice][point]
 
-    def next(self, infinity=False):
+    def next(self, infinity=False, start=None):
         # Init
         anomaly = None
+
+        if start:
+            self.coCursor = start
 
         # Start Loop
         while not anomaly:
             # Raise Point value of Cursor
             self.coCursor[0] += 1
             # Ran out of points?
-            if self.coCursor[0] >= len(self.Map[self.coCursor[1]]):
+            if self.coCursor[0] >= len(self.Map[0]):
                 # Reset
                 self.coCursor[0] = 0
                 # Raise Slice Value of Cursor
@@ -70,6 +73,7 @@ class Universe():
         self.Map[y][x] = Anomaly
 
         Anomaly.getCoordinates([x, y])
+        log.log('Assigned Coordinates %(name)s: %(coordinates)s' % Anomaly.__dict__)
 
     def drawUniverseMap(self, minCoordinates, maxCoordinates):
         universeExpansion_x = maxCoordinates[0] - minCoordinates[0]

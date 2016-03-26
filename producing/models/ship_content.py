@@ -45,6 +45,16 @@ class Room():
     #             self.goodsList.remove(Good)
 
 
+class Good():
+    def __init__(self, Info):
+        self.name = Info['name']
+
+        self.price = 0
+
+
+    def changePrice(self, NewPrice):
+        self.price = NewPrice
+
 
 # Class For Stats
 class Stat():

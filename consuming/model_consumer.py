@@ -31,10 +31,10 @@ class Journey:
 
         while not Player.atAnomaly:
             log.log('Loading Universe Screen')
-            anomaly, travel = self.BrowseMap(Universe, Player, anomaly, first)
+            anomaly, currentMap = self.BrowseMap(Universe, Player, anomaly, first)
             first = False
 
-            if travel:
+            if currentMap:
                 log.log('Traveling to %(name)s' % anomaly.__dict__)
                 self.Travel(anomaly, Player)
                 log.log('Update Universe')
@@ -50,7 +50,7 @@ class Journey:
 
         while Player.atAnomaly:
             log.log('Loading Anomaly Screen')
-            self.Interact(anomaly, Player)
+            self.Interact(anomaly, Player, currentMap)
 
 
     def Travel(self, Anomaly, Player):
@@ -75,9 +75,8 @@ class Journey:
         Player.currentShip.maintenanceCosts.demock()
 
 
-    def Interact(self, Anomaly, Player):
-        """One Interaction with an Anomaly.
-            Raises DepartError if Player wants to depart"""
+    def Interact(self, Anomaly, Player, MapTemplate):
+        """One Interaction with an Anomaly."""
         # You get repaired When you land
         Player.currentShip.shieldStrength.reset()
 
@@ -85,25 +84,37 @@ class Journey:
         availableSections = ac.getAvailableSections(Anomaly, Player)
 
         log.log('Choose Section to Interact with')
-        section = av.chooseSection(Anomaly, Player, availableSections)
+        section = av.chooseSection(Anomaly, Player, availableSections, MapTemplate)
+        # anScreen = av.AnomalyScreen(Player, availableSections)
 
-        # Go to Section
-        atSection = True
+        try: section(Anomaly, Player)
+        except TypeError:
+            atSection = True
+            while atSection:
+                # anScreen = av.AnomalyScreen(Player, availableSections, section)
 
-        if len(section) == 0:
-            atSection = False
-            section(Anomaly, Player)
+                # argument = anScreen.show(section)
+                argument = av.chooseInteraction(Anomaly, Player, section, MapTemplate)
 
-        while atSection:
-            log.log('Choose Details for Interaction with %s' % str(section))
-            sectionCallArgument = av.chooseInteraction(Anomaly, Player, section, atSection)
+                atSection = section(Anomaly, Player, argument)
 
-            log.log('Execute with args %s' % str(sectionCallArgument))
-            atSection = section(Anomaly, Player, sectionCallArgument)
+        # # Go to Section
+        # atSection = True
 
-            # Reinitialize Section
-            try: section.__init__(Anomaly, Player)
-            except AttributeError: atSection = False
+        # if len(section) == 0:
+        #     atSection = False
+        #     section(Anomaly, Player)
+
+        # while atSection:
+        #     log.log('Choose Details for Interaction with %s' % str(section))
+        #     sectionCallArgument = av.chooseInteraction(Anomaly, Player, section, atSection)
+
+        #     log.log('Execute with args %s' % str(sectionCallArgument))
+        #     atSection = section(Anomaly, Player, sectionCallArgument)
+
+        #     # Reinitialize Section
+        #     try: section.__init__(Anomaly, Player)
+        #     except AttributeError: atSection = False
 
 
     def Fight(self, Anomaly, Player):
@@ -152,8 +163,8 @@ class Journey:
         # Reachable?
         if costForTravel is not None:
             log.log('Await Interaction Flag')
-            travel = uv.chooseNextDestination(Universe, Player, anomaly.coordinates, costForTravel)
-            return anomaly, travel
+            uniMap = uv.chooseNextDestination(Universe, Player, anomaly.coordinates, TravelCosts=costForTravel)
+            return anomaly, uniMap
 
         return anomaly, False
 

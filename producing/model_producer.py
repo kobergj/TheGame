@@ -16,19 +16,6 @@ import threading
 import random
 
 
-ANOMALY_INFO_FUNCS = {
-    'Planet':       gpl.generatePlanetInformation,
-    'Starbase':     gsb.generateStarbaseInformation,
-    'Spacegate':    gsg.generateSpacegateInformation,
-}
-
-ANOMALY_MODELS = {
-    'Planet': mod.Planet,
-    'Starbase': mod.Starbase,
-    'Spacegate': mod.Spacegate,
-}
-
-
 def produceUniverse(MaxCoordinates, MinCoordinates=[0, 0]):
     """Produces a Universe with the given Coordinates """
     universe = muv.Universe(MinCoordinates, MaxCoordinates)
@@ -45,21 +32,30 @@ def producePlayer(PlayerInfo):
 
 def produceAnomaly(Database, anomalyInfo=None):
     """Produces a Anomaly. Creates Random Stats if not given"""
+    anomaly_generators = [gpl.generatePlanetInformation,
+                          gsb.generateStarbaseInformation,
+                          gsg.generateSpacegateInformation,
+                        ]
+
+    anomaly_models = [mod.Planet,
+                      mod.Starbase,
+                      mod.Spacegate,
+                    ]
+
     while not anomalyInfo:
         # Choose Anomaly Type
-        anomalyType = random.choice(Database.Universe.AnomalyTypes)
-
-        # Get Info Func
-        genInfo = ANOMALY_INFO_FUNCS[anomalyType]
+        anomalyGenerator = random.choice(anomaly_generators)
 
         # Get Info
-        anomalyInfo = genInfo(Database)
+        anomalyInfo = anomalyGenerator(Database)
 
     # Get Model
-    model = ANOMALY_MODELS[anomalyType]
+    for model in anomaly_models:
+        # Create Anomaly
+        try: anomaly = model(anomalyInfo)
+        except KeyError: continue
 
-    # Create Anomaly
-    anomaly = model(anomalyInfo)
+        break
 
     return anomaly
 

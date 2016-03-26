@@ -39,6 +39,8 @@ class AnomalySection:
         self.interactionType = 'Nothing'
         # Main List object. For Example List of Goods, Rooms, Ships, etc..
         self.mainList = list()
+        # Cursor for iterations
+        self.cursor = -1
 
     def __call__(self, Anomaly, Player, *args):
         # Needs A Call Method which executes the Interaction
@@ -80,7 +82,7 @@ class Quit(AnomalySection):
         quit()
 
     def infoString(self):
-        return 'Graveyard - Quit'
+        return 'Graveyard'
 
 
 class Spaceport(AnomalySection):
@@ -88,7 +90,7 @@ class Spaceport(AnomalySection):
         Player.depart()
 
     def infoString(self):
-        return 'Spaceport - Depart'
+        return 'Spaceport'
 
 
 class Merchant(AnomalySection):
@@ -142,7 +144,7 @@ class Merchant(AnomalySection):
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Merchant - Buy Goods Here'
+        infoStr += 'Merchant'
 
         return infoStr
 
@@ -198,7 +200,7 @@ class Trader(AnomalySection):
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Trader - Sell Goods Here'
+        infoStr += 'Trader'
 
         return infoStr
 
@@ -251,7 +253,7 @@ class EquipmentDealer(AnomalySection):
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Equipment Dealer - Sells Rooms'
+        infoStr += 'Equipment Dealer'
 
         return infoStr
 
@@ -275,6 +277,6 @@ class Gateport(AnomalySection):
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Gate Port - Jump to Anywhere in Space'
+        infoStr += 'Gate Port'
 
         return infoStr

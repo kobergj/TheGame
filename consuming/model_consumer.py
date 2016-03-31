@@ -5,6 +5,7 @@ import consuming.controller.enemy_interactions as emy
 
 import consuming.visualization.anomaly_viz as av
 import consuming.visualization.universe as uv
+import consuming.visualization.terminal_viz as term
 
 import math
 
@@ -28,6 +29,13 @@ class Journey:
         anomaly = Universe[Player.currentPosition]
 
         first = True
+
+        mainScreen = term.MainScreen(Universe, Player)
+
+        anomaly = Universe[Player.currentPosition]
+
+        mainScreen.showAnomaly(anomaly, Player)
+        raw_input()
 
         while not Player.atAnomaly:
             log.log('Loading Universe Screen')

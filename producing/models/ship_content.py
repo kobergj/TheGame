@@ -1,4 +1,5 @@
 
+
 class Room():
     def __init__(self, roomInformation):
         self.name = roomInformation['name']
@@ -31,25 +32,11 @@ class Room():
         return boostList
 
 
-# The Cargo Bay contains Goods
-# class CargoBay():
-#     def __init__(self):
-#         self.goodsList = list()
-
-#     def load(self, Good):
-#         self.goodsList.append(Good)
-
-    # def unload(self, Good):
-    #     for good in goodsList:
-    #         if good.name == Good.name:
-    #             self.goodsList.remove(Good)
-
-
 class Good():
-    def __init__(self, Info):
-        self.name = Info['name']
+    def __init__(self, name, price=None):
+        self.name = name
 
-        self.price = 0
+        self.price = price
 
 
     def changePrice(self, NewPrice):

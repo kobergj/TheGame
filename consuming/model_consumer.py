@@ -3,12 +3,7 @@ import logbook.configuration as log
 import consuming.controller.anomaly_controls as ac
 import consuming.controller.enemy_interactions as emy
 
-import consuming.visualization.anomaly_viz as av
-import consuming.visualization.universe as uv
 import consuming.visualization.terminal_viz as term
-
-import math
-
 
 class Journey:
 
@@ -23,59 +18,55 @@ class Journey:
         Player.travelTo(StartingAnomaly.coordinates)
 
         log.log('Update Universe')
-        Universe.update()
+        Universe.update(Player)
 
     def __call__(self, Universe, Player):
         anomaly = Universe[Player.currentPosition]
 
         first = True
 
-        mainScreen = term.MainScreen(Universe, Player)
-
         anomaly = Universe[Player.currentPosition]
-
-        mainScreen.showAnomaly(anomaly, Player)
-        raw_input()
 
         while not Player.atAnomaly:
             log.log('Loading Universe Screen')
-            anomaly, currentMap = self.BrowseMap(Universe, Player, anomaly, first)
+            anomaly, land = self.BrowseMap(Universe, Player, anomaly, first)
             first = False
 
-            if currentMap:
-                log.log('Traveling to %(name)s' % anomaly.__dict__)
+            if land:
+                log.log('Execute Travel Logic')
                 self.Travel(anomaly, Player)
                 log.log('Update Universe')
-                Universe.update()
+                Universe.update(Player)
                 first = True
 
-        while anomaly.enemies:
-            log.log('Loading Enemy Screen')
-            flee = self.Fight(anomaly, Player)
-            if flee:
-                Player.depart()
-                break
+        # while anomaly.enemies:
+        #     log.log('Loading Enemy Screen')
+        #     flee = self.Fight(anomaly, Player)
+        #     if flee:
+        #         Player.depart()
+        #         break
 
         while Player.atAnomaly:
             log.log('Loading Anomaly Screen')
-            self.Interact(anomaly, Player, currentMap)
+            self.Interact(Universe, Player)
 
 
     def Travel(self, Anomaly, Player):
         """No "Screen" at the moment :) 
             Player travels to Anomaly. Returns True if Player wants to land"""
-        # Get Distance
-        Distance = self.calculateDistance(Player.currentPosition, Anomaly.coordinates)
+
+        if Anomaly.travelCosts is None:
+            return
+
         # Is current?
-        if Distance == 0:
+        if Anomaly.coordinates == Player.currentPosition:
+            log.log('%(name)s is current. Landing...' % Anomaly.__dict__)
             Player.land()
             return
 
-        # Calc Travel Cost
-        costForTravel = self.calculateTravelCosts(Player, Distance)
-        # Pay
-        Player.spendCredits(costForTravel)
-        # Travel
+        log.log('Pay Costs of %(travelCosts)s' % Anomaly.__dict__)
+        Player.spendCredits(Anomaly.travelCosts)
+        log.log('Traveling to %(name)s' % Anomaly.__dict__)
         Player.travelTo(Anomaly.coordinates)
 
         # Demock Stats
@@ -83,8 +74,12 @@ class Journey:
         Player.currentShip.maintenanceCosts.demock()
 
 
-    def Interact(self, Anomaly, Player, MapTemplate):
+    def Interact(self, Universe, Player):
         """One Interaction with an Anomaly."""
+        Anomaly = Universe[Player.currentPosition]
+
+        sectionScreen = term.MainScreen(Universe, Player)
+
         # You get repaired When you land
         Player.currentShip.shieldStrength.reset()
 
@@ -92,38 +87,20 @@ class Journey:
         availableSections = ac.getAvailableSections(Anomaly, Player)
 
         log.log('Choose Section to Interact with')
-        section = av.chooseSection(Anomaly, Player, availableSections, MapTemplate)
-        # anScreen = av.AnomalyScreen(Player, availableSections)
+        # section = av.chooseSection(Anomaly, Player, availableSections, MapTemplate)
+        section = sectionScreen(Player, avail_secs=availableSections)
 
         try: section(Anomaly, Player)
         except TypeError:
             atSection = True
             while atSection:
-                # anScreen = av.AnomalyScreen(Player, availableSections, section)
+                # ReInit sectionScreen
+                sectionScreen.__init__(Universe, Player)
 
-                # argument = anScreen.show(section)
-                argument = av.chooseInteraction(Anomaly, Player, section, MapTemplate)
+                log.log('Choose Interaction')
+                argument = sectionScreen(Player, active_sec=section)
 
                 atSection = section(Anomaly, Player, argument)
-
-        # # Go to Section
-        # atSection = True
-
-        # if len(section) == 0:
-        #     atSection = False
-        #     section(Anomaly, Player)
-
-        # while atSection:
-        #     log.log('Choose Details for Interaction with %s' % str(section))
-        #     sectionCallArgument = av.chooseInteraction(Anomaly, Player, section, atSection)
-
-        #     log.log('Execute with args %s' % str(sectionCallArgument))
-        #     atSection = section(Anomaly, Player, sectionCallArgument)
-
-        #     # Reinitialize Section
-        #     try: section.__init__(Anomaly, Player)
-        #     except AttributeError: atSection = False
-
 
     def Fight(self, Anomaly, Player):
         """Enters the Enemy Screen. Returns True if Player wants to flee"""
@@ -153,8 +130,10 @@ class Journey:
 
 
     def BrowseMap(self, Universe, Player, ActiveAnomaly, first=False):
-        """Show Universe Screen. Uses next Available Cords except home.
+        """Show Universe Screen. Uses next Available Cords except first is given.
             Returns True if Player wants to Travel/Land, None else."""
+        mainScreen = term.MainScreen(Universe, Player)
+
         ActiveCoordinates = ActiveAnomaly.coordinates[:]
 
         if first:
@@ -164,38 +143,20 @@ class Journey:
         log.log('Getting next Anomaly from %s' % ActiveCoordinates)
         anomaly = Universe.next(infinity=True, start=ActiveCoordinates)
 
-        log.log('Calculate Travel Costs to %(name)s' % anomaly.__dict__)
-        distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
-        costForTravel = self.calculateTravelCosts(Player, distance)
+        # log.log('Calculate Travel Costs to %(name)s' % anomaly.__dict__)
+        # distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
+        # costForTravel = self.calculateTravelCosts(Player, distance)
 
         # Reachable?
-        if costForTravel is not None:
-            log.log('Await Interaction Flag')
-            uniMap = uv.chooseNextDestination(Universe, Player, anomaly.coordinates, TravelCosts=costForTravel)
-            return anomaly, uniMap
+        if anomaly.travelCosts is not None:
+            log.log('Await Interaction with %s' % anomaly.coordinates)
+            interact = mainScreen(Player, active_anmy=anomaly)
+
+            if interact:
+                return anomaly, True
 
         return anomaly, False
 
-    def calculateDistance(self, point1, point2):
-        distance = 0.0
-        for i in range(len(point1)):
-            x = point1[i]
-            y = point2[i]
-
-            distance += (x - y)**2
-
-        distance = math.sqrt(distance)
-        distance = round(distance, 2)
-
-        return distance
-
-    def calculateTravelCosts(self, Player, Distance):
-        # Check if reachable
-        if Distance <= Player.currentShip.maxTravelDistance():
-            # Calculate Costs
-            travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
-
-            return travelCosts
 
     def fillUniverse(self, Universe, NumberOfAnomalies):
 

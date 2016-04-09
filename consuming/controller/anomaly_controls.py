@@ -69,7 +69,7 @@ class AnomalySection:
 
         item = self.mainList[self.cursor]
 
-        return item, None
+        return item
 
     def infoString(self):
         # Generate a Information String
@@ -101,8 +101,6 @@ class Merchant(AnomalySection):
         if Player.currentShip.cargoCapacity() <= 0:
             raise AttributeError
 
-        self.prices = Anomaly.prices
-
         self.interactionType = 'Buy'
 
         self.cursor = -1
@@ -120,7 +118,7 @@ class Merchant(AnomalySection):
 
         Player.currentShip.loadCargo(GoodToBuy, Amount)
 
-        price = self.prices[GoodToBuy]
+        price = GoodToBuy.price
 
         Player.spendCredits(price)
 
@@ -136,9 +134,7 @@ class Merchant(AnomalySection):
 
         good = self.mainList[self.cursor]
 
-        price = self.prices[good]
-
-        return good, price
+        return good
 
     # I think this belongs to viz. Need a better Solution here
     def infoString(self):
@@ -160,8 +156,6 @@ class Trader(AnomalySection):
         # Build Main List
         self.mainList = list(sharedGoods)
 
-        self.prices = Anomaly.prices
-
         self.interactionType = 'Sell'
 
         self.cursor = -1
@@ -174,7 +168,7 @@ class Trader(AnomalySection):
         # Currently One Good per buy
         Amount = 1
 
-        price = self.prices[GoodToSell]
+        price = GoodToSell.price
 
         Player.earnCredits(price)
 
@@ -192,9 +186,7 @@ class Trader(AnomalySection):
 
         good = self.mainList[self.cursor]
 
-        price = self.prices[good]
-
-        return good, price
+        return good
 
     # I think this belongs to viz. Need a better Solution here
     def infoString(self):
@@ -245,9 +237,7 @@ class EquipmentDealer(AnomalySection):
 
         room = self.mainList[self.cursor]
 
-        price = room.price
-
-        return room.name, price
+        return room
 
 
     def infoString(self):

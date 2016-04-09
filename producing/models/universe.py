@@ -1,6 +1,7 @@
 import Queue
 import random
 import logbook.configuration as log
+import math
 
 class Universe():
     def __init__(self, minCoordinates, maxCoordinates):
@@ -96,13 +97,18 @@ class Universe():
 
         return universeMap
 
-    def update(self):
+    def update(self, Player):
         for anomaly in self:
             # Get Enemy from Queue
             newEnemy = self.enemyQ.get()
             # Append to Enemy List
             if newEnemy:
                 anomaly.enemies.append(newEnemy)
+
+            # Calculate Travel Costs
+            distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
+            costs = self.calculateTravelCosts(Player, distance)
+            anomaly.setTravelCosts(costs)
 
             try:
                 # Get Ship
@@ -127,3 +133,24 @@ class Universe():
                     anomaly.addRoomForSale(room)
             except AttributeError:
                 pass
+
+    def calculateDistance(self, point1, point2):
+        distance = 0.0
+        for i in range(len(point1)):
+            x = point1[i]
+            y = point2[i]
+
+            distance += (x - y)**2
+
+        distance = math.sqrt(distance)
+        distance = round(distance, 2)
+
+        return distance
+
+    def calculateTravelCosts(self, Player, Distance):
+        # Check if reachable
+        if Distance <= Player.currentShip.maxTravelDistance():
+            # Calculate Costs
+            travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
+
+            return travelCosts

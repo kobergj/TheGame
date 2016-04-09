@@ -1,573 +1,575 @@
+# DEPRECATED
 
-def chooseSection(Anomaly, Player, AvailSecs, UniMap):
-    # Flush Terminal
-    print '\n' * 100
 
-    newMap = addInteractionInfo(UniMap, Anomaly, availSecs=AvailSecs)
+# def chooseSection(Anomaly, Player, AvailSecs, UniMap):
+#     # Flush Terminal
+#     print '\n' * 100
 
-    print newMap
+#     newMap = addInteractionInfo(UniMap, Anomaly, availSecs=AvailSecs)
 
-    choice = raw_input()
+#     print newMap
 
-    while True:
-        try:
-            result = AvailSecs[int(choice)]
-            return result
-        except ValueError:
-            choice = invalidChoice(choice)
+#     choice = raw_input()
 
+#     while True:
+#         try:
+#             result = AvailSecs[int(choice)]
+#             return result
+#         except ValueError:
+#             choice = invalidChoice(choice)
 
-def chooseInteraction(Anomaly, Player, Section, UniMap):
-    # Flush Terminal
-    print '\n' * 100
 
-    newMap = addSubsectionInfo(UniMap, Anomaly, Section)
+# def chooseInteraction(Anomaly, Player, Section, UniMap):
+#     # Flush Terminal
+#     print '\n' * 100
 
-    print newMap
+#     newMap = addSubsectionInfo(UniMap, Anomaly, Section)
 
-    choice = raw_input()
+#     print newMap
 
-    while True:
-        try:
-            choice = int(choice)
-            if choice == 0:
-                return
-            result = Section[choice-1]
-            return result
-        except ValueError:
-            choice = invalidChoice(choice)
+#     choice = raw_input()
 
+#     while True:
+#         try:
+#             choice = int(choice)
+#             if choice == 0:
+#                 return
+#             result = Section[choice-1]
+#             return result
+#         except ValueError:
+#             choice = invalidChoice(choice)
 
 
-def addSubsectionInfo(UniMap, Anomaly, ActiveSection):
-    universemap = UniMap.split('\n')
 
+# def addSubsectionInfo(UniMap, Anomaly, ActiveSection):
+#     universemap = UniMap.split('\n')
 
-    for vertSlice in universemap:
-        if 'XX' in vertSlice:
-            centerSliceNumber = universemap.index(vertSlice)
 
-            splitted = vertSlice.split('XX')
+#     for vertSlice in universemap:
+#         if 'XX' in vertSlice:
+#             centerSliceNumber = universemap.index(vertSlice)
 
-            centerPoint = len(splitted[0]) - 4
+#             splitted = vertSlice.split('XX')
 
-            break
+#             centerPoint = len(splitted[0]) - 4
 
-    # Build Information
-    info = list()
+#             break
 
-    anInfo = "%s %s" % (Anomaly.__class__.__name__, Anomaly.name)
+#     # Build Information
+#     info = list()
 
-    anInfo += " -- %s"  % ActiveSection.infoString()
+#     anInfo = "%s %s" % (Anomaly.__class__.__name__, Anomaly.name)
 
-    info.append(anInfo)
+#     anInfo += " -- %s"  % ActiveSection.infoString()
 
+#     info.append(anInfo)
 
-    interactionInfo = " [0] Back"
-    info.append(interactionInfo)
 
-    for item, price in ActiveSection:
-        interactionInfo = " [%s] %s for %s" % (ActiveSection.index(item)+1, item, price)
-        info.append(interactionInfo)
+#     interactionInfo = " [0] Back"
+#     info.append(interactionInfo)
 
-    line = centerSliceNumber - len(info) / 2
+#     for item, price in ActiveSection:
+#         interactionInfo = " [%s] %s for %s" % (ActiveSection.index(item)+1, item, price)
+#         info.append(interactionInfo)
 
-    for detail in info:
-        new_line = fitInLine(detail, universemap[line], centerPoint)
-        universemap[line] = new_line
-        line += 1
+#     line = centerSliceNumber - len(info) / 2
 
-    final = ''
-    for sl in universemap:
-        final += sl + '\n'
+#     for detail in info:
+#         new_line = fitInLine(detail, universemap[line], centerPoint)
+#         universemap[line] = new_line
+#         line += 1
 
-    return final
+#     final = ''
+#     for sl in universemap:
+#         final += sl + '\n'
 
+#     return final
 
 
-def addInteractionInfo(UniMap, Anomaly, availSecs=None, activeSection=None):
-    universemap = UniMap.split('\n')
 
+# def addInteractionInfo(UniMap, Anomaly, availSecs=None, activeSection=None):
+#     universemap = UniMap.split('\n')
 
-    for vertSlice in universemap:
-        if 'XX' in vertSlice:
-            centerSliceNumber = universemap.index(vertSlice)
 
-            splitted = vertSlice.split('XX')
+#     for vertSlice in universemap:
+#         if 'XX' in vertSlice:
+#             centerSliceNumber = universemap.index(vertSlice)
 
-            centerPoint = len(splitted[0]) - 4
+#             splitted = vertSlice.split('XX')
 
-            break
+#             centerPoint = len(splitted[0]) - 4
 
-    # Build Information
-    info = list()
+#             break
 
-    anInfo = "%s %s" % (Anomaly.__class__.__name__, Anomaly.name)
+#     # Build Information
+#     info = list()
 
-    if activeSection:
-        anInfo += " -- %s"  % activeSection.infoString()
+#     anInfo = "%s %s" % (Anomaly.__class__.__name__, Anomaly.name)
 
-    info.append(anInfo)
+#     if activeSection:
+#         anInfo += " -- %s"  % activeSection.infoString()
 
-    # for enemy in Anomaly.enemies:
-    #     enemy_info = "Enemy: Atk:%s Def:%s" % (enemy.attackPower, enemy.shieldStrength)
-    #     info.append(enemy_info)
+#     info.append(anInfo)
 
-    if activeSection:
-        interactionInfo = " [0] Back"
-        info.append(interactionInfo)
-        for item, price in activeSection:
-            interactionInfo = " [%s] %s for %s" % (activeSection.index(item)+1, item, price)
-            info.append(interactionInfo)
+#     # for enemy in Anomaly.enemies:
+#     #     enemy_info = "Enemy: Atk:%s Def:%s" % (enemy.attackPower, enemy.shieldStrength)
+#     #     info.append(enemy_info)
 
-    else:
-        for section in availSecs:
-            sectionInfo = " [%s] %s" % (availSecs.index(section), section.infoString())
-            info.append(sectionInfo)
+#     if activeSection:
+#         interactionInfo = " [0] Back"
+#         info.append(interactionInfo)
+#         for item, price in activeSection:
+#             interactionInfo = " [%s] %s for %s" % (activeSection.index(item)+1, item, price)
+#             info.append(interactionInfo)
 
-    line = centerSliceNumber - len(info) / 2
+#     else:
+#         for section in availSecs:
+#             sectionInfo = " [%s] %s" % (availSecs.index(section), section.infoString())
+#             info.append(sectionInfo)
 
-    for detail in info:
-        new_line = fitInLine(detail, universemap[line], centerPoint)
-        universemap[line] = new_line
-        line += 1
+#     line = centerSliceNumber - len(info) / 2
 
-    final = ''
-    for sl in universemap:
-        final += sl + '\n'
+#     for detail in info:
+#         new_line = fitInLine(detail, universemap[line], centerPoint)
+#         universemap[line] = new_line
+#         line += 1
 
-    return final
+#     final = ''
+#     for sl in universemap:
+#         final += sl + '\n'
 
+#     return final
 
-def fitInLine(toFit, Line, StartingIndex):
-    left = Line[:StartingIndex]
 
-    left += toFit + Line[StartingIndex+len(toFit):]
+# def fitInLine(toFit, Line, StartingIndex):
+#     left = Line[:StartingIndex]
 
-    return left
+#     left += toFit + Line[StartingIndex+len(toFit):]
 
+#     return left
 
-#####  DEPRECATED #######
 
-def OLDchooseSection(Anomaly, Player, AvailableSections):
-    # Flush Terminal
-    print '\n' * 100
+# #####  DEPRECATED #######
 
-    # Border
-    print '--' * 40
+# def OLDchooseSection(Anomaly, Player, AvailableSections):
+#     # Flush Terminal
+#     print '\n' * 100
 
-    # Information Screen
-    information = generateInfoString(Anomaly, Player, AvailableSections=AvailableSections)
-    print information
+#     # Border
+#     print '--' * 40
 
-    # Border
-    print '--' * 40
+#     # Information Screen
+#     information = generateInfoString(Anomaly, Player, AvailableSections=AvailableSections)
+#     print information
 
-    # Await Choice
-    choice = raw_input()
+#     # Border
+#     print '--' * 40
 
-    while True:
+#     # Await Choice
+#     choice = raw_input()
 
-        if choice == '':
-            return AvailableSections[-1]
+#     while True:
 
-        try:
-            choice = int(choice)
+#         if choice == '':
+#             return AvailableSections[-1]
 
-            # Not Valid Choice
-            if choice not in range(len(AvailableSections)):
-                raise ValueError
+#         try:
+#             choice = int(choice)
 
-            return AvailableSections[choice]
+#             # Not Valid Choice
+#             if choice not in range(len(AvailableSections)):
+#                 raise ValueError
 
-        except ValueError:
-            print "Sorry %s not valid" % choice
-            choice = raw_input()
+#             return AvailableSections[choice]
 
+#         except ValueError:
+#             print "Sorry %s not valid" % choice
+#             choice = raw_input()
 
 
-def OLDchooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
-    # Margin
-    print '\n'*100
-    # Border
-    print '--' * 40
 
-    # Gen Section Info
-    secinfo = generateInfoString(Anomaly, Player, Section, LastInteractionInfo)
-    print secinfo
+# def OLDchooseInteraction(Anomaly, Player, Section, LastInteractionInfo):
+#     # Margin
+#     print '\n'*100
+#     # Border
+#     print '--' * 40
 
-    # Border
-    print '--' * 40
+#     # Gen Section Info
+#     secinfo = generateInfoString(Anomaly, Player, Section, LastInteractionInfo)
+#     print secinfo
 
-    # Await Choice
-    choice = raw_input()
+#     # Border
+#     print '--' * 40
 
-    while True:
-        if choice == '':
-            if LastInteractionInfo != True:
-                number = Section.index(LastInteractionInfo)
+#     # Await Choice
+#     choice = raw_input()
 
-                return Section[number]
+#     while True:
+#         if choice == '':
+#             if LastInteractionInfo != True:
+#                 number = Section.index(LastInteractionInfo)
 
-            return
+#                 return Section[number]
 
-        try:
-            formatedChoice = int(choice)
+#             return
 
-            if formatedChoice not in range(len(Section)+1):
-                raise ValueError
+#         try:
+#             formatedChoice = int(choice)
 
-            if formatedChoice == 0:
-                return
+#             if formatedChoice not in range(len(Section)+1):
+#                 raise ValueError
 
-            return Section[formatedChoice-1]
+#             if formatedChoice == 0:
+#                 return
 
-        except ValueError:
-            print "Sorry %s not valid" % choice
-            choice = raw_input()
+#             return Section[formatedChoice-1]
 
+#         except ValueError:
+#             print "Sorry %s not valid" % choice
+#             choice = raw_input()
 
-def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, AvailableSections=None):
-    # Anomaly Type
-    anomalyType = Anomaly.__class__.__name__
-    # Init
-    info = ''
-    # Positonal Information
-    info += "\n You are at %s %s" % (anomalyType, Anomaly.name)
 
-    longInfo = """
-        Current Stats:
-            Credits: CREDS
-            Attack:  ATTACK    Defense: DEFCURR/DEFMAX
-            Maximum Travel Distance: TRAVELDIST
-            Maintenance Costs: MAINTCOST
+# def generateInfoString(Anomaly, Player, Section=True, LastInteractionInfo=None, AvailableSections=None):
+#     # Anomaly Type
+#     anomalyType = Anomaly.__class__.__name__
+#     # Init
+#     info = ''
+#     # Positonal Information
+#     info += "\n You are at %s %s" % (anomalyType, Anomaly.name)
 
-            Cargo Bay: CURRENTCARGO/MAXCARGO -> INCARGO
+#     longInfo = """
+#         Current Stats:
+#             Credits: CREDS
+#             Attack:  ATTACK    Defense: DEFCURR/DEFMAX
+#             Maximum Travel Distance: TRAVELDIST
+#             Maintenance Costs: MAINTCOST
 
-            Rooms:  CURRENTROOMS/MAXROOMS
-                    ROOMS
+#             Cargo Bay: CURRENTCARGO/MAXCARGO -> INCARGO
 
-        You are at ANOMALYTYPE ANOMALYNAME
-    """
+#             Rooms:  CURRENTROOMS/MAXROOMS
+#                     ROOMS
 
-    longInfo = longInfo.replace('ANOMALYTYPE', anomalyType)
+#         You are at ANOMALYTYPE ANOMALYNAME
+#     """
 
-    longInfo = longInfo.replace('ANOMALYNAME', Anomaly.name)
+#     longInfo = longInfo.replace('ANOMALYTYPE', anomalyType)
 
-    longInfo = longInfo.replace('CREDS', str(Player.credits))
+#     longInfo = longInfo.replace('ANOMALYNAME', Anomaly.name)
 
-    longInfo = longInfo.replace('CURRENTCARGO', str(Player.currentShip.cargoCapacity.startValue - Player.currentShip.cargoCapacity()))
+#     longInfo = longInfo.replace('CREDS', str(Player.credits))
 
-    longInfo = longInfo.replace('MAXCARGO', str(Player.currentShip.cargoCapacity.startValue))
+#     longInfo = longInfo.replace('CURRENTCARGO', str(Player.currentShip.cargoCapacity.startValue - Player.currentShip.cargoCapacity()))
 
-    longInfo = longInfo.replace('INCARGO', str(Player.currentShip.inCargo))
+#     longInfo = longInfo.replace('MAXCARGO', str(Player.currentShip.cargoCapacity.startValue))
 
-    longInfo = longInfo.replace('ATTACK', str(Player.currentShip.attackPower()))
+#     longInfo = longInfo.replace('INCARGO', str(Player.currentShip.inCargo))
 
-    longInfo = longInfo.replace('DEFCURR', str(Player.currentShip.shieldStrength()))
+#     longInfo = longInfo.replace('ATTACK', str(Player.currentShip.attackPower()))
 
-    longInfo = longInfo.replace('DEFMAX', str(Player.currentShip.shieldStrength.startValue))
+#     longInfo = longInfo.replace('DEFCURR', str(Player.currentShip.shieldStrength()))
 
-    longInfo = longInfo.replace('TRAVELDIST', str(Player.currentShip.maxTravelDistance()))
+#     longInfo = longInfo.replace('DEFMAX', str(Player.currentShip.shieldStrength.startValue))
 
-    longInfo = longInfo.replace('MAINTCOST', str(Player.currentShip.maintenanceCosts()))
+#     longInfo = longInfo.replace('TRAVELDIST', str(Player.currentShip.maxTravelDistance()))
 
-    longInfo = longInfo.replace('CURRENTROOMS', str(Player.currentShip.spaceForRooms.startValue - Player.currentShip.spaceForRooms()))
+#     longInfo = longInfo.replace('MAINTCOST', str(Player.currentShip.maintenanceCosts()))
 
-    longInfo = longInfo.replace('MAXROOMS', str(Player.currentShip.spaceForRooms.startValue))
+#     longInfo = longInfo.replace('CURRENTROOMS', str(Player.currentShip.spaceForRooms.startValue - Player.currentShip.spaceForRooms()))
 
-    roomString = ''
-    for room in Player.currentShip.rooms:
-        roomString += room.name + '  '
-        for stat in room.statBoosts:
-            roomString += stat.statName + ' ' + str(stat.startValue) + '  '
-        roomString += '\n                    '
+#     longInfo = longInfo.replace('MAXROOMS', str(Player.currentShip.spaceForRooms.startValue))
 
-    longInfo = longInfo.replace('ROOMS', roomString)
+#     roomString = ''
+#     for room in Player.currentShip.rooms:
+#         roomString += room.name + '  '
+#         for stat in room.statBoosts:
+#             roomString += stat.statName + ' ' + str(stat.startValue) + '  '
+#         roomString += '\n                    '
 
-    # Add Options
-    if Section == True:
-        longInfo += generateSectionsString(AvailableSections)
-    else:
-        longInfo += '\n\n\n'
+#     longInfo = longInfo.replace('ROOMS', roomString)
 
-    # Add Goods Produced
-    try:
-        infoExtension = """
-        Merchant - Sells Goods:
-            GOODSFORSALEINFO
-        """
+#     # Add Options
+#     if Section == True:
+#         longInfo += generateSectionsString(AvailableSections)
+#     else:
+#         longInfo += '\n\n\n'
 
-        goodsSaleInfo = ''
-        for good in Anomaly.goodsProduced:
-            goodsInfo = "< GOODNAME: GOODPRICE >  "
+#     # Add Goods Produced
+#     try:
+#         infoExtension = """
+#         Merchant - Sells Goods:
+#             GOODSFORSALEINFO
+#         """
 
-            goodsInfo = goodsInfo.replace('GOODNAME', good)
+#         goodsSaleInfo = ''
+#         for good in Anomaly.goodsProduced:
+#             goodsInfo = "< GOODNAME: GOODPRICE >  "
 
-            goodsInfo = goodsInfo.replace('GOODPRICE', str(Anomaly.prices[good]))
+#             goodsInfo = goodsInfo.replace('GOODNAME', good)
 
-            goodsSaleInfo += goodsInfo
+#             goodsInfo = goodsInfo.replace('GOODPRICE', str(Anomaly.prices[good]))
 
-        infoExtension = infoExtension.replace('GOODSFORSALEINFO', goodsSaleInfo)
+#             goodsSaleInfo += goodsInfo
 
-        longInfo += infoExtension
+#         infoExtension = infoExtension.replace('GOODSFORSALEINFO', goodsSaleInfo)
 
-        if Section.__class__.__name__ == 'Merchant':
-            longInfo += generateInteractionsString(Section, LastInteractionInfo)
-        else:
-            longInfo += '\n\n'
+#         longInfo += infoExtension
 
-    except AttributeError:
-        pass
+#         if Section.__class__.__name__ == 'Merchant':
+#             longInfo += generateInteractionsString(Section, LastInteractionInfo)
+#         else:
+#             longInfo += '\n\n'
 
-    # Add Goods Consumed
-    try:
-        infoExtension = """
-        Trader - Buys Goods:
-            GOODSBUYINFO
-        """
+#     except AttributeError:
+#         pass
 
-        goodsBuyInfo = ''
-        for good in Anomaly.goodsConsumed:
-            goodsInfo = "< GOODNAME: GOODPRICE >  "
+#     # Add Goods Consumed
+#     try:
+#         infoExtension = """
+#         Trader - Buys Goods:
+#             GOODSBUYINFO
+#         """
 
-            goodsInfo = goodsInfo.replace('GOODNAME', good)
+#         goodsBuyInfo = ''
+#         for good in Anomaly.goodsConsumed:
+#             goodsInfo = "< GOODNAME: GOODPRICE >  "
 
-            goodsInfo = goodsInfo.replace('GOODPRICE', str(Anomaly.prices[good]))
+#             goodsInfo = goodsInfo.replace('GOODNAME', good)
 
-            goodsBuyInfo += goodsInfo
+#             goodsInfo = goodsInfo.replace('GOODPRICE', str(Anomaly.prices[good]))
 
-        infoExtension = infoExtension.replace('GOODSBUYINFO', goodsBuyInfo)
+#             goodsBuyInfo += goodsInfo
 
-        longInfo += infoExtension
+#         infoExtension = infoExtension.replace('GOODSBUYINFO', goodsBuyInfo)
 
-        if Section.__class__.__name__ == 'Trader':
-            longInfo += generateInteractionsString(Section, LastInteractionInfo)
-        else:
-            longInfo += '\n\n'
+#         longInfo += infoExtension
 
-    except AttributeError:
-        pass
+#         if Section.__class__.__name__ == 'Trader':
+#             longInfo += generateInteractionsString(Section, LastInteractionInfo)
+#         else:
+#             longInfo += '\n\n'
 
+#     except AttributeError:
+#         pass
 
-    # Add Rooms For Sale
-    try:
-        roomSaleInfo = """      Equipment Dealer - Sells Rooms: \n"""
-        for room in Anomaly.roomsForSale:
-            roomInfo = """              ROOMNAME: Price: PRICE """
 
-            roomInfo = roomInfo.replace('ROOMNAME', room.name)
+#     # Add Rooms For Sale
+#     try:
+#         roomSaleInfo = """      Equipment Dealer - Sells Rooms: \n"""
+#         for room in Anomaly.roomsForSale:
+#             roomInfo = """              ROOMNAME: Price: PRICE """
 
-            roomInfo = roomInfo.replace('PRICE', str(room.price))
+#             roomInfo = roomInfo.replace('ROOMNAME', room.name)
 
-            for statBoost in room.statBoosts:
-                roomInfo += "/ STATNAME: STATVALUE "
+#             roomInfo = roomInfo.replace('PRICE', str(room.price))
 
-                roomInfo = roomInfo.replace('STATNAME', statBoost.statName)
+#             for statBoost in room.statBoosts:
+#                 roomInfo += "/ STATNAME: STATVALUE "
 
-                roomInfo = roomInfo.replace('STATVALUE', str(statBoost.startValue))
+#                 roomInfo = roomInfo.replace('STATNAME', statBoost.statName)
 
-            roomInfo += '\n'
+#                 roomInfo = roomInfo.replace('STATVALUE', str(statBoost.startValue))
 
-            roomSaleInfo += roomInfo
+#             roomInfo += '\n'
 
-        longInfo += roomSaleInfo
+#             roomSaleInfo += roomInfo
 
-        if Section.__class__.__name__ == 'EquipmentDealer':
-            longInfo += generateInteractionsString(Section, LastInteractionInfo)
+#         longInfo += roomSaleInfo
 
-    except AttributeError:
-        pass
+#         if Section.__class__.__name__ == 'EquipmentDealer':
+#             longInfo += generateInteractionsString(Section, LastInteractionInfo)
 
-    return longInfo
+#     except AttributeError:
+#         pass
 
+#     return longInfo
 
-def generateSectionsString(PossibleActions):
-    # Init
-    info = '\n          '
-    # Option Information
 
-    for interaction in PossibleActions:
-        number = PossibleActions.index(interaction)
+# def generateSectionsString(PossibleActions):
+#     # Init
+#     info = '\n          '
+#     # Option Information
 
-        if number == len(PossibleActions)-1:
-            number = 'ENTER'
+#     for interaction in PossibleActions:
+#         number = PossibleActions.index(interaction)
 
-        info += '/ [%s] %s /' % (str(number), interaction.__class__.__name__)
+#         if number == len(PossibleActions)-1:
+#             number = 'ENTER'
 
-    info += '\n \n'
+#         info += '/ [%s] %s /' % (str(number), interaction.__class__.__name__)
 
-    return info
+#     info += '\n \n'
 
+#     return info
 
-def generateInteractionsString(Section, LastInteractionInfo):
-    # Gen Action String
-    actStr = """
-            / [0] Back /"""
 
-    if LastInteractionInfo == True:
-        actStr = actStr.replace('0', 'ENTER')
-    # Loop
-    for interaction, info in Section:
-        number = str(Section.index(interaction)+1)
-        if LastInteractionInfo == interaction:
-            number = 'ENTER'
-        actStr += '/ [' + number + '] '
+# def generateInteractionsString(Section, LastInteractionInfo):
+#     # Gen Action String
+#     actStr = """
+#             / [0] Back /"""
 
-        actStr += Section.interactionType + ' ' + interaction
+#     if LastInteractionInfo == True:
+#         actStr = actStr.replace('0', 'ENTER')
+#     # Loop
+#     for interaction, info in Section:
+#         number = str(Section.index(interaction)+1)
+#         if LastInteractionInfo == interaction:
+#             number = 'ENTER'
+#         actStr += '/ [' + number + '] '
 
-        # actStr += ' for ' + str(info) + ' /'
-        actStr += ' /'
+#         actStr += Section.interactionType + ' ' + interaction
 
-    actStr += '\n'
+#         # actStr += ' for ' + str(info) + ' /'
+#         actStr += ' /'
 
-    return actStr
+#     actStr += '\n'
 
-def invalidChoice(choice):
-    print 'Sorry, %s not valid' % choice
-    choice = input()
+#     return actStr
 
-    return choice
+# def invalidChoice(choice):
+#     print 'Sorry, %s not valid' % choice
+#     choice = input()
 
+#     return choice
 
 
-# TESTING SECTION
 
-class AnomalyScreen():
+# # TESTING SECTION
 
-    playerStatsTemplate ="""
+# class AnomalyScreen():
 
-    Current Stats:
-    Credits: %(credits)s
-    Attack:  %(attackPower)s    Defense: %(curDef)s/%(maxDef)s
-    Maximum Travel Distance: %(maxTravelDistance)s         Maintenance Costs: %(maintCosts)s
+#     playerStatsTemplate ="""
 
-    Cargo Bay: %(currentCargo)s/%(maxCargo)s
-            %(inCargo)s
+#     Current Stats:
+#     Credits: %(credits)s
+#     Attack:  %(attackPower)s    Defense: %(curDef)s/%(maxDef)s
+#     Maximum Travel Distance: %(maxTravelDistance)s         Maintenance Costs: %(maintCosts)s
 
-    Rooms:  CURRENTROOMS/MAXROOMS
-            ROOMS"""
+#     Cargo Bay: %(currentCargo)s/%(maxCargo)s
+#             %(inCargo)s
 
-    sectionTemplate = """
+#     Rooms:  CURRENTROOMS/MAXROOMS
+#             ROOMS"""
 
-    [%(num)s] %(sectionName)s"""  # -- %(sectionDescr)s""" 
+#     sectionTemplate = """
 
-    subSectionTemplate = """
-        [%(num)s] %(item)s for %(price)s"""
-            # %(itemstats)s"""
+#     [%(num)s] %(sectionName)s"""  # -- %(sectionDescr)s""" 
 
-    backTemplate = """
-        [0] Back"""
+#     subSectionTemplate = """
+#         [%(num)s] %(item)s for %(price)s"""
+#             # %(itemstats)s"""
 
-    def __init__(self, Player, AvailSections, activeSection=None):
+#     backTemplate = """
+#         [0] Back"""
 
-        playerStats = {
-            'credits': Player.credits,
-            'attackPower': Player.currentShip.attackPower(),
-            'curDef': Player.currentShip.shieldStrength(),
-            'maxDef': Player.currentShip.shieldStrength.startValue,
-            'maxTravelDistance': Player.currentShip.maxTravelDistance(),
-            'maintCosts': Player.currentShip.maintenanceCosts(),
-            'currentCargo': Player.currentShip.cargoCapacity.startValue - Player.currentShip.cargoCapacity(),
-            'maxCargo': Player.currentShip.cargoCapacity.startValue,
-            'inCargo': Player.currentShip.inCargo
-        }
+#     def __init__(self, Player, AvailSections, activeSection=None):
 
-        InfoScreen = self.playerStatsTemplate % playerStats
+#         playerStats = {
+#             'credits': Player.credits,
+#             'attackPower': Player.currentShip.attackPower(),
+#             'curDef': Player.currentShip.shieldStrength(),
+#             'maxDef': Player.currentShip.shieldStrength.startValue,
+#             'maxTravelDistance': Player.currentShip.maxTravelDistance(),
+#             'maintCosts': Player.currentShip.maintenanceCosts(),
+#             'currentCargo': Player.currentShip.cargoCapacity.startValue - Player.currentShip.cargoCapacity(),
+#             'maxCargo': Player.currentShip.cargoCapacity.startValue,
+#             'inCargo': Player.currentShip.inCargo
+#         }
 
-        for section in AvailSections:
-            idNumber = AvailSections.index(section)
+#         InfoScreen = self.playerStatsTemplate % playerStats
 
-            if activeSection:
-                idNumber = ''
+#         for section in AvailSections:
+#             idNumber = AvailSections.index(section)
 
-            sectionStats = {
-                'num': idNumber,
-                'sectionName': section.infoString(),
-            }
+#             if activeSection:
+#                 idNumber = ''
 
-            InfoScreen += self.sectionTemplate % sectionStats
+#             sectionStats = {
+#                 'num': idNumber,
+#                 'sectionName': section.infoString(),
+#             }
 
-            if section:
-                InfoScreen += self.backTemplate
+#             InfoScreen += self.sectionTemplate % sectionStats
 
-            for option, price in section:
-                idNumber = ''
+#             if section:
+#                 InfoScreen += self.backTemplate
 
-                if activeSection == section:
-                    idNumber = section.index(option)+1
+#             for option, price in section:
+#                 idNumber = ''
 
-                optionStats = {
-                    'num': idNumber,
-                    'item': option,
-                    'price': price,
-                    # 'itemstats': option.stats
-                }
-                InfoScreen += self.subSectionTemplate % optionStats
+#                 if activeSection == section:
+#                     idNumber = section.index(option)+1
 
-        self.currentScreen = InfoScreen
-        self.availableSections = AvailSections
+#                 optionStats = {
+#                     'num': idNumber,
+#                     'item': option,
+#                     'price': price,
+#                     # 'itemstats': option.stats
+#                 }
+#                 InfoScreen += self.subSectionTemplate % optionStats
 
-    def show(self, Section=None):
-        # Flush Terminal
-        print '\n'*100
+#         self.currentScreen = InfoScreen
+#         self.availableSections = AvailSections
 
-        print self.currentScreen
+#     def show(self, Section=None):
+#         # Flush Terminal
+#         print '\n'*100
 
-        choice = input()
+#         print self.currentScreen
 
-        if choice == 0:
-            return
+#         choice = input()
 
-        if not Section:
-            return self.availableSections[choice-1]
+#         if choice == 0:
+#             return
 
-        return Section[choice]
+#         if not Section:
+#             return self.availableSections[choice-1]
 
+#         return Section[choice]
 
 
-def planetScreen(Planet):
 
-    planetViz = """
-          %s %s
-            | %s %s
-            |   | %s %s
-            |   |   |          %s %s
-            |   |   |            \    %s %s
-            |   |   |             \     |    %s %s
-           [1] [2] [3]             \    |     /
-|-|      /----------------\      __[4]_[5]_[6]__     _       _
-| ||-|  | Goods For Sale  |    / Buys Goods       /   _ | _  _  | [7] Depart
-| || |  |  Merchant       |   / Trader           /    | | |  |  | Spaceport
------------------------------------------------------------------------------
+# def planetScreen(Planet):
 
-"""
-    values = list()
-    indexes = list()
-    i = 1
+#     planetViz = """
+#           %s %s
+#             | %s %s
+#             |   | %s %s
+#             |   |   |          %s %s
+#             |   |   |            \    %s %s
+#             |   |   |             \     |    %s %s
+#            [1] [2] [3]             \    |     /
+# |-|      /----------------\      __[4]_[5]_[6]__     _       _
+# | ||-|  | Goods For Sale  |    / Buys Goods       /   _ | _  _  | [7] Depart
+# | || |  |  Merchant       |   / Trader           /    | | |  |  | Spaceport
+# -----------------------------------------------------------------------------
 
-    for good in Planet.goodsProduced:
-        values.extend([good, Planet.prices[good]])
-        indexes.append(i)
-        i += 1
+# """
+#     values = list()
+#     indexes = list()
+#     i = 1
 
-    while len(values) < 6:
-        values.extend(['', ''])
-        indexes.append('')
+#     for good in Planet.goodsProduced:
+#         values.extend([good, Planet.prices[good]])
+#         indexes.append(i)
+#         i += 1
 
-    for good in Planet.goodsConsumed:
-        values.extend([good, Planet.prices[good]])
-        indexes.append(i)
-        i += 1
+#     while len(values) < 6:
+#         values.extend(['', ''])
+#         indexes.append('')
 
-    while len(values) < 12:
-        values.extend(['', ''])
-        indexes.append('')
+#     for good in Planet.goodsConsumed:
+#         values.extend([good, Planet.prices[good]])
+#         indexes.append(i)
+#         i += 1
 
-    indexes.append(i)
+#     while len(values) < 12:
+#         values.extend(['', ''])
+#         indexes.append('')
 
-    # values.extend(indexes)
+#     indexes.append(i)
 
-    print planetViz % tuple(values)
+#     # values.extend(indexes)
 
-    raw_input()
+#     print planetViz % tuple(values)
+
+#     raw_input()

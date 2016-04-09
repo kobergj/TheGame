@@ -6,9 +6,6 @@ import producing.models.universe as muv
 import producing.models.player as mpl
 
 # Generators
-import producing.generator.planets as gpl
-import producing.generator.spacegates as gsg
-import producing.generator.starbases as gsb
 import producing.generator.ships as gsp
 import producing.generator.rooms as gro
 
@@ -30,34 +27,112 @@ def producePlayer(PlayerInfo):
     return player
 
 
-def produceAnomaly(Database, anomalyInfo=None):
-    """Produces a Anomaly. Creates Random Stats if not given"""
-    anomaly_generators = [gpl.generatePlanetInformation,
-                          gsb.generateStarbaseInformation,
-                          gsg.generateSpacegateInformation,
+def produceAnomaly(Database):
+    """Produces a random anomaly. """
+    anomaly_producers = [producePlanet,
+                         produceStarbase,
+                         produceSpacegate,
                         ]
 
-    anomaly_models = [mod.Planet,
-                      mod.Starbase,
-                      mod.Spacegate,
-                    ]
+    anomaly = None
 
-    while not anomalyInfo:
+    while not anomaly:
         # Choose Anomaly Type
-        anomalyGenerator = random.choice(anomaly_generators)
+        anomalyProducer = random.choice(anomaly_producers)
 
         # Get Info
-        anomalyInfo = anomalyGenerator(Database)
-
-    # Get Model
-    for model in anomaly_models:
-        # Create Anomaly
-        try: anomaly = model(anomalyInfo)
-        except KeyError: continue
-
-        break
+        anomaly = anomalyProducer(Database)
 
     return anomaly
+
+
+def producePlanet(Database, name=None):
+    """Produces Planet. Takes Random Name if not given
+        Fills it with random Goods. 
+        Returns None if no names left"""
+    if not name:
+
+        if not Database.Planets.ListOfNames:
+            return
+
+        name = random.choice(Database.Planets.ListOfNames)
+
+        Database.Planets.ListOfNames.remove(name)
+
+    planet = mod.Planet(name)
+
+    # Add Consume
+    min_goods = Database.Planets.MinNumberOfGoodsConsumed
+    max_goods = Database.Planets.MaxNumberOfGoodsConsumed
+    num = random.randint(min_goods, max_goods)
+
+    poss_goods = Database.Goods.ListOfNames[:]
+
+    while len(planet.goodsConsumed) < num:
+        good_name = random.choice(poss_goods)
+
+        poss_goods.remove(good_name)
+
+        min_price = Database.Goods.MinBuyPrice
+        max_price = Database.Goods.MaxBuyPrice
+        
+        price = random.randint(min_price, max_price)
+
+        good = mro.Good(good_name, price)
+
+        planet.raiseConsume(good)
+
+    # Add Produce
+    min_goods = Database.Planets.MinNumberOfGoodsProduced
+    max_goods = Database.Planets.MaxNumberOfGoodsProduced
+    num = random.randint(min_goods, max_goods)
+
+    while len(planet.goodsProduced) < num:
+        good_name = random.choice(poss_goods)
+
+        poss_goods.remove(good_name)
+
+        min_price = Database.Goods.MinSellPrice
+        max_price = Database.Goods.MaxSellPrice
+        
+        price = random.randint(min_price, max_price)
+
+        good = mro.Good(good_name, price)
+
+        planet.raiseProducing(good)
+
+    return planet
+
+def produceSpacegate(Database, name=None):
+    if not name:
+        name = Database.Spacegates.IdentifiersList[0]
+
+        while name in Database.Spacegates.IdentifiersList:
+
+            currentId = random.randint(1, 1000)
+
+            name += str(currentId)
+
+        Database.Spacegates.IdentifiersList.append(name)
+
+    spacegate = mod.Spacegate(name)
+
+    return spacegate
+
+def produceStarbase(Database, name=None):
+    if not name:
+
+        if not Database.Starbases.ListOfNames:
+            return
+
+        name = random.choice(Database.Starbases.ListOfNames)
+
+        Database.Starbases.ListOfNames.remove(name)
+
+    starbase = mod.Starbase(name)
+
+    return starbase
+
 
 
 def produceShip(Database, shipInfo=None):
@@ -98,7 +173,7 @@ def produceEnemy(Database, enemyInfo=None):
 
     # Loot Goods
     for i in range(random.randint(1, 5)):
-        good_to_loot = random.choice(Database.Goods.ListOfNames)
+        good_to_loot = produceGood
 
         enemy.loadCargo(good_to_loot)
 
@@ -111,6 +186,15 @@ def produceEnemy(Database, enemyInfo=None):
         enemy = None
 
     return enemy
+
+def produceGood(Database, name=None):
+    """Produces a Good. Creates Random Name if not given"""
+    if not name:
+        name = random.choice(Database.Goods.ListOfNames)
+
+    good = mro.Goods(name)
+
+    return good
 
 
 class randomProducer():

@@ -141,34 +141,32 @@ class MainScreen():
         anm_x = self.act_anmy.coordinates[:][0]
         anm_y = self.act_anmy.coordinates[:][1]
 
-        needed_rows = len(matrix)
+        # needed_rows = len(matrix)
 
-        start_row = anm_y - needed_rows/2
+        start_row = anm_y
 
         while start_row < 0:
             anm_y += 1
-            start_row = anm_y - needed_rows/2
+            start_row = anm_y
 
         end_row = start_row + len(matrix)
 
         while end_row >= len(self.uvMatrix):
             anm_y -= 1
-            start_row = anm_y - needed_rows/2
+            start_row = anm_y
             end_row = start_row + len(matrix)
 
-        needed_points = len(matrix[0])
-
-        start_point = anm_x - needed_points/2
+        start_point = anm_x
 
         while start_point < 0:
             anm_x += 1
-            start_point = anm_x - needed_points/2
+            start_point = anm_x
 
         end_point = start_point + len(matrix[0])
 
         while end_point >= len(self.uvMatrix[0]):
             anm_x -= 1
-            start_point = anm_x - needed_points/2
+            start_point = anm_x
             end_point = start_point + len(matrix[0])
 
         row_new = 0

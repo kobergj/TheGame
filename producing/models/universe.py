@@ -18,6 +18,8 @@ class Universe():
         self.coCursor = [-1, 0]
 
     def __iter__(self):
+        self.coCursor = [-1, 0]
+
         return self
 
     def __getitem__(self, coordinates):
@@ -108,6 +110,7 @@ class Universe():
             # Calculate Travel Costs
             distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
             costs = self.calculateTravelCosts(Player, distance)
+            log.log('Assigning TravelCosts %s to %s (dist: %s)' % (costs, anomaly.coordinates, distance))
             anomaly.setTravelCosts(costs)
 
             try:

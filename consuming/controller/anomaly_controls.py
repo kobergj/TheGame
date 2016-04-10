@@ -148,13 +148,22 @@ class Merchant(AnomalySection):
 class Trader(AnomalySection):
 
     def __init__(self, Anomaly, Player):
-        sharedGoods = set(Anomaly.goodsConsumed).intersection(set(Player.currentShip.inCargo.keys()))
+        # Calculate Shared Goods:
+        sharedGoods = list()
+
+        playersGoods = [(lambda x: x.name)(x) for x in Player.currentShip.inCargo.keys()]
+
+        for good in Anomaly.goodsConsumed:
+            log.log('Checking for Similarities: %s - %s' % (good.name, playersGoods))
+            if good.name in playersGoods:
+                sharedGoods.append(good)
+        # sharedGoods = set(Anomaly.goodsConsumed).intersection(set(Player.currentShip.inCargo.keys()))
 
         if not sharedGoods:
             raise AttributeError
 
         # Build Main List
-        self.mainList = list(sharedGoods)
+        self.mainList = sharedGoods
 
         self.interactionType = 'Sell'
 

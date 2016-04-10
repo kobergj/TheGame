@@ -151,11 +151,9 @@ class Trader(AnomalySection):
         # Calculate Shared Goods:
         sharedGoods = list()
 
-        playersGoods = [(lambda x: x.name)(x) for x in Player.currentShip.inCargo.keys()]
-
         for good in Anomaly.goodsConsumed:
-            log.log('Checking for Similarities: %s - %s' % (good.name, playersGoods))
-            if good.name in playersGoods:
+            log.log('Checking for Similarities: %s - %s' % (good.name, Player.currentShip.inCargo.keys()))
+            if good.name in Player.currentShip.inCargo:
                 sharedGoods.append(good)
         # sharedGoods = set(Anomaly.goodsConsumed).intersection(set(Player.currentShip.inCargo.keys()))
 

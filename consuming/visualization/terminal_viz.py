@@ -73,7 +73,14 @@ class MainScreen():
 
             except ValueError:
 
-                print 'Sorry, %s not valid' % choice
+                print 'Sorry, %s not valid. Please Press ENTER or valid number' % choice
+
+                choice = raw_input()
+
+            except IndexError:
+
+                print 'Sorry, There is no Option %s' % choice
+
                 choice = raw_input()
 
 
@@ -225,8 +232,8 @@ class MainScreen():
         def cargoString(CargoBay):
             cargo_string = ''
 
-            for good, amount in CargoBay.iteritems():
-                cargo_string += "%s: %s  " % (good.name, amount)
+            for good_name, amount in CargoBay.iteritems():
+                cargo_string += "%s: %s  " % (good_name, amount)
 
             return cargo_string
 

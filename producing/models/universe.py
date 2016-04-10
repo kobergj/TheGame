@@ -157,3 +157,5 @@ class Universe():
             travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
 
             return travelCosts
+
+        return None

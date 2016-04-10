@@ -134,7 +134,6 @@ def produceStarbase(Database, name=None):
     return starbase
 
 
-
 def produceShip(Database, shipInfo=None):
     """Produces a Ship. Creates Random Stats if not given"""
     if not shipInfo:
@@ -173,7 +172,7 @@ def produceEnemy(Database, enemyInfo=None):
 
     # Loot Goods
     for i in range(random.randint(1, 5)):
-        good_to_loot = produceGood
+        good_to_loot = produceGood(Database)
 
         enemy.loadCargo(good_to_loot)
 
@@ -192,7 +191,7 @@ def produceGood(Database, name=None):
     if not name:
         name = random.choice(Database.Goods.ListOfNames)
 
-    good = mro.Goods(name)
+    good = mro.Good(name)
 
     return good
 

@@ -49,17 +49,17 @@ class Ship():
 
     # CargoBay Methods
     def loadCargo(self, cargo, cargoAmount=1):
-        if cargo in self.inCargo:
-            self.inCargo[cargo] += cargoAmount
+        if cargo.name in self.inCargo:
+            self.inCargo[cargo.name] += cargoAmount
         else:
-            self.inCargo.update({cargo: cargoAmount})
+            self.inCargo.update({cargo.name: cargoAmount})
 
         self.cargoCapacity.addBoost(cargoAmount*-1)
 
     def unloadCargo(self, cargo, cargoAmount=1):
-        self.inCargo[cargo] -= cargoAmount
-        if self.inCargo[cargo] <= 0:
-            del self.inCargo[cargo]
+        self.inCargo[cargo.name] -= cargoAmount
+        if self.inCargo[cargo.name] <= 0:
+            del self.inCargo[cargo.name]
 
         self.cargoCapacity.addBoost(cargoAmount)
 

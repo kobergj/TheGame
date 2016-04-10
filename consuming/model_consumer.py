@@ -50,6 +50,8 @@ class Journey:
             log.log('Loading Anomaly Screen')
             self.Interact(Universe, Player)
 
+        Universe.update(Player)
+
 
     def Travel(self, Anomaly, Player):
         """No "Screen" at the moment :) 

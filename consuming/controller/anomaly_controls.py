@@ -2,7 +2,7 @@ import logbook.configuration as log
 
 def getAvailableSections(Anomaly, Player):
     """Checks for possible Actions with Anomaly"""
-    sectionList = [Quit, Merchant, Trader, EquipmentDealer, Gateport, Spaceport]
+    sectionList = [Spaceport, Merchant, Trader, EquipmentDealer, Gateport, Quit]
 
     availableSections = list()
 

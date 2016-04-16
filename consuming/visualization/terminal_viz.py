@@ -18,6 +18,9 @@ class View:
                       'Highlight':[ ' ->  <-',
                                     'Costs:%u'
                                 ],
+                      'Current': [  'You are',
+                                    '  Here '
+                                ]
                       }
 
     playerStatsTemplate ="""
@@ -129,12 +132,14 @@ class View:
         amyname = Anomaly.name
         amytype = Anomaly.__class__.__name__
 
-        information = '%s %s ' % (amytype, amyname)
+        information = '         %s ' % Anomaly.coordinates
 
         for enemy in Anomaly.enemies:
             information += 'X'
 
-        information += ' '
+        information += '%s %s ' % (amytype, amyname)
+
+        information += ' Cost To Travel Here: %s ' % Anomaly.travelCosts
 
         # Buys It Goods?
         try:
@@ -209,7 +214,8 @@ class View:
 
                     if self.act_anmy == anomaly:
                         log.log('Current %s' % str(anomaly.coordinates))
-                        second_line = second_line.replace('__', 'XX')
+                        first_line = self.mapIdentifiers['Current'][0]
+                        second_line = self.mapIdentifiers['Current'][1]
 
                     if anomaly.travelCosts is None:
                         first_line = self.mapIdentifiers['Unknown'][0]
@@ -224,67 +230,72 @@ class View:
 
     def insertWindow(self, raw_info_string, position):
 
+        # Convert String to Matrix
         matrix = self.string2matrix(raw_info_string)
 
-        # Technical Approach
+        # Try to start at given Position
         anm_x = position[:][0]
         anm_y = position[:][1]
 
-        # needed_rows = len(matrix)
-
-        start_row = anm_y
-
-        while start_row < 0:
+        # Should not happen
+        while anm_y < 0:
             anm_y += 1
-            start_row = anm_y
 
-        end_row = start_row + len(matrix)
+        # Calculate End Row Index
+        end_row = anm_y + len(matrix)
 
+        # Fit in Map?
         while end_row >= len(self.uvMatrix):
             anm_y -= 1
-            start_row = anm_y
-            end_row = start_row + len(matrix)
+            end_row = anm_y + len(matrix)
 
-        start_point = anm_x
-
-        while start_point < 0:
+        # Should not happen
+        while anm_x < 0:
             anm_x += 1
-            start_point = anm_x
 
-        end_point = start_point + len(matrix[0])
+        # Calculate End Point Index
+        end_point = anm_x + len(matrix[0])
 
+        # Fit In Map?
         while end_point >= len(self.uvMatrix[0]):
             anm_x -= 1
-            start_point = anm_x
-            end_point = start_point + len(matrix[0])
+            end_point = anm_x + len(matrix[0])
 
-        row_new = 0
+        matrix_y = 0
 
-        for row_old in range(start_row, end_row):
+        for map_y in range(anm_y, end_row):
 
-            point_new = 0
+            matrix_x = 0
 
-            for point_old in range(start_point, end_point):
+            for map_x in range(anm_x, end_point):
                 try:
-                    self.uvMatrix[row_old][point_old][0] = matrix[row_new][point_new]
+                    new_point = matrix[matrix_y][matrix_x]
+                     
                 except IndexError:
-                    self.uvMatrix[row_old][point_old][0] = ' ' * self.point_len
+                    new_point = ' ' * self.point_len
 
-                point_new += 1
+                log.log('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][0], new_point))
+                self.uvMatrix[map_y][map_x][0] = new_point
 
-            row_new += 1
+                matrix_x += 1
 
-            point_new = 0
+            matrix_y += 1
 
-            for point_old in range(start_point, end_point):
+            matrix_x = 0
+
+            for map_x in range(anm_x, end_point):
                 try:
-                    self.uvMatrix[row_old][point_old][1] = matrix[row_new][point_new]
+                    new_point = matrix[matrix_y][matrix_x]
+                     
                 except IndexError:
-                    self.uvMatrix[row_old][point_old][1] = ' ' * self.point_len
+                    new_point = ' ' * self.point_len
 
-                point_new += 1
+                log.log('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][1], new_point))
+                self.uvMatrix[map_y][map_x][1] = new_point
 
-            row_new += 1
+                matrix_x += 1
+
+            matrix_y += 1
 
 
     def string2matrix(self, rawString):
@@ -322,6 +333,8 @@ class UniverseView(View):
         self.detail_window = self.travel_details(act_anmy)
 
         self.window_position = act_anmy.coordinates
+
+        self.anomalyInfoLine = self.anomaly_info(act_anmy)
 
         self.choiceList = [True, False]
 
@@ -379,59 +392,3 @@ class SectionView(View):
             interactionInfo += " [%s] %s for %s\n" % (i+1, item.name, item.price)
 
         return interactionInfo
-
-
-class Deprecated:
-    def __call__(self, Player, active_sec=None, avail_secs=None, active_anmy=None):
-
-        if active_sec:
-            self.insertSectionDetails(active_sec)
-
-            choiceList = [None]
-
-            for item in active_sec:
-                choiceList.append(item)
-
-        elif avail_secs:
-            self.insertAnomalySections(avail_secs)
-
-            choiceList = avail_secs
-
-        elif active_anmy:
-            self.highlight_anomaly(active_anmy.coordinates)
-
-            choiceList = [True, False]
-
-
-
-    def insertSectionDetails(self, Section):
-        raw_info_string = self.generateInteractionString(Section)
-
-        self.insertWindowInMap(raw_info_string)
-
-    def insertAnomalySections(self, AvailableSections):
-        raw_info_string = self.generateSectionsString(AvailableSections)
-
-        self.insertWindowInMap(raw_info_string)
-
-
-    def highlight_anomaly(self, anomalyCords):
-
-        for y, row in enumerate(self.uvMatrix):
-
-            for x, point in enumerate(row):
-
-                if anomalyCords == [x, y]:
-                    self.uvMatrix[y][x][0] = self.highlight_line(self.uvMatrix[y][x][0])
-
-    def highlight_line(self, line):
-        highlighted_line = self.mapIdentifiers['Highlight']
-        # to_replace = filter(lambda x: x.isalpha(), highlighted_line)
-
-        # anomalyIdentifiers = filter(lambda x: x.isalpha(), line)
-
-        # highlighted_line = highlighted_line.replace(to_replace, anomalyIdentifiers)
-
-        return highlighted_line
-
-

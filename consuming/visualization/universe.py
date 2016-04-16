@@ -1,34 +1,44 @@
 import logbook.configuration as log
 
-def chooseNextDestination(Universe, Player, ActiveCoordinates, TravelCosts=0):
+def chooseNextDestination(Universe, Player, ActiveCoordinates, AvailableSections=None, TravelCosts=0):
     print '\n' * 100
-    print "\n Choose Destination\n"
 
-    drawMap(Universe, Player, ActiveCoordinates, TravelCosts)
+    uvMap = drawMap(Universe, Player, ActiveCoordinates, TravelCosts)
 
-    anomalyInfo(Universe, Player, ActiveCoordinates)
+    anomalyInfoString = anomalyInfo(Universe, Player, ActiveCoordinates)
 
-    showOptions(Universe, Player, ActiveCoordinates, TravelCosts)
+    optionsString = showOptions(Universe, Player, ActiveCoordinates, TravelCosts)
+
+    statsString = playerStats(Player)
+
+    print statsString
+    print uvMap
+    print anomalyInfoString
+    print optionsString
 
     choice = raw_input()
 
-    # Wait for Landing Sequence
-    while choice != '':
+    options = {
+        '': uvMap,
+        '1': False
+    }
 
-        # Show Next Destination
-        if choice == '1':
-            return False
-
-        # Invalid Choice
-        else:
+    while True:
+        try:
+            result = options[choice]
+            return result
+        except KeyError:
             choice = invalidChoice(choice)
 
-    return True
+
 
 
 def drawMap(Universe, Player, ActiveCords, TravelCosts):
     # Where to store them best? 7   ' A12D12'
     mapIdentifiers = {'Empty':      '       ',
+                      'Unknown':[   '       ',
+                                    '   ?   ',
+                                ],
                       'Planet':[    '  /Pl\ ',
                                     '  \__/ ',
                                     # '   ()  '
@@ -43,10 +53,11 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
                                 ]
                       }
 
-    print '#######'*(len(Universe.Map[0])) + '##'
+    universeMap = '#######'*(len(Universe.Map[0])) + '##\n'
 
     # Loop through vertical Slices of Universe
     log.log('drawing Map')
+
     for verticalSlice in Universe.Map:
         first_row = '# '
         second_row = '# '
@@ -65,6 +76,10 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
                 first_line = mapIdentifiers[anomalyType][0]
                 second_line = mapIdentifiers[anomalyType][1]
                 # third_line = mapIdentifiers[anomalyType][2]
+
+                # if not TravelCosts[anomaly.name]:
+                #     first_line = mapIdentifiers['Unknown'][0]
+                #     second_line = mapIdentifiers['Unknown'][1]
 
                 # Check if Anomaly is Active
                 if ActiveCords == anomaly.coordinates:
@@ -107,13 +122,43 @@ def drawMap(Universe, Player, ActiveCords, TravelCosts):
         first_row += '#'
         second_row += '#'
 
-        print first_row
-        print second_row
+        universeMap += first_row + '\n'
+        universeMap += second_row + '\n'
         # print third_row
 
-    print '#######'*(len(Universe.Map[0])) + '##'
+    universeMap += '#######'*(len(Universe.Map[0])) + '##'
 
-    return
+    return universeMap
+
+
+def playerStats(Player):
+    playerStatsTemplate ="""
+
+    Current Stats:
+    Credits: %(credits)s
+    Attack:  %(attackPower)s    Defense: %(curDef)s/%(maxDef)s
+    Maximum Travel Distance: %(maxTravelDistance)s         Maintenance Costs: %(maintCosts)s
+
+    Cargo Bay: %(currentCargo)s/%(maxCargo)s
+            %(inCargo)s
+
+    Rooms:  CURRENTROOMS/MAXROOMS
+            ROOMS"""
+
+    playerStats = {
+        'credits': Player.credits,
+        'attackPower': Player.currentShip.attackPower(),
+        'curDef': Player.currentShip.shieldStrength(),
+        'maxDef': Player.currentShip.shieldStrength.startValue,
+        'maxTravelDistance': Player.currentShip.maxTravelDistance(),
+        'maintCosts': Player.currentShip.maintenanceCosts(),
+        'currentCargo': Player.currentShip.cargoCapacity.startValue - Player.currentShip.cargoCapacity(),
+        'maxCargo': Player.currentShip.cargoCapacity.startValue,
+        'inCargo': Player.currentShip.inCargo
+    }
+
+    return playerStatsTemplate % playerStats
+
 
 
 def anomalyInfo(Universe, Player, ActiveCoordinates):
@@ -156,7 +201,7 @@ def anomalyInfo(Universe, Player, ActiveCoordinates):
     except AttributeError:
         pass
 
-    print information
+    return information
 
 
 def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):
@@ -173,8 +218,9 @@ def showOptions(Universe, Player, DestinationCoordinates, TravelCosts):
 
     finalString += infoString
 
-    print finalString
-    print "[1] Checkout Next Destination"
+    finalString += "\n[1] Checkout Next Destination"
+
+    return finalString
 
 
 def interactionString(Anomaly):

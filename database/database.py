@@ -17,12 +17,6 @@ class InitializedDatabase():
 
 class DynamicDatabase:
     class Goods:
-        MinNumberOfGoodsConsumed = 1
-        MaxNumberOfGoodsConsumed = 3
-
-        MinNumberOfGoodsProduced = 1
-        MaxNumberOfGoodsProduced = 3
-
         MinSellPrice = 1
         MaxSellPrice = 3
 
@@ -32,6 +26,12 @@ class DynamicDatabase:
         ListOfNames = ['Gin', 'Tobacco', 'Oil', 'BloodySweaters', 'Meat', 'Airplanes', 'Potatoes']
 
     class Planets:
+        MinNumberOfGoodsConsumed = 1
+        MaxNumberOfGoodsConsumed = 3
+
+        MinNumberOfGoodsProduced = 1
+        MaxNumberOfGoodsProduced = 3
+
         ListOfNames = ['Earth', 'Venus', 'Mars', 'SecretPlanet', 'A3X-424', 'Eden', 'Volcan', 'Endar',
                        'Uranus', 'BingoPlanet', 'CrappyWorld']
 

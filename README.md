@@ -1,16 +1,18 @@
 # TheGame (Working Title)
 
-Travel Anomalies in Space
-Currently Implemented:
 
-## Planets
+TheGame (Working Title) is my approach of building a Spacegame.
 
-Buy and sell Goods
+You can visit Planets, Buy and Sell Goods to raise your Fortune
 
-## Spacegates
+.. and spend it all for new Ships and Upgrades at the next Starbase.
 
-Jump Anywhere for no Travel Costs
+## Tech Details
 
-## Starbases
+The Program is written in python 2.7. Just Use
 
-Buy Ships
+```bash
+  python The.Game.py
+```
+
+to start - No Dependencies Needed

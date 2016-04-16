@@ -247,7 +247,7 @@ class View:
         end_row = anm_y + len(matrix)
 
         # Fit in Map?
-        while end_row >= len(self.uvMatrix):
+        while end_row > len(self.uvMatrix):
             anm_y -= 1
             end_row = anm_y + len(matrix)
 
@@ -277,7 +277,9 @@ class View:
                 except IndexError:
                     point_one = ' ' * self.point_len
 
-                log.log('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][0], point_one))
+                log.log('Overwriting %s with %s [%s]' % (
+                                    self.uvMatrix[map_y][map_x][0], point_one, [map_x, map_y])
+                                    )
 
                 try:
                     point_two = matrix[matrix_y][matrix_x][1]

@@ -12,7 +12,7 @@ You can visit Planets, Buy and Sell Goods to raise your Fortune
 The Program is written in python 2.7. Just Use
 
 ```bash
-  python The.Game.py
+  python TheGame.py
 ```
 
 to start - No Dependencies Needed

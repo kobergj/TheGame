@@ -15,7 +15,9 @@ class View:
                       'Starbase':[  '  |SB| ',
                                     '  |__| ',
                                 ],
-                      'Highlight':  ' ->  <-',
+                      'Highlight':[ ' ->  <-',
+                                    'Costs:%u'
+                                ],
                       }
 
     playerStatsTemplate ="""
@@ -222,30 +224,7 @@ class View:
 
     def insertWindow(self, raw_info_string, position):
 
-        def string2matrix(self, rawString):
-            row_splitted = rawString.split('\n')
-
-            matrix = list()
-
-            for row_string in row_splitted:
-
-                row = list()
-
-                while row_string:
-                    point = row_string[:self.point_len]
-
-                    row_string = row_string[self.point_len:]
-
-                    while len(point) < self.point_len:
-                        point += ' '
-
-                    row.append(point)
-
-                matrix.append(row)
-
-            return matrix
-
-        matrix = string2matrix(raw_info_string)
+        matrix = self.string2matrix(raw_info_string)
 
         # Technical Approach
         anm_x = position[:][0]
@@ -308,23 +287,53 @@ class View:
             row_new += 1
 
 
+    def string2matrix(self, rawString):
+        row_splitted = rawString.split('\n')
+
+        matrix = list()
+
+        for row_string in row_splitted:
+
+            row = list()
+
+            while row_string:
+                point = row_string[:self.point_len]
+
+                row_string = row_string[self.point_len:]
+
+                while len(point) < self.point_len:
+                    point += ' '
+
+                row.append(point)
+
+            matrix.append(row)
+
+        return matrix
+
+
 
 
 class UniverseView(View):
 
-    def __init__(self, Universe, Player, act_coords):
+    def __init__(self, Universe, Player, act_anmy):
 
         View.__init__(self, Universe, Player)
 
-        self.detail_window = self.travel_details(act_coords)
+        self.detail_window = self.travel_details(act_anmy)
 
-        self.window_position = act_coords
+        self.window_position = act_anmy.coordinates
 
         self.choiceList = [True, False]
 
-    def travel_details(self):
+    def travel_details(self, anomaly):
 
-        return self.mapIdentifiers['Highlight']
+        details = self.mapIdentifiers['Highlight'][0]
+
+        details += '\n'
+
+        details += self.mapIdentifiers['Highlight'][1] % anomaly.travelCosts
+
+        return details
 
 
 class AnomalyView(View):

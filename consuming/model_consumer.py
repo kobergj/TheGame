@@ -151,7 +151,7 @@ class Journey:
         # Reachable?
         if anomaly.travelCosts is not None:
             log.log('Await Interaction with %s' % anomaly.coordinates)
-            view = term.UniverseView(Universe, Player, anomaly.coordinates)
+            view = term.UniverseView(Universe, Player, anomaly)
 
             interact = view()
 

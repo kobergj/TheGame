@@ -8,9 +8,9 @@ def initLogBook():
     logging.warning('-- -- LOGBOOK INITIALIZED -- --')
 
 
-def log(message):
+def log(message, level=20):
 
-    logging.info(message)
+    logging.log(level, message)
 
 
 class FleeError(AssertionError):

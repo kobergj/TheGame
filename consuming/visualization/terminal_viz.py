@@ -181,6 +181,7 @@ class View:
 
             for x, point in enumerate(row):
 
+                log.log('Drawing %s' % point, level=10)
                 first_line += point[0]
                 second_line += point[1]
 
@@ -230,12 +231,13 @@ class View:
 
     def insertWindow(self, raw_info_string, position):
 
-        # Convert String to Matrix
+        log.log('Convert String to Matrix')
         matrix = self.string2matrix(raw_info_string)
+        log.log('Needed Rows: %s, Needed Points: %s' % (len(matrix), len(matrix[0])))
 
-        # Try to start at given Position
-        anm_x = position[:][0]
+        log.log('Starting Coordinates %s' % position)
         anm_y = position[:][1]
+        anm_x = position[:][0]
 
         # Should not happen
         while anm_y < 0:
@@ -257,7 +259,7 @@ class View:
         end_point = anm_x + len(matrix[0])
 
         # Fit In Map?
-        while end_point >= len(self.uvMatrix[0]):
+        while end_point > len(self.uvMatrix[0]):
             anm_x -= 1
             end_point = anm_x + len(matrix[0])
 
@@ -268,30 +270,24 @@ class View:
             matrix_x = 0
 
             for map_x in range(anm_x, end_point):
+
                 try:
-                    new_point = matrix[matrix_y][matrix_x]
+                    point_one = matrix[matrix_y][matrix_x][0]
+
+                except IndexError:
+                    point_one = ' ' * self.point_len
+
+                log.log('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][0], point_one))
+
+                try:
+                    point_two = matrix[matrix_y][matrix_x][1]
                      
                 except IndexError:
-                    new_point = ' ' * self.point_len
+                    point_two = ' ' * self.point_len
 
-                log.log('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][0], new_point))
-                self.uvMatrix[map_y][map_x][0] = new_point
+                log.log('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][1], point_two))
 
-                matrix_x += 1
-
-            matrix_y += 1
-
-            matrix_x = 0
-
-            for map_x in range(anm_x, end_point):
-                try:
-                    new_point = matrix[matrix_y][matrix_x]
-                     
-                except IndexError:
-                    new_point = ' ' * self.point_len
-
-                log.log('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][1], new_point))
-                self.uvMatrix[map_y][map_x][1] = new_point
+                self.uvMatrix[map_y][map_x] = [point_one, point_two]
 
                 matrix_x += 1
 
@@ -300,25 +296,75 @@ class View:
 
     def string2matrix(self, rawString):
         row_splitted = rawString.split('\n')
+        log.log('Splitted String to %s' % row_splitted)
 
         matrix = list()
 
-        for row_string in row_splitted:
+        row_one_counter = 0
+        row_two_counter = 1
+
+        while row_two_counter <=len(row_splitted):
 
             row = list()
 
-            while row_string:
-                point = row_string[:self.point_len]
+            row_one = list()
+
+            try:
+                row_string = row_splitted[row_one_counter]
+            except IndexError:
+                row_string = ''
+
+            while True:
+                point_one = row_string[:self.point_len]
 
                 row_string = row_string[self.point_len:]
 
-                while len(point) < self.point_len:
-                    point += ' '
+                while len(point_one) < self.point_len:
+                    point_one += ' '
 
-                row.append(point)
+                row_one.append(point_one)
+
+                if not row_string:
+                    break
+
+            row_two = list()
+
+            try:
+                row_string = row_splitted[row_two_counter]
+            except IndexError:
+                row_string = ''
+
+            while True:
+                point_two = row_string[:self.point_len]
+
+                row_string = row_string[self.point_len:]
+
+                while len(point_two) < self.point_len:
+                    point_two += ' '
+
+                row_two.append(point_two)
+
+                if not row_string:
+                    break
+
+            log.log('Make same length: %s, %s' % (row_one, row_two), level=10)
+            while len(row_one) < len(row_two):
+                row_one.append(' ' * self.point_len)
+
+            while len(row_two) < len(row_one):
+                row_two.append(' ' * self.point_len)
+
+            log.log('Zipping: %s, %s' % (row_one, row_two))
+            for i, unn in enumerate(row_one):
+
+                row.append([row_one[i], row_two[i]])
+
+            row_one_counter += 2
+            row_two_counter += 2
 
             matrix.append(row)
 
+        log.log('Matrix Generated: %s' % matrix)
         return matrix
 
 

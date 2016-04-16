@@ -31,7 +31,7 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
 log.initLogBook()
 
 # Boot Database
-database = db.DynamicDatabase()
+database = db.DynamicDatabase
 
 # Assign Player
 player = pro.producePlayer(PLAYER_INFO)

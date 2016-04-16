@@ -54,8 +54,7 @@ class Journey:
 
 
     def Travel(self, Anomaly, Player):
-        """No "Screen" at the moment :) 
-            Player travels to Anomaly. Returns True if Player wants to land"""
+        """Player travels to Anomaly. Returns True if Player wants to land"""
 
         if Anomaly.travelCosts is None:
             return
@@ -80,28 +79,29 @@ class Journey:
         """One Interaction with an Anomaly."""
         Anomaly = Universe[Player.currentPosition]
 
-        sectionScreen = term.MainScreen(Universe, Player)
-
         # You get repaired When you land
         Player.currentShip.shieldStrength.reset()
 
         log.log('Get List of Available Sections')
         availableSections = ac.getAvailableSections(Anomaly, Player)
 
+        log.log('Init Anomaly %s' % Anomaly.coordinates)
+        view = term.AnomalyView(Universe, Player, availableSections)
+
         log.log('Choose Section to Interact with')
-        # section = av.chooseSection(Anomaly, Player, availableSections, MapTemplate)
-        section = sectionScreen(Player, avail_secs=availableSections)
+        section = view()
 
         try: section(Anomaly, Player)
         except TypeError:
             atSection = True
             while atSection:
-                # ReInit sectionScreen
-                sectionScreen.__init__(Universe, Player)
+                log.log('Init Section %s' % section.infoString())
+                view = term.SectionView(Universe, Player, section)
 
                 log.log('Choose Interaction')
-                argument = sectionScreen(Player, active_sec=section)
+                argument = view()
 
+                log.log('Execute Interaction')
                 atSection = section(Anomaly, Player, argument)
 
     def Fight(self, Anomaly, Player):
@@ -134,7 +134,6 @@ class Journey:
     def BrowseMap(self, Universe, Player, ActiveAnomaly, first=False):
         """Show Universe Screen. Uses next Available Cords except first is given.
             Returns True if Player wants to Travel/Land, None else."""
-        mainScreen = term.MainScreen(Universe, Player)
 
         ActiveCoordinates = ActiveAnomaly.coordinates[:]
 
@@ -152,7 +151,9 @@ class Journey:
         # Reachable?
         if anomaly.travelCosts is not None:
             log.log('Await Interaction with %s' % anomaly.coordinates)
-            interact = mainScreen(Player, active_anmy=anomaly)
+            view = term.UniverseView(Universe, Player, anomaly.coordinates)
+
+            interact = view()
 
             if interact:
                 return anomaly, True

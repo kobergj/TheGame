@@ -39,6 +39,8 @@ class AnomalySection:
         self.interactionType = 'Nothing'
         # Main List object. For Example List of Goods, Rooms, Ships, etc..
         self.mainList = list()
+        # Cursor for iterations
+        self.cursor = -1
 
     def __call__(self, Anomaly, Player, *args):
         # Needs A Call Method which executes the Interaction
@@ -67,7 +69,7 @@ class AnomalySection:
 
         item = self.mainList[self.cursor]
 
-        return item, None
+        return item
 
     def infoString(self):
         # Generate a Information String
@@ -80,7 +82,7 @@ class Quit(AnomalySection):
         quit()
 
     def infoString(self):
-        return 'Graveyard - Quit'
+        return 'Graveyard'
 
 
 class Spaceport(AnomalySection):
@@ -88,7 +90,7 @@ class Spaceport(AnomalySection):
         Player.depart()
 
     def infoString(self):
-        return 'Spaceport - Depart'
+        return 'Spaceport'
 
 
 class Merchant(AnomalySection):
@@ -98,8 +100,6 @@ class Merchant(AnomalySection):
 
         if Player.currentShip.cargoCapacity() <= 0:
             raise AttributeError
-
-        self.prices = Anomaly.prices
 
         self.interactionType = 'Buy'
 
@@ -118,7 +118,7 @@ class Merchant(AnomalySection):
 
         Player.currentShip.loadCargo(GoodToBuy, Amount)
 
-        price = self.prices[GoodToBuy]
+        price = GoodToBuy.price
 
         Player.spendCredits(price)
 
@@ -134,15 +134,13 @@ class Merchant(AnomalySection):
 
         good = self.mainList[self.cursor]
 
-        price = self.prices[good]
-
-        return good, price
+        return good
 
     # I think this belongs to viz. Need a better Solution here
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Merchant - Buy Goods Here'
+        infoStr += 'Merchant'
 
         return infoStr
 
@@ -150,15 +148,20 @@ class Merchant(AnomalySection):
 class Trader(AnomalySection):
 
     def __init__(self, Anomaly, Player):
-        sharedGoods = set(Anomaly.goodsConsumed).intersection(set(Player.currentShip.inCargo.keys()))
+        # Calculate Shared Goods:
+        sharedGoods = list()
+
+        for good in Anomaly.goodsConsumed:
+            log.log('Checking for Similarities: %s - %s' % (good.name, Player.currentShip.inCargo.keys()))
+            if good.name in Player.currentShip.inCargo:
+                sharedGoods.append(good)
+        # sharedGoods = set(Anomaly.goodsConsumed).intersection(set(Player.currentShip.inCargo.keys()))
 
         if not sharedGoods:
             raise AttributeError
 
         # Build Main List
-        self.mainList = list(sharedGoods)
-
-        self.prices = Anomaly.prices
+        self.mainList = sharedGoods
 
         self.interactionType = 'Sell'
 
@@ -172,7 +175,7 @@ class Trader(AnomalySection):
         # Currently One Good per buy
         Amount = 1
 
-        price = self.prices[GoodToSell]
+        price = GoodToSell.price
 
         Player.earnCredits(price)
 
@@ -190,15 +193,13 @@ class Trader(AnomalySection):
 
         good = self.mainList[self.cursor]
 
-        price = self.prices[good]
-
-        return good, price
+        return good
 
     # I think this belongs to viz. Need a better Solution here
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Trader - Sell Goods Here'
+        infoStr += 'Trader'
 
         return infoStr
 
@@ -243,15 +244,13 @@ class EquipmentDealer(AnomalySection):
 
         room = self.mainList[self.cursor]
 
-        price = room.price
-
-        return room.name, price
+        return room
 
 
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Equipment Dealer - Sells Rooms'
+        infoStr += 'Equipment Dealer'
 
         return infoStr
 
@@ -275,6 +274,6 @@ class Gateport(AnomalySection):
     def infoString(self):
         infoStr = ''
 
-        infoStr += 'Gate Port - Jump to Anywhere in Space'
+        infoStr += 'Gate Port'
 
         return infoStr

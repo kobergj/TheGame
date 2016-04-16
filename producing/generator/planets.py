@@ -7,18 +7,18 @@ def generatePlanetInformation(db):
 
     planetName = generatePlanetName(db)
 
-    goodsConsumed = generateConsumedGoods(db)
-    goodsProduced = generateProducedGoods(db, goodsConsumed)
+    # goodsConsumed = generateConsumedGoods(db)
+    # goodsProduced = generateProducedGoods(db, goodsConsumed)
 
-    prices = generatePrices(db, goodsConsumed, goodsProduced)
+    # prices = generatePrices(db)
 
     planetInformation = {
         'name': planetName,
 
-        'goodsConsumed': goodsConsumed,
-        'goodsProduced': goodsProduced,
+        # 'goodsConsumed': goodsConsumed,
+        # 'goodsProduced': goodsProduced,
 
-        'prices': prices
+        # 'prices': prices
     }
 
     return planetInformation

@@ -48,18 +48,18 @@ class Ship():
             self.rooms.remove(Room)
 
     # CargoBay Methods
-    def loadCargo(self, cargoId, cargoAmount=1):
-        if cargoId in self.inCargo:
-            self.inCargo[cargoId] += cargoAmount
+    def loadCargo(self, cargo, cargoAmount=1):
+        if cargo.name in self.inCargo:
+            self.inCargo[cargo.name] += cargoAmount
         else:
-            self.inCargo.update({cargoId: cargoAmount})
+            self.inCargo.update({cargo.name: cargoAmount})
 
         self.cargoCapacity.addBoost(cargoAmount*-1)
 
-    def unloadCargo(self, cargoId, cargoAmount=1):
-        self.inCargo[cargoId] -= cargoAmount
-        if self.inCargo[cargoId] <= 0:
-            del self.inCargo[cargoId]
+    def unloadCargo(self, cargo, cargoAmount=1):
+        self.inCargo[cargo.name] -= cargoAmount
+        if self.inCargo[cargo.name] <= 0:
+            del self.inCargo[cargo.name]
 
         self.cargoCapacity.addBoost(cargoAmount)
 

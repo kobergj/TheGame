@@ -1,45 +1,55 @@
 
 class Anomaly():
     # Generic Anomaly in Space.
-    def __init__(self, anomalieInformation):
+    def __init__(self, name):
         # Identifier
-        self.name = anomalieInformation['name']
+        self.name = name
         # Coordinates
         self.coordinates = None
         # Enemies in Orbit
         self.enemies = list()
+        # Cost To Get here
+        self.travelCosts = None
 
     def addEnemy(self, enemy):
-
         self.enemies.append(enemy)
 
     def getCoordinates(self, Coordinates):
         self.coordinates = Coordinates
 
+    def setTravelCosts(self, value):
+        self.travelCosts = value
+
 
 class Planet(Anomaly):
     # Buy and Sell Goods
-    def __init__(self, planetInformation):
-        Anomaly.__init__(self, planetInformation)
+    def __init__(self, name):
+        Anomaly.__init__(self, name)
 
-        self.goodsConsumed = planetInformation['goodsConsumed']
-        self.goodsProduced = planetInformation['goodsProduced']
+        self.goodsConsumed = list()
+        self.goodsProduced = list()
 
-        self.prices = planetInformation['prices']
+        # self.prices = planetInformation['prices']
+
+    def raiseConsume(self, good):
+        self.goodsConsumed.append(good)
+
+    def raiseProducing(self, good):
+        self.goodsProduced.append(good)
 
 
 class Starbase(Anomaly):
     # Buy Ships and Rooms
-    def __init__(self, starbaseInformation):
+    def __init__(self, name, maxRoomsforSale=3):
         # Init Anomaly
-        Anomaly.__init__(self, starbaseInformation)
+        Anomaly.__init__(self, name)
 
         # Ship Bay
         self.shipForSale = None
         self.deprecatedShips = list()
 
         # Room Merchant
-        self.maxRoomsForSale = starbaseInformation['maxRoomsforSale']
+        self.maxRoomsForSale = maxRoomsforSale
         self.roomsForSale = list()
 
     def changeShipForSale(self, Ship):
@@ -58,10 +68,10 @@ class Starbase(Anomaly):
 
 class Spacegate(Anomaly):
     # Jump Anywhere for lower travel Cost
-    def __init__(self, spacegateInformation):
-        Anomaly.__init__(self, spacegateInformation)
+    def __init__(self, name, costForUse=0):
+        Anomaly.__init__(self, name)
 
-        self.costForUse = spacegateInformation['costForUse']
+        self.costForUse = costForUse
 
         self.travelDistance = 99
 

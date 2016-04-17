@@ -1,10 +1,10 @@
-import consuming.model_consumer as con
+import controller.viewmodel_fabric as vf
+import controller.model_fabric as mf
 
-import producing.model_producer as pro
+import configuration.database as db
+import configuration.log_details as log
 
-import database.database as db
-
-import logbook.configuration as log
+import models.game_models as gm
 
 NUMBER_OF_ANOMALIES = 25
 
@@ -30,35 +30,22 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
 # Init Log
 log.initLogBook()
 
-# Boot Database
-database = db.DynamicDatabase
+# Init Game 
+game = gm.RandomGame(PLAYER_INFO, MAX_COORDINATES, STARTING_SHIP_STATS, NUMBER_OF_ANOMALIES)
 
-# Assign Player
-player = pro.producePlayer(PLAYER_INFO)
-
-# Generate Universe
-universe = pro.produceUniverse(MAX_COORDINATES)
-
-# Initialize Producer
-randomProducer = pro.randomProducer(database, universe)
-
-# Set Starting Anomaly
-startingAnomaly = pro.produceAnomaly(database)
-
-# Craft Ship
-startingShip = pro.produceShip(database, STARTING_SHIP_STATS)
-
-# Board Ship
-player.switchShip(startingShip)
 
 if __name__ == '__main__':
     # Start Producer
-    randomProducer.startProducing()
+    game.randomProducer.startProducing()
 
     # Start Main Game
-    journey = con.Journey(universe, player, startingAnomaly, NUMBER_OF_ANOMALIES)
+    # journey = con.Journey(universe, player, startingAnomaly, NUMBER_OF_ANOMALIES)
 
     # The Journey ...
     while True:
-        # continues
-        journey(universe, player)
+        # I guess it should look like this
+        view_model = game(universe, player)
+
+        view(view_model)
+
+        view_model()

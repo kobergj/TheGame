@@ -6,6 +6,8 @@ import configuration.log_details as log
 
 import models.game_models as gm
 
+import view.basic_view as vwf
+
 NUMBER_OF_ANOMALIES = 25
 
 MAX_COORDINATES = [15, 15]
@@ -38,13 +40,13 @@ if __name__ == '__main__':
     # Start Producer
     game.randomProducer.startProducing()
 
-    # Start Main Game
-    # journey = con.Journey(universe, player, startingAnomaly, NUMBER_OF_ANOMALIES)
+    # Init View
+    view = vwf.View()
 
     # The Journey ...
     while True:
         # I guess it should look like this
-        view_model = game(universe, player)
+        view_model = game()
 
         view(view_model)
 

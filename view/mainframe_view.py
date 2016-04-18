@@ -1,60 +1,70 @@
-import view.basic_view as bv
 
-class UniverseView(bv.View):
+import configuration.log_details as log
 
-    def __init__(self, Universe, Player, act_anmy):
+class MainframeView:
 
-        bv.View.__init__(self, Universe, Player)
+    def __call__(self, Matrix):
+        """Returns Universe Map as String."""
+        universeString = ''
 
-        self.detail_window = self.travel_details(act_anmy)
+        for y, row in enumerate(Matrix):
+            first_line = ''
+            second_line = ''
 
-        self.window_position = act_anmy.coordinates
+            for x, point in enumerate(row):
 
-        self.anomalyInfoLine = self.anomaly_info(act_anmy)
+                log.log('Drawing %s' % point, level=10)
+                first_line += point[0]
+                second_line += point[1]
 
-        self.choiceList = [True, False]
+            universeString += first_line + '\n' + second_line + '\n'
 
-    def travel_details(self, anomaly):
+        return universeString
 
-        details = self.mapIdentifiers['Highlight'][0]
+class ViewFabric:
 
-        details += '\n'
+    def __call__(self, main_vm, mapIdents):
 
-        details += self.mapIdentifiers['Highlight'][1] % anomaly.travelCosts
+        if main_vm.atSection:
+            section_window = self.section_view(main_vm)
+            return [section_window], main_vm.anomaly.coordinates
 
-        return details
+        if main_vm.atAnomaly:
+            anomaly_window = self.anomaly_view(main_vm)
+            return [anomaly_window], main_vm.anomaly.coordinates
 
+        uv_windows, uv_positions = self.universe_view(main_vm, mapIdents)
+        return uv_windows, uv_positions
 
-class AnomalyView(bv.View):
+    def universe_view(self, availableAnomalies, mapIdentifiers):
+        windows = list()
+        positions = list()
 
-    def __init__(self, Universe, Player, avail_secs):
+        for anomaly in availableAnomalies:
+            win = mapIdentifiers[anomaly.__class__.__name__]
+            pos = anomaly.coordinates
 
-        bv.View.__init__(self, Universe, Player)
+            if anomaly == availableAnomalies.active:
+                win = mapIdentifiers['Highlight']
 
-        self.detail_window = self.anomaly_details(avail_secs)
+            if anomaly == availableAnomalies.current:
+                win = mapIdentifiers['Current']
 
-        self.choiceList = avail_secs
+            win = win[0] + '\n' + win[1]
 
-    def anomaly_details(self, availableSections):
+            windows.append(win)
+            positions.append(pos)
+
+        return windows, positions
+
+    def anomaly_view(self, availableSections):
         sectionInfo = 'Welcome to %s %s\n' % (self.act_anmy.__class__.__name__, self.act_anmy.name)
         for i, section in enumerate(availableSections):
             sectionInfo += " [%s] %s\n" % (i, section.infoString())
 
         return sectionInfo
 
-class SectionView(bv.View):
-
-    def __init__(self, Universe, Player, active_sec):
-        bv.View.__init__(self, Universe, Player)
-
-        self.detail_window = self.section_details(active_sec)
-
-        self.choiceList = [None]
-
-        for item in active_sec:
-            self.choiceList.append(item)
-
-    def section_details(self, Section):
+    def section_view(self, Section):
         # Build Information
         interactionInfo = ''
 

@@ -20,7 +20,7 @@ class View:
                                     '  |__| ',
                                 ],
                       'Highlight':[ ' ->  <-',
-                                    'Costs:%u'
+                                    ' ENTER '
                                 ],
                       'Current': [  'You are',
                                     '  Here '
@@ -28,26 +28,27 @@ class View:
                       }
 
     def __init__(self, Universe, Player):
-        self.act_anmy = Universe[Player.currentPosition]
+        # self.act_anmy = Universe[Player.currentPosition]
 
         self.uvMatrix = self.drawMap(Universe)
 
         self.point_len = len(self.mapIdentifiers['Empty'])
 
-        self.detail_window = None
+        # self.detail_window = None
 
-        self.window_position = self.act_anmy.coordinates
+        # self.window_position = self.act_anmy.coordinates
 
-        self.choiceList = [None]
+        # self.choiceList = [None]
 
     def __call__(self, view_model):
+        windows, positions = mv.ViewFabric(view_model, self.mapIdentifiers)
 
-        self.insertWindow(self.detail_window, self.window_position)
+        self.window_inserter(windows, positions)
 
         print '\n' * 100
         print sv.StatView(view_model.player)
         print iv.InfoView(view_model.anomaly)
-        print self.showUniverse()
+        print mv.MainframeView(self.uvMatrix)
 
         choice = raw_input()
 
@@ -72,33 +73,12 @@ class View:
 
                 choice = raw_input()
 
-
-
-    def showUniverse(self):
-        """Prints Universe Map. Highlights an Anomaly if given."""
-
-        universeString = ''
-
-        for y, row in enumerate(self.uvMatrix):
-            first_line = ''
-            second_line = ''
-
-            for x, point in enumerate(row):
-
-                log.log('Drawing %s' % point, level=10)
-                first_line += point[0]
-                second_line += point[1]
-
-            universeString += first_line + '\n' + second_line + '\n'
-
-        return universeString
-
     def drawMap(self, Universe):
         # VizUniverse Map
         universeMatrix = list()
 
         # Loop through vertical Slices of Universe
-        log.log('drawing Map. Position: ' % self.act_anmy.coordinates)
+        log.log('drawing Map. Position: %s' % self.act_anmy.coordinates)
 
         for verticalSlice in Universe.Map:
             row = list()
@@ -132,11 +112,24 @@ class View:
 
         return universeMatrix
 
+    def window_inserter(self, window_list, position_list):
 
-    def insertWindow(self, raw_info_string, position):
+        for i, window in enumerate(window_list):
+            log.log('Get Position')
+            position = position_list[i]
 
-        log.log('Convert String to Matrix')
-        matrix = self.string2matrix(raw_info_string)
+            log.log('Convert String to Matrix')
+            matrix = self.string2matrix(window)
+
+            log.log('Calc Window Position')
+            x_rng, y_rng = self.calculate_window_range(matrix, position)
+
+            log.log('Insert Window')
+            self.insert_window(matrix, [x_rng, y_rng])
+
+
+    def calculate_window_range(self, matrix, position):
+
         log.log('Needed Rows: %s, Needed Points: %s' % (len(matrix), len(matrix[0])))
 
         log.log('Starting Coordinates %s' % position)
@@ -167,13 +160,21 @@ class View:
             anm_x -= 1
             end_point = anm_x + len(matrix[0])
 
+        y_range = [anm_y, end_row]
+        x_range = [anm_x, end_point]
+
+        return x_range, y_range
+
+
+    def insert_window(self, matrix, position):
+
         matrix_y = 0
 
-        for map_y in range(anm_y, end_row):
+        for map_y in range(position[1]):
 
             matrix_x = 0
 
-            for map_x in range(anm_x, end_point):
+            for map_x in range(position[0]):
 
                 try:
                     point_one = matrix[matrix_y][matrix_x][0]

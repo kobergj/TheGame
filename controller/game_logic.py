@@ -39,19 +39,13 @@ class RandomGame:
         self.fillUniverse(self.universe, an_num)
         self.universe.update(self.player)
 
-    def __call__(self):
+    def __call__(self, old_view_model):
 
-        if self.player.atSection:
-            view_model = svm.SectionViewModel(self.universe)
+        old_view_model(self.universe, self.player)
 
-        elif self.player.atAnomaly:
-            view_model = avm.AnomalyViewModel(self.universe[self.player.currentPosition])
-
-        else:
-            view_model = uvm.UniverseViewModel(self.universe)
+        view_model = old_view_model.next_viewmodel(self.universe, self.player)
 
         return view_model
-
 
     def fillUniverse(self, NumberOfAnomalies):
 

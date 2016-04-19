@@ -33,21 +33,21 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
 log.initLogBook()
 
 # Init Game 
-game = gm.RandomGame(PLAYER_INFO, MAX_COORDINATES, STARTING_SHIP_STATS, NUMBER_OF_ANOMALIES)
+controller = gm.RandomGame(PLAYER_INFO, MAX_COORDINATES, STARTING_SHIP_STATS, NUMBER_OF_ANOMALIES)
 
 
 if __name__ == '__main__':
     # Start Producer
-    game.randomProducer.startProducing()
+    controller.randomProducer.startProducing()
 
     # Init View
-    view = vwf.View()
+    view = vwf.View(controller.universe)
+
+    view_model = None
 
     # The Journey ...
     while True:
         # I guess it should look like this
-        view_model = game()
+        view_model = controller(view_model)
 
         view(view_model)
-
-        view_model()

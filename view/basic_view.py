@@ -27,18 +27,11 @@ class View:
                                 ]
                       }
 
-    def __init__(self, Universe, Player):
-        # self.act_anmy = Universe[Player.currentPosition]
-
+    def __init__(self, Universe):
         self.uvMatrix = self.drawMap(Universe)
+        self._uvMatrix = self.uvMatrix[:]
 
         self.point_len = len(self.mapIdentifiers['Empty'])
-
-        # self.detail_window = None
-
-        # self.window_position = self.act_anmy.coordinates
-
-        # self.choiceList = [None]
 
     def __call__(self, view_model):
         windows, positions = mv.ViewFabric(view_model, self.mapIdentifiers)
@@ -52,14 +45,16 @@ class View:
 
         choice = raw_input()
 
+        self.uvMatrix = self._uvMatrix[:]
+
         while True:
             try:
                 if choice == '':
                     choice = 0
 
                 log.log('Player choose %s' % choice)
-                result = self.choiceList[int(choice)]
-                return result
+                result = view_model.choiceList[int(choice)]
+                view_model.choice = result
 
             except ValueError:
 
@@ -91,20 +86,8 @@ class View:
 
 
                 if anomaly:
-                    # Load Map Identifier
-                    anomalyType = anomaly.__class__.__name__
-
-                    first_line = self.mapIdentifiers[anomalyType][0]
-                    second_line = self.mapIdentifiers[anomalyType][1]
-
-                    if self.act_anmy == anomaly:
-                        log.log('Current %s' % str(anomaly.coordinates))
-                        first_line = self.mapIdentifiers['Current'][0]
-                        second_line = self.mapIdentifiers['Current'][1]
-
-                    if anomaly.travelCosts is None:
-                        first_line = self.mapIdentifiers['Unknown'][0]
-                        second_line = self.mapIdentifiers['Unknown'][1]
+                    first_line = self.mapIdentifiers['Unknown'][0]
+                    second_line = self.mapIdentifiers['Unknown'][1]
 
                 row.append([first_line, second_line])
 

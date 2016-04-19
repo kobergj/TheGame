@@ -1,27 +1,36 @@
 # import logbook.configuration as log
 
+import viewmodels.basic_vm as bvm
 import viewmodels.section_vm as svm
 
-class AnomalyViewModel:
+class AnomalyViewModel(bvm.BasicViewModel):
 
     def __init__(self, Anomaly, Player):
         """Checks for possible Actions with Anomaly"""
-        sectionList = [svm.Spaceport, svm.Merchant, svm.Trader, svm.EquipmentDealer, svm.Gateport, svm.Quit]
+        bvm.BasicViewModel.__init__(self, Anomaly, Player)
 
-        availableSections = list()
+        section_vm_list = [
+            svm.Spaceport, svm.Merchant, svm.Trader, svm.EquipmentDealer, svm.Gateport, svm.Quit
+            ]
 
-        for possibleSection in sectionList:
+        availableViewModels = list()
+
+        for possibleSection in section_vm_list:
 
             try:
                 section = possibleSection(Anomaly, Player)
 
-                availableSections.append(section)
+                availableViewModels.append(section)
 
             except AttributeError:
                 pass
 
-        self.sections = availableSections
+        self.choiceList = availableViewModels
 
     def __iter__(self):
         return iter(self.sections)
+
+    def __call__(self, Universe, Player):
+
+        self.next_viewmodel = self.choiceList[self.player_choice]
 

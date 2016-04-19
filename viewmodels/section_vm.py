@@ -1,7 +1,8 @@
 import configuration.log_details as log
+import view_models.basic_vm as bvm
 
 # Anomaly Sections
-class AnomalySection:
+class AnomalySection(bvm.BasicViewModel):
     """ Each Section of the Anomaly Contains the Interaction Information.
         Currently Implemented:
         Quit            - Quit Game
@@ -14,47 +15,44 @@ class AnomalySection:
         """
 
     def __init__(self, Anomaly, Player):
-        # Needs A Init Method which assigns all needed Stats
+        bvm.BasicViewModel.__init__(self, Anomaly, Player)
 
         # Interaction Type says what you can actualy DO with a Section
         self.interactionType = 'Nothing'
-        # Main List object. For Example List of Goods, Rooms, Ships, etc..
-        self.mainList = list()
-        # Cursor for iterations
-        self.cursor = -1
 
     def __call__(self, Anomaly, Player, *args):
         # Needs A Call Method which executes the Interaction
-        return
+        pass
 
     def __iter__(self):
         # For iteration
-        return self
+        return iter([(lambda x: x[0])(x) for x in self.choice_list])
 
     def __len__(self):
-        return len(self.mainList)
+        return len(self.choice_list)
 
     def __getitem__(self, i):
-        return self.mainList[i]
-
-    def index(self, item):
-        return self.mainList.index(item)
-
-    def next(self):
-        self.cursor += 1
-
-        if self.cursor >= len(self.mainList):
-            # Reset Cursor
-            self.cursor = -1
-            raise StopIteration
-
-        item = self.mainList[self.cursor]
-
-        return item
+        return self.choice_list[i][0]
 
     def infoString(self):
         # Generate a Information String
         return 'None'
+
+    # def index(self, item):
+    #     return self.choice_list.index(item)
+
+    # def next(self):
+    #     self.cursor += 1
+
+    #     if self.cursor >= len(self.mainList):
+    #         # Reset Cursor
+    #         self.cursor = -1
+    #         raise StopIteration
+
+    #     item = self.mainList[self.cursor]
+
+    #     return item
+
 
 
 
@@ -77,53 +75,40 @@ class Spaceport(AnomalySection):
 class Merchant(AnomalySection):
 
     def __init__(self, Anomaly, Player):
-        self.mainList = Anomaly.goodsProduced
-
-        if Player.currentShip.cargoCapacity() <= 0:
-            raise AttributeError
+        AnomalySection.__init__(self, Anomaly, Player)
 
         self.interactionType = 'Buy'
 
-        self.cursor = -1
+        self.choice_list = Anomaly.goodsProduced
 
-    def __call__(self, Anomaly, Player, GoodToBuy):
-
-        if not GoodToBuy:
-            return
+    def __call__(self, Anomaly, Player):
+        GoodToBuy = self.choice_list[self.player_choice]
 
         # Currently One Good per buy
         Amount = 1
 
-        if Player.currentShip.cargoCapacity() <= 0:
-            return
-
-        Player.currentShip.loadCargo(GoodToBuy, Amount)
+        self.player.currentShip.loadCargo(GoodToBuy, Amount)
 
         price = GoodToBuy.price
 
-        Player.spendCredits(price)
+        self.player.spendCredits(price)
 
-        return GoodToBuy
+    def infoString(self):
+        return 'Merchant'
 
-    def next(self):
-        self.cursor += 1
+    # def next(self):
+    #     self.cursor += 1
 
-        if self.cursor >= len(self.mainList):
-            # Reset Cursor
-            self.cursor = -1
-            raise StopIteration
+    #     if self.cursor >= len(self.mainList):
+    #         # Reset Cursor
+    #         self.cursor = -1
+    #         raise StopIteration
 
-        good = self.mainList[self.cursor]
+    #     good = self.mainList[self.cursor]
 
-        return good
+    #     return good
 
     # I think this belongs to viz. Need a better Solution here
-    def infoString(self):
-        infoStr = ''
-
-        infoStr += 'Merchant'
-
-        return infoStr
 
 
 class Trader(AnomalySection):

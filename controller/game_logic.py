@@ -41,11 +41,17 @@ class RandomGame:
 
     def __call__(self, old_view_model):
 
-        old_view_model(self.universe, self.player)
+        view_models = [uvm.Universe, avm.Anomaly, svm.Section]
 
-        view_model = old_view_model.next_viewmodel(self.universe, self.player)
+        i = view_models.index(old_view_model.__class__)
+
+        view_model = old_view_model()
+
+        if not view_model:
+            view_model = view_models[i-1](self.universe, self.player)
 
         return view_model
+
 
     def fillUniverse(self, NumberOfAnomalies):
 

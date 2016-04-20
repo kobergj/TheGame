@@ -212,7 +212,7 @@ class randomProducer():
     def __init__(self, Database, Universe):
         # Create Producer Thread
         self.producingThread = threading.Thread(
-            name='ProducingThread',
+            name='ModelProducer',
             target=self.producingFunction,
             args=(Database, Universe)
             )

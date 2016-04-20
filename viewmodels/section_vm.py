@@ -14,11 +14,13 @@ class AnomalySection(bvm.BasicViewModel):
         Spaceport       - Depart from Anomaly
         """
 
-    def __init__(self, Anomaly, Player):
+    def __init__(self, Anomaly, Player, AnomalyViewModel):
         bvm.BasicViewModel.__init__(self, Anomaly, Player)
 
         # Interaction Type says what you can actualy DO with a Section
         self.interactionType = 'Nothing'
+
+        self.parent = AnomalyViewModel
 
     def __call__(self, Anomaly, Player, *args):
         # Needs A Call Method which executes the Interaction
@@ -32,7 +34,7 @@ class AnomalySection(bvm.BasicViewModel):
         return len(self.choice_list)
 
     def __getitem__(self, i):
-        return self.choice_list[i][0]
+        return self.choice_list[i]
 
     def infoString(self):
         # Generate a Information String
@@ -64,25 +66,29 @@ class Quit(AnomalySection):
         return 'Graveyard'
 
 
-class Spaceport(AnomalySection):
-    def __call__(self, Anomaly, Player, *args):
-        Player.depart()
+# class Spaceport(AnomalySection):
+#     def __call__(self, Anomaly, Player, *args):
+#         Player.depart()
 
-    def infoString(self):
-        return 'Spaceport'
+#     def infoString(self):
+#         return 'Spaceport'
 
 
 class Merchant(AnomalySection):
 
-    def __init__(self, Anomaly, Player):
+    def __init__(self, Anomaly, Player, AnomalyViewModel):
         AnomalySection.__init__(self, Anomaly, Player)
 
         self.interactionType = 'Buy'
 
         self.choice_list = Anomaly.goodsProduced
 
-    def __call__(self, Anomaly, Player):
-        GoodToBuy = self.choice_list[self.player_choice]
+    def __call__(self):
+
+        if not self.player_choice:
+            return AnomalyViewModel
+
+        GoodToBuy = self.choice_list[self.player_choice-1]
 
         # Currently One Good per buy
         Amount = 1
@@ -93,22 +99,14 @@ class Merchant(AnomalySection):
 
         self.player.spendCredits(price)
 
+        if self.player.currentShip.cargoCapacity() > 0:
+            return Merchant
+
+        return AnomalyViewMode
+
+
     def infoString(self):
         return 'Merchant'
-
-    # def next(self):
-    #     self.cursor += 1
-
-    #     if self.cursor >= len(self.mainList):
-    #         # Reset Cursor
-    #         self.cursor = -1
-    #         raise StopIteration
-
-    #     good = self.mainList[self.cursor]
-
-    #     return good
-
-    # I think this belongs to viz. Need a better Solution here
 
 
 class Trader(AnomalySection):

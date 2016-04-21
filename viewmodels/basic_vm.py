@@ -9,5 +9,5 @@ class BasicViewModel:
 
         self.player_choice = None
 
-        self.choiceList = [None]
+        self.choice_list = [None]
 

@@ -10,35 +10,40 @@ class UniverseViewModel(bvm.BasicViewModel):
     scan_index = 0
     update = False
 
-    def __init__(self, universe, player):
+    def __init__(self, universe, player, update):
 
         self.available_anomalies = self.get_available_anomalies(universe, player)
 
         bvm.BasicViewModel.__init__(self, self.available_anomalies[self.scan_index], player)
 
-        if self.update:
+        self.choice_list = [True, False]
+
+        self.parent = update
+
+        if self.parent:
             log.log('Update Universe')
             universe.update(player)
 
-        self.choice_list = [True, False]
-
     def __call__(self):
-        if self.player_choice:
+        choice = self.choice_list[self.player_choice]
+
+        if choice:
             log.log('Execute Travel Logic')
             land = self.Travel(self.anomaly, self.player)
 
             if land:
+                self.parent = UniverseViewModel
                 return avm.AnomalyViewModel
 
             UniverseViewModel.scan_index = 0
-            UniverseViewModel.update = True
+            self.parent = True
             return UniverseViewModel
 
         UniverseViewModel.scan_index += 1
         if UniverseViewModel.scan_index >= len(self.available_anomalies):
             UniverseViewModel.scan_index = 0
 
-        UniverseViewModel.update = False
+        self.parent = False
         return UniverseViewModel
 
     def Travel(self, Anomaly, Player):
@@ -73,7 +78,10 @@ class UniverseViewModel(bvm.BasicViewModel):
         available_anomalies = list()
 
         while len(available_anomalies) < player.currentShip.maxTravelDistance():
-            available_anomalies.append(distance_list.pop(0)[0])
+            try:
+                available_anomalies.append(distance_list.pop(0)[0])
+            except IndexError:
+                return available_anomalies
 
         return available_anomalies
 

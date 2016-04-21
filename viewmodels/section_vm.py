@@ -14,7 +14,9 @@ class AnomalySection(bvm.BasicViewModel):
         Spaceport       - Depart from Anomaly
         """
 
-    def __init__(self, Anomaly, Player, AnomalyViewModel):
+    def __init__(self, Universe, Player, AnomalyViewModel):
+        Anomaly = Universe[Player.currentPosition]
+
         bvm.BasicViewModel.__init__(self, Anomaly, Player)
 
         # Interaction Type says what you can actualy DO with a Section
@@ -76,12 +78,13 @@ class Quit(AnomalySection):
 
 class Merchant(AnomalySection):
 
-    def __init__(self, Anomaly, Player, AnomalyViewModel):
-        AnomalySection.__init__(self, Anomaly, Player, AnomalyViewModel)
+    def __init__(self, Universe, Player, AnomalyViewModel):
+
+        AnomalySection.__init__(self, Universe, Player, AnomalyViewModel)
 
         self.interactionType = 'Buy'
 
-        self.choice_list = Anomaly.goodsProduced
+        self.choice_list = Universe[Player.currentPosition].goodsProduced
 
     def __call__(self):
 

@@ -151,14 +151,10 @@ class Universe():
         return distance
 
     def calculateTravelCosts(self, Player, Distance):
-        # Check if reachable
-        if Distance <= Player.currentShip.maxTravelDistance():
-            # Calculate Costs
-            travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
+        # Calculate Costs
+        travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
 
-            return travelCosts
-
-        return None
+        return travelCosts
 
     def fill(self, NumberOfAnomalies):
         for i in range(NumberOfAnomalies):

@@ -28,14 +28,14 @@ def get_view(view_model, mapIdents):
         pass
 
     try:
-        view_model.parent
+        view_model.interactionType
         section_window = section_view(view_model)
-        return [section_window], view_model.anomaly.coordinates
+        return [section_window], [view_model.anomaly.coordinates]
     except AttributeError:
         pass
 
     anomaly_window = anomaly_view(view_model)
-    return [anomaly_window], view_model.anomaly.coordinates
+    return [anomaly_window], [view_model.anomaly.coordinates]
 
 
 def universe_view(view_model, mapIdentifiers):
@@ -49,8 +49,11 @@ def universe_view(view_model, mapIdentifiers):
         if anomaly == view_model.anomaly:
             win = mapIdentifiers['Highlight']
 
-        if anomaly == view_model.player.currentPosition:
+        if anomaly.coordinates == view_model.player.currentPosition:
             win = mapIdentifiers['Current']
+
+            if anomaly == view_model.anomaly:
+                win = mapIdentifiers['CurHigh']
 
         win = win[0] + '\n' + win[1]
 
@@ -62,9 +65,14 @@ def universe_view(view_model, mapIdentifiers):
 def anomaly_view(view_model):
     sectionInfo = 'Welcome to %s %s\n' % (view_model.anomaly.__class__.__name__, view_model.anomaly.name)
 
+    log.log('Pick Anomaly Section from %s' % view_model.choice_list)
     for i, section in enumerate(view_model.choice_list):
 
-        sectionInfo += " [%s] %s\n" % (i, section.__class__.__name__)
+        if i == 0:
+            sectionInfo += '[ENTER] Back\n'
+            continue
+
+        sectionInfo += " [%s] %s\n" % (i, section.__name__)
 
     return sectionInfo
 

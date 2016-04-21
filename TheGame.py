@@ -1,11 +1,13 @@
+import Queue
+
 import configuration.database as db
 import configuration.log_details as log
 
 import controller.model_fabric as mf
+import controller.viewmodel_fabric as vf
 
 import view.basic_view as vwf
 
-import viewmodels.universe_vm as uvm
 
 NUMBER_OF_ANOMALIES = 25
 
@@ -40,8 +42,12 @@ player = mf.producePlayer(PLAYER_INFO)
 log.log('Generate Universe')
 universe = mf.produceUniverse(MAX_COORDINATES)
 
-log.log('Initialize Producer')
-randomProducer = mf.randomProducer(database, universe)
+log.log('Initialize Model Producer')
+modelProducer = mf.randomProducer(database, universe)
+
+log.log('Initialize ViewModel Producer')
+viewmodel_queue = Queue.Queue(maxsize=1)
+viewmodelProducer = vf.ViewModelProducer(universe, player, viewmodel_queue)
 
 log.log('Craft Ship')
 startingShip = mf.produceShip(database, STARTING_SHIP_STATS)
@@ -56,26 +62,22 @@ player.travelTo(startingAnomaly.coordinates)
 
 
 if __name__ == '__main__':
-    log.log('Start Producer')
-    randomProducer.startProducing()
+    log.log('Start Model Producer')
+    modelProducer.startProducing()
 
     log.log('Fill Universe')
     universe.fill(NUMBER_OF_ANOMALIES)
     universe.update(player)
 
+    log.log('Start ViewModel Producer')
+    viewmodelProducer.startProducing()
+
     log.log('Init View')
     view = vwf.View(universe)
 
-    # Set Starting ViewModel
-    view_model_class = uvm.UniverseViewModel
-
-    # The Journey ...
+    # The Journey begins
     while True:
-        view_model = view_model_class(universe, player)
+        view_model = viewmodel_queue.get()
 
         view(view_model)
-
-        view_model_class = view_model()
-
-
 

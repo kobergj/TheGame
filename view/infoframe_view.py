@@ -9,7 +9,7 @@ def info_view(Anomaly):
     amyname = Anomaly.name
     amytype = Anomaly.__class__.__name__
 
-    information = '         %s ' % Anomaly.coordinates
+    information = '    [ENTER]  ' # % Anomaly.coordinates
 
     for enemy in Anomaly.enemies:
         information += 'X'
@@ -44,5 +44,7 @@ def info_view(Anomaly):
 
     except AttributeError:
         pass
+
+    information += ' // [1] Next'
 
     return information

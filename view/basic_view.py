@@ -1,3 +1,5 @@
+import copy
+
 import configuration.log_details as log
 
 import view.infoframe_view as iv
@@ -20,16 +22,19 @@ class View:
                                     '  |__| ',
                                 ],
                       'Highlight':[ ' ->  <-',
-                                    ' ENTER '
+                                    ' Travel'
                                 ],
                       'Current': [  'You are',
+                                    '  Here '
+                                ],
+                      'CurHigh': [  '  Land ',
                                     '  Here '
                                 ]
                       }
 
     def __init__(self, Universe):
         self.uvMatrix = self.drawMap(Universe)
-        self._uvMatrix = self.uvMatrix[:]
+        self._uvMatrix = copy.deepcopy(self.uvMatrix)
 
         self.point_len = len(self.mapIdentifiers['Empty'])
 
@@ -47,7 +52,7 @@ class View:
 
         choice = raw_input()
 
-        self.uvMatrix = self._uvMatrix[:]
+        self.uvMatrix = copy.deepcopy(self._uvMatrix)
 
         while True:
             try:
@@ -55,8 +60,10 @@ class View:
                     choice = 0
 
                 log.log('Player choose %s' % choice)
-                result = view_model.choiceList[int(choice)]
-                view_model.choice = result
+                choice = int(choice)
+                view_model.choice_list[choice]
+                view_model.player_choice = choice
+                return
 
             except ValueError:
 
@@ -118,8 +125,8 @@ class View:
         log.log('Needed Rows: %s, Needed Points: %s' % (len(matrix), len(matrix[0])))
 
         log.log('Starting Coordinates %s' % position)
-        anm_y = position[:][1]
-        anm_x = position[:][0]
+        anm_y = position[1]
+        anm_x = position[0]
 
         # Should not happen
         while anm_y < 0:

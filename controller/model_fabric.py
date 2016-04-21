@@ -218,7 +218,7 @@ class randomProducer():
             args=(Database, Universe)
             )
         # Make Him a Daemon
-        self.producingThread.daemon = True
+        # self.producingThread.daemon = True
 
         # Set Kill Switch
         self.dead = False

@@ -1,9 +1,6 @@
 import threading
 
 import viewmodels.universe_vm as uvm
-import viewmodels.anomaly_vm as avm
-import viewmodels.anomaly_vm as svm
-
 
 class ViewModelProducer:
 
@@ -16,7 +13,7 @@ class ViewModelProducer:
             )
 
         # Make Her a Daemon
-        self.producingThread.daemon = True
+        # self.producingThread.daemon = True
 
         # Set Kill Switch
         self.dead = False
@@ -31,23 +28,20 @@ class ViewModelProducer:
 
     def producingFunction(self, universe, player):
 
-        view_models = [uvm.Universe]
-
-        self.queue.put(view_models[0])
+        view_model = uvm.UniverseViewModel(universe, player, False)
 
         while not self.dead:
 
-            while not self.queue.empty():
+            self.queue.put(view_model)
+
+            while view_model.player_choice is None:
                 pass
 
-            view_model = self.queue.get()
+            view_model_class = view_model()
 
-            if not view_model:
-                view_model = view_models.pop()
+            view_model = view_model_class(universe, player, view_model.parent)
 
-            view_model(universe, player)
 
-            self.queue.put(view_model)
 
 
 

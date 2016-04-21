@@ -3,7 +3,8 @@
 playerStatsTemplate ="""
 
     Current Stats:
-    Credits: %(credits)s    Attack:  %(attackPower)s    Defense: %(curDef)s/%(maxDef)s  Maximum Travel Distance: %(maxTravelDistance)s  Maintenance Costs: %(maintCosts)s
+    Credits: %(credits)s    Reachable Planets: %(maxTravelDistance)s  Maintenance Costs: %(maintCosts)s
+    Attack:  %(attackPower)s    Defense: %(curDef)s/%(maxDef)s  
 
     Cargo Bay: %(currentCargo)s/%(maxCargo)s -> %(inCargo)s
 

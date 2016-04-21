@@ -24,6 +24,8 @@ class AnomalySection(bvm.BasicViewModel):
 
         self.parent = AnomalyViewModel
 
+        self.choice_list = [None]
+
     def __call__(self, Anomaly, Player, *args):
         # Needs A Call Method which executes the Interaction
         pass
@@ -84,14 +86,16 @@ class Merchant(AnomalySection):
 
         self.interactionType = 'Buy'
 
-        self.choice_list = Universe[Player.currentPosition].goodsProduced
+        for good in Universe[Player.currentPosition].goodsProduced:
+            self.choice_list.append(good)
+
 
     def __call__(self):
 
         if not self.player_choice:
             return self.parent
 
-        GoodToBuy = self.choice_list[self.player_choice-1]
+        GoodToBuy = self.choice_list[self.player_choice]
 
         # Currently One Good per buy
         Amount = 1

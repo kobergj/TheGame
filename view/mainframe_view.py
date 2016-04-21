@@ -82,9 +82,12 @@ def section_view(view_model):
     interactionInfo += "%s %s" % (view_model.anomaly.__class__.__name__, view_model.anomaly.name)
     interactionInfo += " -- %s\n"  % view_model.__class__.__name__
 
-    interactionInfo += " [0] Back\n"
+    log.log('Generating Sections string for %s' % view_model.choice_list)
+    for i, item in enumerate(view_model.choice_list):
+        if i == 0:
+            interactionInfo += " [0] Back\n"
+            continue
 
-    for i, item in enumerate(view_model.available_options):
-        interactionInfo += " [%s] %s for %s\n" % (i+1, item.name, item.price)
+        interactionInfo += " [%s] %s for %s\n" % (i, item.name, item.price)
 
     return interactionInfo

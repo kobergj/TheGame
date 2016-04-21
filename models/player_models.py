@@ -1,4 +1,4 @@
-import logbook.configuration as log
+import configuration.log_details as log
 
 
 class Player():

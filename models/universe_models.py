@@ -1,6 +1,6 @@
 import Queue
 import random
-import logbook.configuration as log
+import configuration.log_details as log
 import math
 
 class Universe():

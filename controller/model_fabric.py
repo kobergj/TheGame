@@ -1,16 +1,17 @@
-# Models
-import producing.models.anomalies as mod
-import producing.models.ships as msp
-import producing.models.ship_content as mro
-import producing.models.universe as muv
-import producing.models.player as mpl
-
-# Generators
-import producing.generator.ships as gsp
-import producing.generator.rooms as gro
-
 import threading
 import random
+
+
+# Models
+import models.anomaly_models as mod
+import models.ship_models as msp
+import models.content_models as mro
+import models.universe_models as muv
+import models.player_models as mpl
+
+# Generators
+import controller.generator.ships as gsp
+import controller.generator.rooms as gro
 
 
 def produceUniverse(MaxCoordinates, MinCoordinates=[0, 0]):

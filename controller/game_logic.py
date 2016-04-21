@@ -11,33 +11,6 @@ import viewmodels.anomaly_vm as svm
 class RandomGame:
 
     def __init__(self, pl_info, uv_size, sh_stats, an_num):
-        log.log('Init Database')
-        self.database = db.DynamicDatabase[:]
-
-        log.log('Assigning Player')
-        self.player = mf.producePlayer(pl_info)
-
-        log.log('Generate Universe')
-        self.universe = mf.produceUniverse(uv_size)
-
-        log.log('Initialize Producer')
-        self.randomProducer = mf.randomProducer(self.database, self.universe)
-
-        log.log('Craft Ship')
-        startingShip = mf.produceShip(self.database, sh_stats)
-
-        log.log('Board Ship')
-        self.player.switchShip(startingShip)
-
-
-        log.log('Set Starting Anomaly')
-        startingAnomaly = mf.produceAnomaly(self.database)
-        self.universe.addAnomaly(startingAnomaly)
-        self.player.travelTo(startingAnomaly.coordinates)
-
-        log.log('Fill Universe')
-        self.fillUniverse(self.universe, an_num)
-        self.universe.update(self.player)
 
     def __call__(self, old_view_model):
 

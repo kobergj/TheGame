@@ -18,14 +18,14 @@ class AnomalyViewModel(bvm.BasicViewModel):
         for possibleSection in section_vm_list:
 
             try:
-                section = possibleSection(Anomaly, Player, AnomalyViewModel)
+                possibleSection(Anomaly, Player, AnomalyViewModel)
 
-                availableViewModels.append(section)
+                availableViewModels.append(possibleSection)
 
             except AttributeError:
                 pass
 
-        self.choiceList = availableViewModels
+        self.choice_list = availableViewModels
 
     def __iter__(self):
         return iter(self.sections)

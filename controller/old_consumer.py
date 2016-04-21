@@ -1,4 +1,4 @@
-import logbook.configuration as log
+import configuration.log_details as log
 
 import consuming.controller.anomaly_controls as ac
 import consuming.controller.enemy_interactions as emy
@@ -20,12 +20,7 @@ class Journey:
             anomaly, land = self.BrowseMap(Universe, Player, anomaly, first)
             first = False
 
-            if land:
-                log.log('Execute Travel Logic')
-                self.Travel(anomaly, Player)
-                log.log('Update Universe')
-                Universe.update(Player)
-                first = True
+            
 
         # while anomaly.enemies:
         #     log.log('Loading Enemy Screen')
@@ -41,26 +36,6 @@ class Journey:
         Universe.update(Player)
 
 
-    def Travel(self, Anomaly, Player):
-        """Player travels to Anomaly. Returns True if Player wants to land"""
-
-        if Anomaly.travelCosts is None:
-            return
-
-        # Is current?
-        if Anomaly.coordinates == Player.currentPosition:
-            log.log('%(name)s is current. Landing...' % Anomaly.__dict__)
-            Player.land()
-            return
-
-        log.log('Pay Costs of %(travelCosts)s' % Anomaly.__dict__)
-        Player.spendCredits(Anomaly.travelCosts)
-        log.log('Traveling to %(name)s' % Anomaly.__dict__)
-        Player.travelTo(Anomaly.coordinates)
-
-        # Demock Stats
-        Player.currentShip.maxTravelDistance.demock()
-        Player.currentShip.maintenanceCosts.demock()
 
 
     def Interact(self, Universe, Player):

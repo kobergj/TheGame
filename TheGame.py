@@ -32,7 +32,7 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
 log.initLogBook()
 
 log.log('Init Database')
-database = db.DynamicDatabase[:]
+database = db.DynamicDatabase
 
 log.log('Assigning Player')
 player = mf.producePlayer(PLAYER_INFO)
@@ -66,15 +66,16 @@ if __name__ == '__main__':
     log.log('Init View')
     view = vwf.View(universe)
 
-    view_model = uvm.UniverseViewModel(universe, player)
+    # Set Starting ViewModel
+    view_model_class = uvm.UniverseViewModel
 
     # The Journey ...
     while True:
-        view_model_class = view_model()
-
         view_model = view_model_class(universe, player)
 
         view(view_model)
+
+        view_model_class = view_model()
 
 
 

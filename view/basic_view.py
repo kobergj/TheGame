@@ -1,4 +1,4 @@
-import logbook.configuration as log
+import configuration.log_details as log
 
 import view.infoframe_view as iv
 import view.statframe_view as sv
@@ -34,14 +34,16 @@ class View:
         self.point_len = len(self.mapIdentifiers['Empty'])
 
     def __call__(self, view_model):
-        windows, positions = mv.ViewFabric(view_model, self.mapIdentifiers)
+        log.log('Getting Windows Of %s' % view_model.__class__.__name__)
+        windows, positions = mv.get_view(view_model, self.mapIdentifiers)
 
+        log.log('Inserting %s at %s' % (windows, positions))
         self.window_inserter(windows, positions)
 
         print '\n' * 100
-        print sv.StatView(view_model.player)
-        print iv.InfoView(view_model.anomaly)
-        print mv.MainframeView(self.uvMatrix)
+        print sv.stat_view(view_model.player)
+        print iv.info_view(view_model.anomaly)
+        print mv.mainframe_view(self.uvMatrix)
 
         choice = raw_input()
 
@@ -73,7 +75,7 @@ class View:
         universeMatrix = list()
 
         # Loop through vertical Slices of Universe
-        log.log('drawing Map. Position: %s' % self.act_anmy.coordinates)
+        # log.log('drawing Map. Position: %s' % self.anomaly.coordinates)
 
         for verticalSlice in Universe.Map:
             row = list()
@@ -153,11 +155,11 @@ class View:
 
         matrix_y = 0
 
-        for map_y in range(position[1]):
+        for map_y in range(*position[1]):
 
             matrix_x = 0
 
-            for map_x in range(position[0]):
+            for map_x in range(*position[0]):
 
                 try:
                     point_one = matrix[matrix_y][matrix_x][0]

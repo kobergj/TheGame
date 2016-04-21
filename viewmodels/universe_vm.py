@@ -20,6 +20,8 @@ class UniverseViewModel(bvm.BasicViewModel):
             log.log('Update Universe')
             universe.update(player)
 
+        self.choice_list = [True, False]
+
     def __call__(self):
         if self.player_choice:
             log.log('Execute Travel Logic')
@@ -89,7 +91,7 @@ class UniverseViewModel(bvm.BasicViewModel):
 class DistanceCalculator:
 
     def __init__(self, position):
-        self.postion = position
+        self.position = position
 
     def __call__(self, coordinates):
         distance = 0.0

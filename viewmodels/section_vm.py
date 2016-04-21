@@ -1,5 +1,5 @@
 import configuration.log_details as log
-import view_models.basic_vm as bvm
+import viewmodels.basic_vm as bvm
 
 # Anomaly Sections
 class AnomalySection(bvm.BasicViewModel):
@@ -77,7 +77,7 @@ class Quit(AnomalySection):
 class Merchant(AnomalySection):
 
     def __init__(self, Anomaly, Player, AnomalyViewModel):
-        AnomalySection.__init__(self, Anomaly, Player)
+        AnomalySection.__init__(self, Anomaly, Player, AnomalyViewModel)
 
         self.interactionType = 'Buy'
 
@@ -86,7 +86,7 @@ class Merchant(AnomalySection):
     def __call__(self):
 
         if not self.player_choice:
-            return AnomalyViewModel
+            return self.parent
 
         GoodToBuy = self.choice_list[self.player_choice-1]
 
@@ -102,7 +102,7 @@ class Merchant(AnomalySection):
         if self.player.currentShip.cargoCapacity() > 0:
             return Merchant
 
-        return AnomalyViewMode
+        return self.parent
 
 
     def infoString(self):

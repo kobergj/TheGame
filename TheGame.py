@@ -1,12 +1,11 @@
-import controller.viewmodel_fabric as vf
-import controller.model_fabric as mf
-
 import configuration.database as db
 import configuration.log_details as log
 
-import models.game_models as gm
+import controller.model_fabric as mf
 
 import view.basic_view as vwf
+
+import viewmodels.universe_vm as uvm
 
 NUMBER_OF_ANOMALIES = 25
 
@@ -32,22 +31,50 @@ STARTING_SHIP_STATS = {'cargoCapacity': 10,
 # Init Log
 log.initLogBook()
 
-# Init Game 
-controller = gm.RandomGame(PLAYER_INFO, MAX_COORDINATES, STARTING_SHIP_STATS, NUMBER_OF_ANOMALIES)
+log.log('Init Database')
+database = db.DynamicDatabase[:]
+
+log.log('Assigning Player')
+player = mf.producePlayer(PLAYER_INFO)
+
+log.log('Generate Universe')
+universe = mf.produceUniverse(MAX_COORDINATES)
+
+log.log('Initialize Producer')
+randomProducer = mf.randomProducer(database, universe)
+
+log.log('Craft Ship')
+startingShip = mf.produceShip(database, STARTING_SHIP_STATS)
+
+log.log('Board Ship')
+player.switchShip(startingShip)
+
+log.log('Set Starting Anomaly')
+startingAnomaly = mf.produceAnomaly(database)
+universe.addAnomaly(startingAnomaly)
+player.travelTo(startingAnomaly.coordinates)
 
 
 if __name__ == '__main__':
-    # Start Producer
-    controller.randomProducer.startProducing()
+    log.log('Start Producer')
+    randomProducer.startProducing()
 
-    # Init View
-    view = vwf.View(controller.universe)
+    log.log('Fill Universe')
+    universe.fill(NUMBER_OF_ANOMALIES)
+    universe.update(player)
 
-    view_model = None
+    log.log('Init View')
+    view = vwf.View(universe)
+
+    view_model = uvm.UniverseViewModel(universe, player)
 
     # The Journey ...
     while True:
-        # I guess it should look like this
-        view_model = controller(view_model)
+        view_model_class = view_model()
+
+        view_model = view_model_class(universe, player)
 
         view(view_model)
+
+
+

@@ -159,3 +159,11 @@ class Universe():
             return travelCosts
 
         return None
+
+    def fill(self, NumberOfAnomalies):
+        for i in range(NumberOfAnomalies):
+            # Get Anomaly
+            anomaly = self.anomalyQ.get()
+            # Add Anomaly
+            self.addAnomaly(anomaly)
+

@@ -12,7 +12,7 @@ class AnomalyViewModel(bvm.BasicViewModel):
         bvm.BasicViewModel.__init__(self, Anomaly, Player)
 
         section_vm_list = [
-            svm.Merchant  #, svm.Trader, svm.EquipmentDealer, svm.Gateport, svm.Quit
+            svm.Merchant, svm.Trader, svm.EquipmentDealer, svm.Gateport
             ]
 
         availableViewModels = [UniverseViewModel]

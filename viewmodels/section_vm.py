@@ -62,12 +62,12 @@ class AnomalySection(bvm.BasicViewModel):
 
 
 
-class Quit(AnomalySection):
-    def __call__(self, Anomaly, Player, *args):
-        quit()
+# class Quit(AnomalySection):
+#     def __call__(self, Anomaly, Player, *args):
+#         quit()
 
-    def infoString(self):
-        return 'Graveyard'
+#     def infoString(self):
+#         return 'Graveyard'
 
 
 # class Spaceport(AnomalySection):
@@ -118,133 +118,89 @@ class Merchant(AnomalySection):
 
 class Trader(AnomalySection):
 
-    def __init__(self, Anomaly, Player):
+    def __init__(self, Universe, Player, AnomalyViewModel):
+        AnomalySection.__init__(self, Universe, Player, AnomalyViewModel)
         # Calculate Shared Goods:
         sharedGoods = list()
 
-        for good in Anomaly.goodsConsumed:
+        for good in Universe[Player.currentPosition].goodsConsumed:
             log.log('Checking for Similarities: %s - %s' % (good.name, Player.currentShip.inCargo.keys()))
             if good.name in Player.currentShip.inCargo:
                 sharedGoods.append(good)
-        # sharedGoods = set(Anomaly.goodsConsumed).intersection(set(Player.currentShip.inCargo.keys()))
 
-        if not sharedGoods:
-            raise AttributeError
+        # if not sharedGoods:
+        #     raise AttributeError
 
         # Build Main List
-        self.mainList = sharedGoods
+        for good in sharedGoods:
+            self.choice_list.append(good)
 
         self.interactionType = 'Sell'
 
-        self.cursor = -1
+    def __call__(self):
 
-    def __call__(self, Anomaly, Player, GoodToSell):
+        if not self.player_choice:
+            return self.parent
 
-        if not GoodToSell:
-            return
+        GoodToSell = self.choice_list[self.player_choice]
 
-        # Currently One Good per buy
+        # Currently One Good per sell
         Amount = 1
+
+        self.player.currentShip.unloadCargo(GoodToSell, Amount)
 
         price = GoodToSell.price
 
-        Player.earnCredits(price)
+        self.player.earnCredits(price)
 
-        Player.currentShip.unloadCargo(GoodToSell, Amount)
+        return Trader
 
-        return GoodToSell
-
-    def next(self):
-        self.cursor += 1
-
-        if self.cursor >= len(self.mainList):
-            # Reset Cursor
-            self.cursor = -1
-            raise StopIteration
-
-        good = self.mainList[self.cursor]
-
-        return good
-
-    # I think this belongs to viz. Need a better Solution here
     def infoString(self):
-        infoStr = ''
-
-        infoStr += 'Trader'
-
-        return infoStr
+        return 'Trader'
 
 class EquipmentDealer(AnomalySection):
-    def __init__(self, Anomaly, Player):
-        self.mainList = Anomaly.roomsForSale
+    def __init__(self, Universe, Player, AnomalyViewModel):
+        AnomalySection.__init__(self, Universe, Player, AnomalyViewModel)
 
-        if not Anomaly.roomsForSale:
-            raise AttributeError
+        for room in self.anomaly.roomsForSale:
+            self.choice_list.append(room)
 
         self.interactionType = 'Buy'
 
-        self.cursor = -1
+    def __call__(self):
 
-    def __call__(self, Anomaly, Player, RoomToBuy):
+        if not self.player_choice:
+            return self.parent
 
-        if not RoomToBuy:
-            return
+        RoomToBuy = self.choice_list[self.player_choice]
 
-        Player.spendCredits(RoomToBuy.price)
+        self.player.spendCredits(RoomToBuy.price)
 
-        Player.currentShip.attachRoom(RoomToBuy)
+        self.player.currentShip.attachRoom(RoomToBuy)
 
-        Anomaly.roomsForSale.remove(RoomToBuy)
+        self.anomaly.roomsForSale.remove(RoomToBuy)
 
-        return True
-
-    def index(self, roomName):
-        for room in self.mainList:
-            if room.name == roomName:
-                break
-
-        return self.mainList.index(room)
-
-    def next(self):
-        self.cursor += 1
-
-        if self.cursor >= len(self.mainList):
-            # Reset Cursor
-            self.cursor = -1
-            raise StopIteration
-
-        room = self.mainList[self.cursor]
-
-        return room
-
+        return EquipmentDealer
 
     def infoString(self):
-        infoStr = ''
-
-        infoStr += 'Equipment Dealer'
-
-        return infoStr
+        return 'Equipment Dealer'
 
 
 class Gateport(AnomalySection):
-    def __init__(self, Anomaly, Player):
-        self.mainList = list()
-
-        self.costForUse = Anomaly.costForUse
+    def __init__(self, Universe, Player, AnomalyViewModel):
+        AnomalySection.__init__(self, Universe, Player, AnomalyViewModel)
 
         self.interactionType = 'Travel'
 
-        self.cursor = -1
+        self.cost_for_use = self.anomaly.costForUse
 
-    def __call__(self, Anomaly, Player, *args):
-        Player.spendCredits(self.costForUse)
+    def __call__(self):
+        self.player.spendCredits(self.cost_for_use)
 
-        Player.currentShip.maxTravelDistance.mock(9999999)
-        Player.currentShip.maintenanceCosts.mock(0.00000001)
+        self.player.currentShip.maxTravelDistance.mock(9999999)
+        self.player.currentShip.maintenanceCosts.mock(0.00000001)
+
+        return self.parent
 
     def infoString(self):
-        infoStr = ''
-
-        infoStr += 'Gate Port'
-
-        return infoStr
+        return 'Gate Port'

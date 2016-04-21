@@ -56,6 +56,9 @@ class View:
 
         while True:
             try:
+                if choice == 'q':
+                    quit()
+
                 if choice == '':
                     choice = 0
 

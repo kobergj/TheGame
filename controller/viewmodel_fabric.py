@@ -5,7 +5,7 @@ import viewmodels.universe_vm as uvm
 
 class ViewModelProducer:
 
-    def __init__(self, universe, player, queue):
+    def __init__(self, universe, player, queue, choice_queue):
 
         self.producingThread = multiprocessing.Process(
             name='ViewModelProducer',
@@ -16,8 +16,11 @@ class ViewModelProducer:
         # Set Kill Switch
         self.dead = False
 
-        # Assign Queue
+        # Output Queue
         self.queue = queue
+
+        # Input Queue
+        self.choice_queue = choice_queue
 
     def startProducing(self):
         # Start Thread
@@ -39,7 +42,7 @@ class ViewModelProducer:
             # Put it In
             self.queue.put(view_model)
             log.log('Awaiting Player Choice')
-            players_choice = self.queue.get()
+            players_choice = self.choice_queue.get()
 
             log.log('Execute %s' % view_model)
             view_model_class = view_model(players_choice)

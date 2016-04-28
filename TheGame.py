@@ -43,12 +43,15 @@ player = mf.producePlayer(PLAYER_INFO)
 log.log('Generate Universe')
 universe = mf.produceUniverse(MAX_COORDINATES)
 
+log.log('Initialize Queues')
+viewmodel_queue = mp.Queue(maxsize=1)
+choice_queue = mp.Queue(maxsize=1)
+
 log.log('Initialize Model Producer')
 modelProducer = mf.randomProducer(database, universe)
 
 log.log('Initialize ViewModel Producer')
-viewmodel_queue = mp.Queue(maxsize=1)
-viewmodelProducer = vf.ViewModelProducer(universe, player, viewmodel_queue)
+viewmodelProducer = vf.ViewModelProducer(universe, player, viewmodel_queue, choice_queue)
 
 log.log('Craft Ship')
 startingShip = mf.produceShip(database, STARTING_SHIP_STATS)
@@ -83,5 +86,5 @@ if __name__ == '__main__':
         # Show View Model
         players_choice = view(view_model)
         # Returns Answer
-        viewmodel_queue.put(players_choice)
+        choice_queue.put(players_choice)
 

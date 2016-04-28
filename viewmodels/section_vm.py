@@ -90,12 +90,12 @@ class Merchant(AnomalySection):
             self.choice_list.append(good)
 
 
-    def __call__(self):
+    def __call__(self, player_choice):
 
-        if not self.player_choice:
+        if not player_choice:
             return self.parent
 
-        GoodToBuy = self.choice_list[self.player_choice]
+        GoodToBuy = self.choice_list[player_choice]
 
         # Currently One Good per buy
         Amount = 1
@@ -137,12 +137,12 @@ class Trader(AnomalySection):
 
         self.interactionType = 'Sell'
 
-    def __call__(self):
+    def __call__(self, player_choice):
 
-        if not self.player_choice:
+        if not player_choice:
             return self.parent
 
-        GoodToSell = self.choice_list[self.player_choice]
+        GoodToSell = self.choice_list[player_choice]
 
         # Currently One Good per sell
         Amount = 1
@@ -167,12 +167,12 @@ class EquipmentDealer(AnomalySection):
 
         self.interactionType = 'Buy'
 
-    def __call__(self):
+    def __call__(self, player_choice):
 
-        if not self.player_choice:
+        if not player_choice:
             return self.parent
 
-        RoomToBuy = self.choice_list[self.player_choice]
+        RoomToBuy = self.choice_list[player_choice]
 
         self.player.spendCredits(RoomToBuy.price)
 
@@ -194,7 +194,7 @@ class Gateport(AnomalySection):
 
         self.cost_for_use = self.anomaly.costForUse
 
-    def __call__(self):
+    def __call__(self, player_choice):
         self.player.spendCredits(self.cost_for_use)
 
         self.player.currentShip.maxTravelDistance.mock(9999999)

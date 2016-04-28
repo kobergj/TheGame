@@ -37,6 +37,7 @@ class View:
         self._uvMatrix = copy.deepcopy(self.uvMatrix)
 
         self.point_len = len(self.mapIdentifiers['Empty'])
+        self.map_len = len(self.uvMatrix[0]) * self.point_len
 
     def __call__(self, view_model):
         log.log('Getting Windows Of %s' % view_model.__class__.__name__)
@@ -45,10 +46,17 @@ class View:
         log.log('Inserting %s at %s' % (windows, positions))
         self.window_inserter(windows, positions)
 
+        # Stat Frame
+        pl_view = sv.stat_view(view_model.player)
+        # Anm Frame
+        anm_view = iv.info_view(view_model.anomaly)
+        # Universe Frame
+        uv_view = mv.mainframe_view(self.uvMatrix)
+        log.log('Adding borders to %s' % [pl_view, anm_view, uv_view])
+        complete_view = self.border(pl_view, anm_view, uv_view)
+
         print '\n' * 100
-        print sv.stat_view(view_model.player)
-        print iv.info_view(view_model.anomaly)
-        print mv.mainframe_view(self.uvMatrix)
+        print complete_view
 
         choice = raw_input()
 
@@ -65,8 +73,7 @@ class View:
                 log.log('Player choose %s' % choice)
                 choice = int(choice)
                 view_model.choice_list[choice]
-                view_model.player_choice = choice
-                return
+                return choice
 
             except ValueError:
 
@@ -79,6 +86,41 @@ class View:
                 print 'Sorry, There is no Option %s' % choice
 
                 choice = raw_input()
+
+    def border(self, pl_frame, an_frame, uv_frame):
+        border_char = '#'
+
+        final_string = border_char * (self.map_len + 2)
+        final_string += '\n'
+
+        spl_player_frame = pl_frame.split('\n')
+        for line in spl_player_frame:
+            line_string = border_char + line
+
+            while len(line_string) <= self.map_len:
+                line_string += ' '
+
+            line_string += border_char + '\n'
+
+            final_string += line_string
+
+        while len(an_frame) < self.map_len:
+            an_frame += ' '
+
+        final_string += border_char + an_frame + border_char + '\n'
+
+        final_string += border_char * (self.map_len + 2)
+        final_string += '\n'
+
+        spl_uv_frame = uv_frame.split('\n')
+        for line in spl_uv_frame:
+            final_string += border_char + line + border_char + '\n'
+
+
+        final_string += border_char * (self.map_len + 2)
+        final_string += '\n'
+
+        return final_string
 
     def drawMap(self, Universe):
         # VizUniverse Map

@@ -1,4 +1,4 @@
-import Queue
+import multiprocessing as mp
 
 import configuration.database as db
 import configuration.log_details as log
@@ -9,6 +9,7 @@ import controller.viewmodel_fabric as vf
 import view.basic_view as vwf
 
 
+# TODO: Constants need to be configurable...
 NUMBER_OF_ANOMALIES = 25
 
 MAX_COORDINATES = [15, 15]
@@ -46,7 +47,7 @@ log.log('Initialize Model Producer')
 modelProducer = mf.randomProducer(database, universe)
 
 log.log('Initialize ViewModel Producer')
-viewmodel_queue = Queue.Queue(maxsize=1)
+viewmodel_queue = mp.Queue(maxsize=1)
 viewmodelProducer = vf.ViewModelProducer(universe, player, viewmodel_queue)
 
 log.log('Craft Ship')
@@ -77,7 +78,10 @@ if __name__ == '__main__':
 
     # The Journey begins
     while True:
+        # Get View Model
         view_model = viewmodel_queue.get()
-
-        view(view_model)
+        # Show View Model
+        players_choice = view(view_model)
+        # Returns Answer
+        viewmodel_queue.put(players_choice)
 

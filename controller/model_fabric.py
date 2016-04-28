@@ -1,4 +1,4 @@
-import threading
+import multiprocessing
 import random
 
 
@@ -212,7 +212,7 @@ class randomProducer():
     # For the Moment Only One Universe per Producer
     def __init__(self, Database, Universe):
         # Create Producer Thread
-        self.producingThread = threading.Thread(
+        self.producingThread = multiprocessing.Process(
             name='ModelProducer',
             target=self.producingFunction,
             args=(Database, Universe)

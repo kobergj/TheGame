@@ -1,4 +1,4 @@
-import Queue
+import multiprocessing as mp
 import random
 import configuration.log_details as log
 import math
@@ -6,10 +6,10 @@ import math
 class Universe():
     def __init__(self, minCoordinates, maxCoordinates):
         # Init Queues
-        self.anomalyQ = Queue.Queue(maxsize=3)
-        self.enemyQ = Queue.Queue(maxsize=3)
-        self.shipQ = Queue.Queue(maxsize=3)
-        self.roomQ = Queue.Queue(maxsize=3)
+        self.anomalyQ = mp.Queue(maxsize=3)
+        self.enemyQ = mp.Queue(maxsize=3)
+        self.shipQ = mp.Queue(maxsize=3)
+        self.roomQ = mp.Queue(maxsize=3)
 
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)

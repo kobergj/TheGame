@@ -24,8 +24,8 @@ class UniverseViewModel(bvm.BasicViewModel):
             log.log('Update Universe')
             universe.update(player)
 
-    def __call__(self):
-        choice = self.choice_list[self.player_choice]
+    def __call__(self, player_choice):
+        choice = self.choice_list[player_choice]
 
         if choice:
             log.log('Execute Travel Logic')

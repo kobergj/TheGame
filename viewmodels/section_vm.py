@@ -40,43 +40,14 @@ class AnomalySection(bvm.BasicViewModel):
     def __getitem__(self, i):
         return self.choice_list[i]
 
+    def next(self, player_choice):
+        self.player_choice = player_choice
+        # Returns next view model
+        return self.parent
+
     def infoString(self):
         # Generate a Information String
         return 'None'
-
-    # def index(self, item):
-    #     return self.choice_list.index(item)
-
-    # def next(self):
-    #     self.cursor += 1
-
-    #     if self.cursor >= len(self.mainList):
-    #         # Reset Cursor
-    #         self.cursor = -1
-    #         raise StopIteration
-
-    #     item = self.mainList[self.cursor]
-
-    #     return item
-
-
-
-
-# class Quit(AnomalySection):
-#     def __call__(self, Anomaly, Player, *args):
-#         quit()
-
-#     def infoString(self):
-#         return 'Graveyard'
-
-
-# class Spaceport(AnomalySection):
-#     def __call__(self, Anomaly, Player, *args):
-#         Player.depart()
-
-#     def infoString(self):
-#         return 'Spaceport'
-
 
 class Merchant(AnomalySection):
 
@@ -90,31 +61,36 @@ class Merchant(AnomalySection):
             self.choice_list.append(good)
 
 
-    def __call__(self, player_choice):
+    def __call__(self, universe, player):
+        if not self.player_choice:
+            return
 
-        if not player_choice:
-            return self.parent
-
-        GoodToBuy = self.choice_list[player_choice]
+        GoodToBuy = self.choice_list[self.player_choice]
 
         # Currently One Good per buy
         Amount = 1
 
-        self.player.currentShip.loadCargo(GoodToBuy, Amount)
+        player.currentShip.loadCargo(GoodToBuy, Amount)
 
         price = GoodToBuy.price
 
-        self.player.spendCredits(price)
+        player.spendCredits(price)
 
-        if self.player.currentShip.cargoCapacity() > 0:
+        return
+
+    def next(self, player_choice):
+        self.player_choice = player_choice
+
+        if not player_choice:
+            return self.parent
+
+        if self.player.currentShip.cargoCapacity() > 1:
             return Merchant
 
         return self.parent
 
-
     def infoString(self):
         return 'Merchant'
-
 
 class Trader(AnomalySection):
 
@@ -137,21 +113,28 @@ class Trader(AnomalySection):
 
         self.interactionType = 'Sell'
 
-    def __call__(self, player_choice):
+    def __call__(self, universe, player):
+        if not self.player_choice:
+            return
 
-        if not player_choice:
-            return self.parent
-
-        GoodToSell = self.choice_list[player_choice]
+        GoodToSell = self.choice_list[self.player_choice]
 
         # Currently One Good per sell
         Amount = 1
 
-        self.player.currentShip.unloadCargo(GoodToSell, Amount)
+        player.currentShip.unloadCargo(GoodToSell, Amount)
 
         price = GoodToSell.price
 
-        self.player.earnCredits(price)
+        player.earnCredits(price)
+
+        return
+
+    def next(self, player_choice):
+        self.player_choice = player_choice
+
+        if not player_choice:
+            return self.parent
 
         return Trader
 
@@ -167,18 +150,28 @@ class EquipmentDealer(AnomalySection):
 
         self.interactionType = 'Buy'
 
-    def __call__(self, player_choice):
+    def __call__(self, universe, player):
+        if not self.player_choice:
+            return
+
+        RoomToBuy = self.choice_list[self.player_choice]
+
+        player.spendCredits(RoomToBuy.price)
+
+        player.currentShip.attachRoom(RoomToBuy)
+
+        anomaly = universe[player.currentPosition]
+
+        anomaly.remove_room(RoomToBuy)
+
+        return
+
+
+    def next(self, player_choice):
+        self.player_choice = player_choice
 
         if not player_choice:
             return self.parent
-
-        RoomToBuy = self.choice_list[player_choice]
-
-        self.player.spendCredits(RoomToBuy.price)
-
-        self.player.currentShip.attachRoom(RoomToBuy)
-
-        self.anomaly.roomsForSale.remove(RoomToBuy)
 
         return EquipmentDealer
 
@@ -194,13 +187,16 @@ class Gateport(AnomalySection):
 
         self.cost_for_use = self.anomaly.costForUse
 
-    def __call__(self, player_choice):
-        self.player.spendCredits(self.cost_for_use)
+    def __call__(self, universe, player):
+        if not self.player_choice:
+            return
 
-        self.player.currentShip.maxTravelDistance.mock(9999999)
-        self.player.currentShip.maintenanceCosts.mock(0.00000001)
+        player.spendCredits(self.cost_for_use)
 
-        return self.parent
+        player.currentShip.maxTravelDistance.mock(9999999)
+        player.currentShip.maintenanceCosts.mock(0.00000001)
+
+        return
 
     def infoString(self):
         return 'Gate Port'

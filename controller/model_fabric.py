@@ -13,8 +13,10 @@ import models.player_models as mpl
 import controller.generator.ships as gsp
 import controller.generator.rooms as gro
 
+# Log
+import configuration.log_details as log
 
-def produceUniverse(MaxCoordinates, MinCoordinates=[0, 0]):
+def produceUniverse(MaxCoordinates=[15, 15], MinCoordinates=[0, 0]):
     """Produces a Universe with the given Coordinates """
     universe = muv.Universe(MinCoordinates, MaxCoordinates)
 
@@ -210,12 +212,12 @@ class randomProducer():
             Enemies"""
 
     # For the Moment Only One Universe per Producer
-    def __init__(self, Database, Universe):
+    def __init__(self, database, connection):
         # Create Producer Thread
         self.producingThread = multiprocessing.Process(
             name='ModelProducer',
-            target=self.producingFunction,
-            args=(Database, Universe)
+            target=self.__call__,
+            # args=(database)
             )
         # Make Him a Daemon
         # self.producingThread.daemon = True
@@ -223,13 +225,96 @@ class randomProducer():
         # Set Kill Switch
         self.dead = False
 
+        self.conn = connection
+
+        self.db = database
+
+    def __call__(self):
+        log.log('Creating Player')
+        player = producePlayer(self.db.StartConfiguration.PlayerInfo)
+
+        log.log('Generating Universe')
+        universe = produceUniverse(self.db.StartConfiguration.MaxCoordinates,
+                                   self.db.StartConfiguration.MinCoordinates)
+
+        log.log('Craft Ship')
+        startingShip = produceShip(self.db, self.db.StartConfiguration.StartingShipStats)
+
+        log.log('Board Ship')
+        player.switchShip(startingShip)
+
+        log.log('Set Starting Anomaly')
+        startingAnomaly = produceAnomaly(self.db)
+        universe.addAnomaly(startingAnomaly)
+        player.travelTo(startingAnomaly.coordinates)
+
+        log.log('Fill Universe')
+        self.fill_universe(universe, self.db.StartConfiguration.NumberOfAnomalies)
+
+        while True:
+            log.log('Update Universe')
+            self.update(universe, player)
+            log.log('Sending Models')
+            self.conn.send([universe, player])
+            log.log('Awaiting Input')
+            change_function = self.conn.recv()
+            log.log('Executing Input')
+            change_function(universe, player)
+
+    def update(self, universe, player):
+        for anomaly in universe:
+            # Get Enemy from Queue
+            newEnemy = produceEnemy(self.db)
+            # Append to Enemy List
+            if newEnemy:
+                anomaly.enemies.append(newEnemy)
+
+            try:
+                # Get Ship
+                ship = produceShip(self.db)
+
+                # Attach Ship to Station
+                anomaly.changeShipForSale(ship)
+            except AttributeError:
+                pass
+
+            try:
+                # Delete One Room
+                if anomaly.roomsForSale:
+                    anomaly.roomsForSale.pop(0)
+
+                # Fill Room List
+                while len(anomaly.roomsForSale) < anomaly.maxRoomsForSale:
+                    # Get Room
+                    room = produceRoom(self.db)
+
+                    # Add Room
+                    anomaly.addRoomForSale(room)
+            except AttributeError:
+                pass
+
+    def fill_universe(self, universe, NumberOfAnomalies):
+        for i in range(NumberOfAnomalies):
+            # Get Anomaly
+            anomaly = produceAnomaly(self.db)
+            # Add Anomaly
+            universe.addAnomaly(anomaly)
+
+
     def startProducing(self):
         self.producingThread.start()
+
+    def stopProducing(self):
+        # Stop Process
+        self.killProducer()
+        self.producingThread.join()
 
     def killProducer(self):
         self.dead = True
 
     def producingFunction(self, Database, Universe):
+
+        log.log('Start Model Producing')
 
         while not self.dead:
             # Anomalies
@@ -263,3 +348,5 @@ class randomProducer():
 
                 # Put in Q
                 Universe.enemyQ.put(enemy)
+
+        log.log('Model Producer dead and gone')

@@ -5,22 +5,20 @@ import viewmodels.universe_vm as uvm
 
 class ViewModelProducer:
 
-    def __init__(self, universe, player, queue, choice_queue):
+    def __init__(self, model_connection, view_connection):
 
         self.producingThread = multiprocessing.Process(
             name='ViewModelProducer',
-            target=self.producingFunction,
-            args=(universe, player)
+            target=self.__call__,
+            # args=()
             )
 
         # Set Kill Switch
         self.dead = False
 
-        # Output Queue
-        self.queue = queue
-
-        # Input Queue
-        self.choice_queue = choice_queue
+        # Connections
+        self.model_conn = model_connection
+        self.view_conn = view_connection
 
     def startProducing(self):
         # Start Thread
@@ -28,27 +26,41 @@ class ViewModelProducer:
 
     def stopProducing(self):
         # Stop Process
-        self.producingThread.start()
+        self.killProducer()
+        self.producingThread.join()
 
     def killProducer(self):
         # Sad it is...
         self.dead = True
 
-    def producingFunction(self, universe, player):
+    def __call__(self):
+        log.log('Getting Models')
+        universe, player = self.model_conn.recv()
+
+        log.log('Start ViewModel Producing')
         # Start at Universe. Configurabe?
         view_model = uvm.UniverseViewModel(universe, player, False)
 
-        while not self.dead:
-            # Put it In
-            self.queue.put(view_model)
+        while True:
+            log.log('Sending View Model')
+            self.view_conn.send(view_model)
+
             log.log('Awaiting Player Choice')
-            players_choice = self.choice_queue.get()
+            players_choice = self.view_conn.recv()
 
             log.log('Execute %s' % view_model)
-            view_model_class = view_model(players_choice)
+            view_model_class = view_model.next(players_choice)
+
+            log.log('Sending Changes')
+            self.model_conn.send(view_model)
+
+            log.log('Getting New Models')
+            universe, player = self.model_conn.recv()
 
             log.log('Initialize View Model %s' % view_model_class)
             view_model = view_model_class(universe, player, view_model.parent)
+
+        log.log('View Model Producer dead and gone')
 
 
 

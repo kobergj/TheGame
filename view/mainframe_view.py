@@ -21,7 +21,7 @@ def mainframe_view(Matrix):
 
 def get_view(view_model, mapIdents):
     try:
-        view_model.available_anomalies
+        view_model.anomaly_availability
         uv_windows, uv_positions = universe_view(view_model, mapIdents)
         return uv_windows, uv_positions
     except AttributeError:
@@ -42,11 +42,13 @@ def universe_view(view_model, mapIdentifiers):
     windows = list()
     positions = list()
 
-    for anomaly in view_model.available_anomalies:
+    available_anomalies = view_model.anomaly_availability[0]
+
+    for anomaly in available_anomalies:
         win = mapIdentifiers[anomaly.__class__.__name__]
         pos = anomaly.coordinates
 
-        if anomaly == view_model.anomaly:
+        if anomaly.coordinates == view_model.anomaly.coordinates:
             win = mapIdentifiers['Highlight']
 
         if anomaly.coordinates == view_model.player.currentPosition:
@@ -54,6 +56,17 @@ def universe_view(view_model, mapIdentifiers):
 
             if anomaly == view_model.anomaly:
                 win = mapIdentifiers['CurHigh']
+
+        win = win[0] + '\n' + win[1]
+
+        windows.append(win)
+        positions.append(pos)
+
+    not_available_anomalies = view_model.anomaly_availability[1]
+
+    for anomaly in not_available_anomalies:
+        win = mapIdentifiers['Unknown']
+        pos = anomaly.coordinates
 
         win = win[0] + '\n' + win[1]
 

@@ -1,4 +1,5 @@
 import copy
+import sys
 
 import configuration.log_details as log
 
@@ -32,8 +33,8 @@ class View:
                                 ]
                       }
 
-    def __init__(self, Universe):
-        self.uvMatrix = self.drawMap(Universe)
+    def __init__(self, database):
+        self.uvMatrix = self.drawMap(database.StartConfiguration)
         self._uvMatrix = copy.deepcopy(self.uvMatrix)
 
         self.point_len = len(self.mapIdentifiers['Empty'])
@@ -52,10 +53,12 @@ class View:
         anm_view = iv.info_view(view_model.anomaly)
         # Universe Frame
         uv_view = mv.mainframe_view(self.uvMatrix)
+
         log.log('Adding borders to %s' % [pl_view, anm_view, uv_view])
         complete_view = self.border(pl_view, anm_view, uv_view)
 
-        print '\n' * 100
+        # print '\n' * 1000
+        # sys.stdout.write("\033[F")
         print complete_view
 
         choice = raw_input()
@@ -65,7 +68,7 @@ class View:
         while True:
             try:
                 if choice == 'q':
-                    quit()
+                    return 'I wanna quit the goddamn Game!'
 
                 if choice == '':
                     choice = 0
@@ -122,30 +125,28 @@ class View:
 
         return final_string
 
-    def drawMap(self, Universe):
+    def drawMap(self, startConfig):
+        maxCoordinates = startConfig.MaxCoordinates
+        minCoordinates = startConfig.MinCoordinates
+
+        universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
+        universeExpansion_y = maxCoordinates[1] - minCoordinates[1]
+
         # VizUniverse Map
         universeMatrix = list()
 
-        # Loop through vertical Slices of Universe
-        # log.log('drawing Map. Position: %s' % self.anomaly.coordinates)
+        # Problems with negative Coordinates
+        # Currently 2-Dims Only
+        for verticalSlice in range(universeExpansion_y):
+            # Vertical Slices through Space
+            verticalSlice = list()
 
-        for verticalSlice in Universe.Map:
-            row = list()
+            for point_in_space in range(universeExpansion_x):
+                point_in_space = [self.mapIdentifiers['Empty'], self.mapIdentifiers['Empty']]
 
-            # Loop through Anomalies
-            for anomaly in verticalSlice:
-                # Assume its Empty
-                first_line = self.mapIdentifiers['Empty']
-                second_line = self.mapIdentifiers['Empty']
+                verticalSlice.append(point_in_space)
 
-
-                if anomaly:
-                    first_line = self.mapIdentifiers['Unknown'][0]
-                    second_line = self.mapIdentifiers['Unknown'][1]
-
-                row.append([first_line, second_line])
-
-            universeMatrix.append(row)
+            universeMatrix.append(verticalSlice)
 
         return universeMatrix
 

@@ -1,4 +1,5 @@
 import multiprocessing as mp
+from datetime import datetime as dt
 
 import configuration.database as db
 import configuration.log_details as log
@@ -8,28 +9,8 @@ import controller.viewmodel_fabric as vf
 
 import view.basic_view as vwf
 
-
-# TODO: Constants need to be configurable...
-NUMBER_OF_ANOMALIES = 25
-
-MAX_COORDINATES = [15, 15]
-
-PLAYER_INFO = {'name': 'Dr.Play',
-               'startingCredits': 12
-               }
-
-STARTING_SHIP_STATS = {'cargoCapacity': 10,
-
-                       'maintenanceCosts': 2,
-                       'maxTravelDistance': 4,
-
-                       'spaceForRooms': 2,
-
-                       'price': 0,
-
-                       'attackPower': 7,
-                       'shieldStrength': 15,
-                       }
+# Starting Time Stamp
+start = dt.now()
 
 # Init Log
 log.initLogBook()
@@ -37,54 +18,42 @@ log.initLogBook()
 log.log('Init Database')
 database = db.DynamicDatabase
 
-log.log('Assigning Player')
-player = mf.producePlayer(PLAYER_INFO)
-
-log.log('Generate Universe')
-universe = mf.produceUniverse(MAX_COORDINATES)
-
-log.log('Initialize Queues')
-viewmodel_queue = mp.Queue(maxsize=1)
-choice_queue = mp.Queue(maxsize=1)
+log.log('Creating Connections')
+model_connection = mp.Pipe()
+view_connection = mp.Pipe()
 
 log.log('Initialize Model Producer')
-modelProducer = mf.randomProducer(database, universe)
+modelProducer = mf.randomProducer(database, model_connection[0])
 
 log.log('Initialize ViewModel Producer')
-viewmodelProducer = vf.ViewModelProducer(universe, player, viewmodel_queue, choice_queue)
+viewmodelProducer = vf.ViewModelProducer(model_connection[1], view_connection[0])
 
-log.log('Craft Ship')
-startingShip = mf.produceShip(database, STARTING_SHIP_STATS)
-
-log.log('Board Ship')
-player.switchShip(startingShip)
-
-log.log('Set Starting Anomaly')
-startingAnomaly = mf.produceAnomaly(database)
-universe.addAnomaly(startingAnomaly)
-player.travelTo(startingAnomaly.coordinates)
-
+log.log('Init View')
+view = vwf.View(database)
 
 if __name__ == '__main__':
     log.log('Start Model Producer')
     modelProducer.startProducing()
 
-    log.log('Fill Universe')
-    universe.fill(NUMBER_OF_ANOMALIES)
-    universe.update(player)
-
     log.log('Start ViewModel Producer')
     viewmodelProducer.startProducing()
 
-    log.log('Init View')
-    view = vwf.View(universe)
-
-    # The Journey begins
+    # May be "True" is not the best option...
     while True:
         # Get View Model
-        view_model = viewmodel_queue.get()
+        view_model = view_connection[1].recv()
         # Show View Model
         players_choice = view(view_model)
-        # Returns Answer
-        choice_queue.put(players_choice)
+        # Lame
+        if players_choice == 'I wanna quit the goddamn Game!':
+            break
+        # Return Answer
+        view_connection[1].send(players_choice)
 
+
+    # Clean Up
+    modelProducer.stopProducing()
+    viewmodelProducer.stopProducing()
+    view_connection[1].close()
+    model_connection[1].close()
+    log.log('Done. Session %s' % (dt.now() - start))

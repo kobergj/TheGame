@@ -15,6 +15,8 @@ class Player():
         self.currentPosition = None
         # At Anomaly?
         self.atAnomaly = False
+        # Lets say you are alive at the beginning
+        self.dead = False
 
     def land(self):
         self.atAnomaly = True

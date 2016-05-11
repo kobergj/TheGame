@@ -12,51 +12,62 @@ class UniverseViewModel(bvm.BasicViewModel):
 
     def __init__(self, universe, player, update):
 
-        self.available_anomalies = self.get_available_anomalies(universe, player)
+        self.anomaly_availability = self.get_available_anomalies(universe, player)
 
-        bvm.BasicViewModel.__init__(self, self.available_anomalies[self.scan_index], player)
+        available_anomalies = self.anomaly_availability[0]
+
+        bvm.BasicViewModel.__init__(self, available_anomalies[self.scan_index], player)
 
         self.choice_list = [True, False]
 
         self.parent = update
 
-        if self.parent:
-            log.log('Update Universe')
-            universe.update(player)
+        # if self.parent:
+        #     log.log('Update Universe')
+        #     universe.update(player)
 
-    def __call__(self, player_choice):
+    def __call__(self, universe, player):
+        if self.player_choice == 0:
+            anomaly = universe[self.anomaly.coordinates]
+
+            self.Travel(anomaly, player)
+
+        if self.player_choice == 1:
+            player.land()
+
+        return
+
+    def next(self, player_choice):
         choice = self.choice_list[player_choice]
 
         if choice:
-            log.log('Execute Travel Logic')
-            land = self.Travel(self.anomaly, self.player)
-
-            if land:
+            if self.anomaly.coordinates == self.player.currentPosition:
                 self.parent = UniverseViewModel
+                self.player_choice = 1
                 return avm.AnomalyViewModel
 
             UniverseViewModel.scan_index = 0
             self.parent = True
+            self.player_choice = 0
             return UniverseViewModel
 
         UniverseViewModel.scan_index += 1
-        if UniverseViewModel.scan_index >= len(self.available_anomalies):
+        if UniverseViewModel.scan_index >= len(self.anomaly_availability[0]):
             UniverseViewModel.scan_index = 0
 
         self.parent = False
+        self.player_choice = 2
         return UniverseViewModel
 
     def Travel(self, Anomaly, Player):
         """Player travels to Anomaly."""
-
         # Is current?
-        if Anomaly.coordinates == Player.currentPosition:
-            log.log('%(name)s is current. Landing...' % Anomaly.__dict__)
-            Player.land()
-            return True
+        dist_calc = DistanceCalculator(Player.currentPosition)
+        distance = dist_calc(Anomaly.coordinates)
+        costs = self.calculateTravelCosts(Player, distance)
 
         log.log('Pay Costs of %(travelCosts)s' % Anomaly.__dict__)
-        Player.spendCredits(Anomaly.travelCosts)
+        Player.spendCredits(costs)
         log.log('Traveling to %(name)s' % Anomaly.__dict__)
         Player.travelTo(Anomaly.coordinates)
 
@@ -76,14 +87,18 @@ class UniverseViewModel(bvm.BasicViewModel):
         distance_list.sort(key=(lambda x: x[1]))
 
         available_anomalies = list()
+        not_available_anomalies = list()
 
         while len(available_anomalies) < player.currentShip.maxTravelDistance():
             try:
                 available_anomalies.append(distance_list.pop(0)[0])
             except IndexError:
-                return available_anomalies
+                return available_anomalies, not_available_anomalies
 
-        return available_anomalies
+        while distance_list:
+            not_available_anomalies.append(distance_list.pop(0)[0])
+
+        return available_anomalies, not_available_anomalies
 
     def calculateTravelCosts(self, Player, Distance):
         # Check if reachable

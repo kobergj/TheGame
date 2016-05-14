@@ -1,4 +1,4 @@
-import configuration.log_details as log
+import logging
 
 def mainframe_view(Matrix):
     """Returns Universe Map as String."""
@@ -10,7 +10,7 @@ def mainframe_view(Matrix):
 
         for x, point in enumerate(row):
 
-            log.log('Drawing %s' % point, level=10)
+            logging.debug('Drawing %s' % point)
             first_line += point[0]
             second_line += point[1]
 
@@ -80,7 +80,7 @@ def universe_view(view_model, mapIdentifiers):
 def anomaly_view(view_model):
     sectionInfo = 'Welcome to %s %s\n' % (view_model.anomaly.__class__.__name__, view_model.anomaly.name)
 
-    log.log('Pick Anomaly Section from %s' % view_model.choice_list)
+    logging.info('Pick Anomaly Section from %s' % view_model.choice_list)
     for i, section in enumerate(view_model.choice_list):
 
         if i == 0:
@@ -97,7 +97,7 @@ def section_view(view_model):
     interactionInfo += "%s %s" % (view_model.anomaly.__class__.__name__, view_model.anomaly.name)
     interactionInfo += " -- %s\n"  % view_model.__class__.__name__
 
-    log.log('Generating Sections string for %s' % view_model.choice_list)
+    logging.info('Generating Sections string for %s' % view_model.choice_list)
     for i, item in enumerate(view_model.choice_list):
         if i == 0:
             interactionInfo += " [0] Back\n"

@@ -1,4 +1,4 @@
-import configuration.log_details as log
+import logging
 import viewmodels.basic_vm as bvm
 
 # Anomaly Sections
@@ -101,7 +101,7 @@ class Trader(AnomalySection):
         sharedGoods = list()
 
         for good in Universe[Player.currentPosition].goodsConsumed:
-            log.log('Checking for Similarities: %s - %s' % (good.name, Player.currentShip.inCargo.keys()))
+            logging.info('Checking for Similarities: %s - %s' % (good.name, Player.currentShip.inCargo.keys()))
             if good.name in Player.currentShip.inCargo:
                 sharedGoods.append(good)
 

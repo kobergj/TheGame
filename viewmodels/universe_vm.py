@@ -3,7 +3,7 @@ import math
 import viewmodels.basic_vm as bvm
 import viewmodels.anomaly_vm as avm
 
-import configuration.log_details as log
+import logging
 
 class UniverseViewModel(bvm.BasicViewModel):
 
@@ -23,7 +23,7 @@ class UniverseViewModel(bvm.BasicViewModel):
         self.parent = update
 
         # if self.parent:
-        #     log.log('Update Universe')
+        #     logging.info('Update Universe')
         #     universe.update(player)
 
     def __call__(self, universe, player):
@@ -68,9 +68,9 @@ class UniverseViewModel(bvm.BasicViewModel):
         distance = dist_calc(Anomaly.coordinates)
         costs = self.calculateTravelCosts(Player, distance)
 
-        log.log('Pay Costs of %(travelCosts)s' % Anomaly.__dict__)
+        logging.info('Pay Costs of %(travelCosts)s' % Anomaly.__dict__)
         Player.spendCredits(costs)
-        log.log('Traveling to %(name)s' % Anomaly.__dict__)
+        logging.info('Traveling to %(name)s' % Anomaly.__dict__)
         Player.travelTo(Anomaly.coordinates)
 
     def get_available_anomalies(self, universe, player):

@@ -1,6 +1,6 @@
 # import multiprocessing as mp
 import random
-import configuration.log_details as log
+import logging
 # import math
 
 class Universe():
@@ -79,7 +79,7 @@ class Universe():
         self.Map[y][x] = Anomaly
 
         Anomaly.getCoordinates([x, y])
-        log.log('Assigned Coordinates %(name)s: %(coordinates)s' % Anomaly.__dict__)
+        logging.info('Assigned Coordinates %(name)s: %(coordinates)s' % Anomaly.__dict__)
 
     def drawUniverseMap(self, minCoordinates, maxCoordinates):
         universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
@@ -113,7 +113,7 @@ class Universe():
     #         # Calculate Travel Costs
     #         distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
     #         costs = self.calculateTravelCosts(Player, distance)
-    #         log.log('Assigning TravelCosts %s to %s (dist: %s)' % (costs, anomaly.coordinates, distance))
+    #         logging.info('Assigning TravelCosts %s to %s (dist: %s)' % (costs, anomaly.coordinates, distance))
     #         anomaly.setTravelCosts(costs)
 
     #         try:

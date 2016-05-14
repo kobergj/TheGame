@@ -1,4 +1,4 @@
-import configuration.log_details as log
+import logging
 
 
 class Player():
@@ -43,5 +43,5 @@ class Player():
         self.currentShip = Ship
 
     def travelTo(self, Coordinates):
-        log.log('Player travelled to %s' % str(Coordinates))
+        logging.info('Player travelled to %s' % str(Coordinates))
         self.currentPosition = Coordinates

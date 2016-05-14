@@ -14,7 +14,7 @@ import controller.generator.ships as gsp
 import controller.generator.rooms as gro
 
 # Log
-import configuration.log_details as log
+import logging
 
 def produceUniverse(MaxCoordinates=[15, 15], MinCoordinates=[0, 0]):
     """Produces a Universe with the given Coordinates """
@@ -230,36 +230,42 @@ class randomProducer():
         self.db = database
 
     def __call__(self):
-        log.log('Creating Player')
+        logging.info('Creating Player')
         player = producePlayer(self.db.StartConfiguration.PlayerInfo)
 
-        log.log('Generating Universe')
+        logging.info('Generating Universe')
         universe = produceUniverse(self.db.StartConfiguration.MaxCoordinates,
                                    self.db.StartConfiguration.MinCoordinates)
 
-        log.log('Craft Ship')
+        logging.info('Craft Ship')
         startingShip = produceShip(self.db, self.db.StartConfiguration.StartingShipStats)
 
-        log.log('Board Ship')
+        logging.info('Board Ship')
         player.switchShip(startingShip)
 
-        log.log('Set Starting Anomaly')
+        logging.info('Set Starting Anomaly')
         startingAnomaly = produceAnomaly(self.db)
         universe.addAnomaly(startingAnomaly)
         player.travelTo(startingAnomaly.coordinates)
 
-        log.log('Fill Universe')
+        logging.info('Fill Universe')
         self.fill_universe(universe, self.db.StartConfiguration.NumberOfAnomalies)
 
-        while True:
-            log.log('Update Universe')
+        while not self.dead:
+            logging.info('Update Universe')
             self.update(universe, player)
-            log.log('Sending Models')
+            logging.info('Sending Models')
             self.conn.send([universe, player])
-            log.log('Awaiting Input')
+            logging.info('Awaiting Input')
             change_function = self.conn.recv()
-            log.log('Executing Input')
+
+            if change_function is None:
+                break
+
+            logging.info('Executing Input')
             change_function(universe, player)
+
+        logging.info('Model Producer Dead and gone')
 
     def update(self, universe, player):
         if not universe.request_update:
@@ -317,7 +323,7 @@ class randomProducer():
 
     def stopProducing(self):
         # Stop Process
-        self.killProducer()
+        # self.killProducer()
         self.producingThread.join()
 
     def killProducer(self):
@@ -325,7 +331,7 @@ class randomProducer():
 
     def producingFunction(self, Database, Universe):
 
-        log.log('Start Model Producing')
+        logging.info('Start Model Producing')
 
         while not self.dead:
             # Anomalies
@@ -360,4 +366,4 @@ class randomProducer():
                 # Put in Q
                 Universe.enemyQ.put(enemy)
 
-        log.log('Model Producer dead and gone')
+        logging.info('Model Producer dead and gone')

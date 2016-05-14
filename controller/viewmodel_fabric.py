@@ -1,6 +1,6 @@
 import multiprocessing
 
-import configuration.log_details as log
+import logging
 import viewmodels.universe_vm as uvm
 
 class ViewModelProducer:
@@ -26,7 +26,7 @@ class ViewModelProducer:
 
     def stopProducing(self):
         # Stop Process
-        self.killProducer()
+        # self.killProducer()
         self.producingThread.join()
 
     def killProducer(self):
@@ -34,33 +34,37 @@ class ViewModelProducer:
         self.dead = True
 
     def __call__(self):
-        log.log('Getting Models')
+        logging.info('Getting Models')
         universe, player = self.model_conn.recv()
 
-        log.log('Start ViewModel Producing')
+        logging.info('Start ViewModel Producing')
         # Start at Universe. Configurabe?
         view_model = uvm.UniverseViewModel(universe, player, False)
 
         while True:
-            log.log('Sending View Model')
+            logging.info('Sending View Model')
             self.view_conn.send(view_model)
 
-            log.log('Awaiting Player Choice')
+            logging.info('Awaiting Player Choice')
             players_choice = self.view_conn.recv()
 
-            log.log('Execute %s' % view_model)
+            if players_choice is None:
+                self.model_conn.send(None)
+                break
+
+            logging.info('Execute %s' % view_model)
             view_model_class = view_model.next(players_choice)
 
-            log.log('Sending Changes')
+            logging.info('Sending Changes')
             self.model_conn.send(view_model)
 
-            log.log('Getting New Models')
+            logging.info('Getting New Models')
             universe, player = self.model_conn.recv()
 
-            log.log('Initialize View Model %s' % view_model_class)
+            logging.info('Initialize View Model %s' % view_model_class)
             view_model = view_model_class(universe, player, view_model.parent)
 
-        log.log('View Model Producer dead and gone')
+        logging.info('View Model Producer dead and gone')
 
 
 

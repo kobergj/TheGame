@@ -1,4 +1,4 @@
-import configuration.log_details as log
+import logging
 
 import consuming.controller.anomaly_controls as ac
 import consuming.controller.enemy_interactions as emy
@@ -16,21 +16,21 @@ class Journey:
         anomaly = Universe[Player.currentPosition]
 
         while not Player.atAnomaly:
-            log.log('Loading Universe Screen')
+            logging.info('Loading Universe Screen')
             anomaly, land = self.BrowseMap(Universe, Player, anomaly, first)
             first = False
 
             
 
         # while anomaly.enemies:
-        #     log.log('Loading Enemy Screen')
+        #     logging.info('Loading Enemy Screen')
         #     flee = self.Fight(anomaly, Player)
         #     if flee:
         #         Player.depart()
         #         break
 
         while Player.atAnomaly:
-            log.log('Loading Anomaly Screen')
+            logging.info('Loading Anomaly Screen')
             self.Interact(Universe, Player)
 
         Universe.update(Player)
@@ -45,26 +45,26 @@ class Journey:
         # You get repaired When you land
         Player.currentShip.shieldStrength.reset()
 
-        log.log('Get List of Available Sections')
+        logging.info('Get List of Available Sections')
         availableSections = ac.getAvailableSections(Anomaly, Player)
 
-        log.log('Init Anomaly %s' % Anomaly.coordinates)
+        logging.info('Init Anomaly %s' % Anomaly.coordinates)
         view = term.AnomalyView(Universe, Player, availableSections)
 
-        log.log('Choose Section to Interact with')
+        logging.info('Choose Section to Interact with')
         section = view()
 
         try: section(Anomaly, Player)
         except TypeError:
             atSection = True
             while atSection:
-                log.log('Init Section %s' % section.infoString())
+                logging.info('Init Section %s' % section.infoString())
                 view = term.SectionView(Universe, Player, section)
 
-                log.log('Choose Interaction')
+                logging.info('Choose Interaction')
                 argument = view()
 
-                log.log('Execute Interaction')
+                logging.info('Execute Interaction')
                 atSection = section(Anomaly, Player, argument)
 
     def Fight(self, Anomaly, Player):
@@ -72,7 +72,7 @@ class Journey:
         # Get Enemy
         enemy = Anomaly.enemies[0]
 
-        log.log('begin Fight')
+        logging.info('begin Fight')
         won = emy.beginFight(Player.currentShip, enemy)
 
         # Check For Sucess
@@ -80,7 +80,7 @@ class Journey:
             # Enemy Gets repaired
             enemy.shieldStrength.reset()
 
-            log.log('Player flew')
+            logging.info('Player flew')
             return True
 
         # Get Credits
@@ -90,7 +90,7 @@ class Journey:
         for good, amount in enemy.inCargo.iteritems():
             Player.currentShip.loadCargo(good, amount)
 
-        log.log('Fight won. Killing Enemy')
+        logging.info('Fight won. Killing Enemy')
         Anomaly.enemies.remove(enemy)
 
 
@@ -104,12 +104,12 @@ class Journey:
             # Start at Current Anomaly
             ActiveCoordinates = [ActiveCoordinates[0]-1, ActiveCoordinates[1]]
 
-        log.log('Getting next Anomaly from %s' % ActiveCoordinates)
+        logging.info('Getting next Anomaly from %s' % ActiveCoordinates)
         anomaly = Universe.next(infinity=True, start=ActiveCoordinates)
 
         # Reachable?
         if anomaly.travelCosts is not None:
-            log.log('Await Interaction with %s' % anomaly.coordinates)
+            logging.info('Await Interaction with %s' % anomaly.coordinates)
             view = term.UniverseView(Universe, Player, anomaly)
 
             interact = view()

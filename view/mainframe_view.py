@@ -16,6 +16,8 @@ def mainframe_view(Matrix):
 
         universeString += first_line + '\n' + second_line + '\n'
 
+    universeString = universeString[:-1]
+
     return universeString
 
 

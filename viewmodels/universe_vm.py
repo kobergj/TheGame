@@ -98,14 +98,10 @@ class UniverseViewModel(bvm.BasicViewModel):
         return available_anomalies, not_available_anomalies
 
     def calculateTravelCosts(self, Player, Distance):
-        # Check if reachable
-        if Distance <= Player.currentShip.maxTravelDistance():
-            # Calculate Costs
-            travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
+        # Calculate Costs
+        travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
 
-            return travelCosts
-
-        return None
+        return travelCosts
 
 
 class DistanceCalculator:

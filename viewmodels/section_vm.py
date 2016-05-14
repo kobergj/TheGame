@@ -58,7 +58,8 @@ class Merchant(AnomalySection):
         self.interactionType = 'Buy'
 
         for good in Universe[Player.currentPosition].goodsProduced:
-            self.choice_list.append(good)
+            if Player.currentShip.cargoCapacity() > 0:
+                self.choice_list.append(good)
 
 
     def __call__(self, universe, player):

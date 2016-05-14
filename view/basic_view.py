@@ -1,35 +1,36 @@
 import copy
-import time
 
 import configuration.log_details as log
 
+import view.gameinfo_view as gv
 import view.infoframe_view as iv
 import view.statframe_view as sv
 import view.mainframe_view as mv
 
+
 class View:
-    # Where to store them best? 7   '0123456'
-    mapIdentifiers = {'Empty':      '       ',
-                      'Unknown':[   '       ',
-                                    '   ?   ',
+    # Where to store them best? 7   '01234567890'
+    mapIdentifiers = {'Empty':      '           ',
+                      'Unknown':[   '           ',
+                                    '     ?     ',
                                 ],
-                      'Planet':[    '  /Pl\ ',
-                                    '  \__/ ',
-                                ],
-                      'Spacegate':[ '   SG  ',
-                                    '  /__\ ',
-                                ],
-                      'Starbase':[  '  |SB| ',
-                                    '  |__| ',
-                                ],
-                      'Highlight':[ ' ->  <-',
-                                    ' Travel'
-                                ],
-                      'Current': [  'You are',
-                                    '  Here '
-                                ],
-                      'CurHigh': [  '  Land ',
-                                    '  Here '
+                      'Planet':[    '    /Pl\   ',
+                                    '    \__/   ',
+                                ],    
+                      'Spacegate':[ '     SG    ',
+                                    '    /__\   ',
+                                ],      
+                      'Starbase':[  '    |SB|   ',
+                                    '    |__|   ',
+                                ],    
+                      'Highlight':[ '   ->  <-   ',
+                                    '   Travel   '
+                                ],    
+                      'Current': [  '   You are  ',
+                                    '    Here    '
+                                ],   
+                      'CurHigh': [  '    Land    ',
+                                    '    Here    '
                                 ]
                       }
 
@@ -47,6 +48,9 @@ class View:
         log.log('Inserting %s at %s' % (windows, positions))
         self.window_inserter(windows, positions)
 
+        # Game Frame
+        ga_view = gv.gameinfo_view(view_model)
+
         # Stat Frame
         pl_view = sv.stat_view(view_model.player)
         # Anm Frame
@@ -55,7 +59,7 @@ class View:
         uv_view = mv.mainframe_view(self.uvMatrix)
 
         log.log('Adding borders to %s' % [pl_view, anm_view, uv_view])
-        complete_view = self.border(pl_view, anm_view, uv_view)
+        complete_view = self.border(ga_view, pl_view, anm_view, uv_view)
 
         print '\n' * 100
         print complete_view
@@ -88,11 +92,23 @@ class View:
 
                 choice = raw_input()
 
-    def border(self, pl_frame, an_frame, uv_frame):
+    def border(self, ga_frame, pl_frame, an_frame, uv_frame):
         border_char = '#'
 
-        final_string = border_char * (self.map_len + 2)
-        final_string += '\n'
+        def seperator():
+            sep = border_char * (self.map_len + 2)
+            sep += '\n'
+
+            return sep
+
+        final_string = seperator()
+
+        while len(ga_frame) < self.map_len:
+            ga_frame += ' '
+
+        final_string += border_char + ga_frame + border_char +'\n'
+
+        final_string += seperator()
 
         spl_player_frame = pl_frame.split('\n')
         for line in spl_player_frame:
@@ -105,21 +121,20 @@ class View:
 
             final_string += line_string
 
+        final_string += seperator()
+
         while len(an_frame) < self.map_len:
             an_frame += ' '
 
         final_string += border_char + an_frame + border_char + '\n'
 
-        final_string += border_char * (self.map_len + 2)
-        final_string += '\n'
+        final_string += seperator()
 
         spl_uv_frame = uv_frame.split('\n')
         for line in spl_uv_frame:
             final_string += border_char + line + border_char + '\n'
 
-
-        final_string += border_char * (self.map_len + 2)
-        final_string += '\n'
+        final_string += seperator()
 
         return final_string
 

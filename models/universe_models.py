@@ -1,21 +1,24 @@
-import Queue
+# import multiprocessing as mp
 import random
-import logbook.configuration as log
-import math
+import logging
+# import math
 
 class Universe():
     def __init__(self, minCoordinates, maxCoordinates):
         # Init Queues
-        self.anomalyQ = Queue.Queue(maxsize=3)
-        self.enemyQ = Queue.Queue(maxsize=3)
-        self.shipQ = Queue.Queue(maxsize=3)
-        self.roomQ = Queue.Queue(maxsize=3)
+        # self.anomalyQ = mp.Queue(maxsize=3)
+        # self.enemyQ = mp.Queue(maxsize=3)
+        # self.shipQ = mp.Queue(maxsize=3)
+        # self.roomQ = mp.Queue(maxsize=3)
 
         # Draw Universe Map
         self.Map = self.drawUniverseMap(minCoordinates, maxCoordinates)
 
         # Coordinates Cursor
         self.coCursor = [-1, 0]
+
+        # Flag for update
+        self.request_update = True
 
     def __iter__(self):
         self.coCursor = [-1, 0]
@@ -76,7 +79,7 @@ class Universe():
         self.Map[y][x] = Anomaly
 
         Anomaly.getCoordinates([x, y])
-        log.log('Assigned Coordinates %(name)s: %(coordinates)s' % Anomaly.__dict__)
+        logging.info('Assigned Coordinates %(name)s: %(coordinates)s' % Anomaly.__dict__)
 
     def drawUniverseMap(self, minCoordinates, maxCoordinates):
         universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
@@ -99,63 +102,67 @@ class Universe():
 
         return universeMap
 
-    def update(self, Player):
-        for anomaly in self:
-            # Get Enemy from Queue
-            newEnemy = self.enemyQ.get()
-            # Append to Enemy List
-            if newEnemy:
-                anomaly.enemies.append(newEnemy)
+    # def update(self, Player):
+    #     for anomaly in self:
+    #         # Get Enemy from Queue
+    #         newEnemy = self.enemyQ.get()
+    #         # Append to Enemy List
+    #         if newEnemy:
+    #             anomaly.enemies.append(newEnemy)
 
-            # Calculate Travel Costs
-            distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
-            costs = self.calculateTravelCosts(Player, distance)
-            log.log('Assigning TravelCosts %s to %s (dist: %s)' % (costs, anomaly.coordinates, distance))
-            anomaly.setTravelCosts(costs)
+    #         # Calculate Travel Costs
+    #         distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
+    #         costs = self.calculateTravelCosts(Player, distance)
+    #         logging.info('Assigning TravelCosts %s to %s (dist: %s)' % (costs, anomaly.coordinates, distance))
+    #         anomaly.setTravelCosts(costs)
 
-            try:
-                # Get Ship
-                ship = self.shipQ.get()
+    #         try:
+    #             # Get Ship
+    #             ship = self.shipQ.get()
 
-                # Attach Ship to Station
-                anomaly.changeShipForSale(ship)
-            except AttributeError:
-                pass
+    #             # Attach Ship to Station
+    #             anomaly.changeShipForSale(ship)
+    #         except AttributeError:
+    #             pass
 
-            try:
-                # Delete One Room
-                if anomaly.roomsForSale:
-                    anomaly.roomsForSale.pop(0)
+    #         try:
+    #             # Delete One Room
+    #             if anomaly.roomsForSale:
+    #                 anomaly.roomsForSale.pop(0)
 
-                # Fill Room List
-                while len(anomaly.roomsForSale) < anomaly.maxRoomsForSale:
-                    # Get Room
-                    room = self.roomQ.get()
+    #             # Fill Room List
+    #             while len(anomaly.roomsForSale) < anomaly.maxRoomsForSale:
+    #                 # Get Room
+    #                 room = self.roomQ.get()
 
-                    # Add Room
-                    anomaly.addRoomForSale(room)
-            except AttributeError:
-                pass
+    #                 # Add Room
+    #                 anomaly.addRoomForSale(room)
+    #         except AttributeError:
+    #             pass
 
-    def calculateDistance(self, point1, point2):
-        distance = 0.0
-        for i in range(len(point1)):
-            x = point1[i]
-            y = point2[i]
+    # def calculateDistance(self, point1, point2):
+    #     distance = 0.0
+    #     for i in range(len(point1)):
+    #         x = point1[i]
+    #         y = point2[i]
 
-            distance += (x - y)**2
+    #         distance += (x - y)**2
 
-        distance = math.sqrt(distance)
-        distance = round(distance, 2)
+    #     distance = math.sqrt(distance)
+    #     distance = round(distance, 2)
 
-        return distance
+    #     return distance
 
-    def calculateTravelCosts(self, Player, Distance):
-        # Check if reachable
-        if Distance <= Player.currentShip.maxTravelDistance():
-            # Calculate Costs
-            travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
+    # def calculateTravelCosts(self, Player, Distance):
+    #     # Calculate Costs
+    #     travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
 
-            return travelCosts
+    #     return travelCosts
 
-        return None
+    # def fill(self, NumberOfAnomalies):
+    #     for i in range(NumberOfAnomalies):
+    #         # Get Anomaly
+    #         anomaly = self.anomalyQ.get()
+    #         # Add Anomaly
+    #         self.addAnomaly(anomaly)
+

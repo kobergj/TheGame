@@ -1,64 +1,58 @@
-import consuming.model_consumer as con
+import multiprocessing as mp
+from datetime import datetime as dt
 
-import producing.model_producer as pro
+import configuration.database as db
+import logging
 
-import database.database as db
+import controller.model_fabric as mf
+import controller.viewmodel_fabric as vf
 
-import logbook.configuration as log
+import view.basic_view as vwf
 
-NUMBER_OF_ANOMALIES = 25
-
-MAX_COORDINATES = [15, 15]
-
-PLAYER_INFO = {'name': 'Dr.Play',
-               'startingCredits': 12
-               }
-
-STARTING_SHIP_STATS = {'cargoCapacity': 10,
-
-                       'maintenanceCosts': 2,
-                       'maxTravelDistance': 4,
-
-                       'spaceForRooms': 2,
-
-                       'price': 0,
-
-                       'attackPower': 7,
-                       'shieldStrength': 15,
-                       }
+# Starting Time Stamp
+start = dt.now()
 
 # Init Log
-log.initLogBook()
+logging.basicConfig(filename='configuration/basic.log', level=logging.INFO,
+                    filemode='w', format='%(asctime)s, %(filename)s --  %(message)s')
 
-# Boot Database
-database = db.DynamicDatabase()
+logging.info('Init Database')
+database = db.DynamicDatabase
 
-# Assign Player
-player = pro.producePlayer(PLAYER_INFO)
+logging.info('Creating Connections')
+model_connection = mp.Pipe()
+view_connection = mp.Pipe()
 
-# Generate Universe
-universe = pro.produceUniverse(MAX_COORDINATES)
+logging.info('Initialize Model Producer')
+modelProducer = mf.randomProducer(database, model_connection[0])
 
-# Initialize Producer
-randomProducer = pro.randomProducer(database, universe)
+logging.info('Initialize ViewModel Producer')
+viewmodelProducer = vf.ViewModelProducer(model_connection[1], view_connection[0])
 
-# Set Starting Anomaly
-startingAnomaly = pro.produceAnomaly(database)
-
-# Craft Ship
-startingShip = pro.produceShip(database, STARTING_SHIP_STATS)
-
-# Board Ship
-player.switchShip(startingShip)
+logging.info('Init View')
+view = vwf.View(database)
 
 if __name__ == '__main__':
-    # Start Producer
-    randomProducer.startProducing()
+    logging.info('Start Model Producer')
+    modelProducer.startProducing()
 
-    # Start Main Game
-    journey = con.Journey(universe, player, startingAnomaly, NUMBER_OF_ANOMALIES)
+    logging.info('Start ViewModel Producer')
+    viewmodelProducer.startProducing()
 
-    # The Journey ...
-    while True:
-        # continues
-        journey(universe, player)
+    players_choice = True
+
+    while players_choice is not None:
+        # Get View Model
+        view_model = view_connection[1].recv()
+        # Show View Model
+        players_choice = view(view_model)
+        # Return Answer
+        view_connection[1].send(players_choice)
+
+
+    # Clean Up
+    logging.info('Killing ViewModel Producer')
+    viewmodelProducer.stopProducing()
+    logging.info('Killing Model Producer')
+    modelProducer.stopProducing()
+    logging.info('Done. Session %s' % (dt.now() - start))

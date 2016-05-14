@@ -65,6 +65,12 @@ class Starbase(Anomaly):
     def addRoomForSale(self, Room):
         self.roomsForSale.append(Room)
 
+    def remove_room(self, room):
+        for avail_room in self.roomsForSale:
+            if avail_room.name == room.name:
+                room_to_remove = avail_room 
+
+        self.roomsForSale.remove(room_to_remove)
 
 class Spacegate(Anomaly):
     # Jump Anywhere for lower travel Cost

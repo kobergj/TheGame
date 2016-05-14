@@ -1,4 +1,4 @@
-import logbook.configuration as log
+import logging
 
 
 class Player():
@@ -15,6 +15,8 @@ class Player():
         self.currentPosition = None
         # At Anomaly?
         self.atAnomaly = False
+        # Lets say you are alive at the beginning
+        self.dead = False
 
     def land(self):
         self.atAnomaly = True
@@ -41,5 +43,5 @@ class Player():
         self.currentShip = Ship
 
     def travelTo(self, Coordinates):
-        log.log('Player travelled to %s' % str(Coordinates))
+        logging.info('Player travelled to %s' % str(Coordinates))
         self.currentPosition = Coordinates

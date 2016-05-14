@@ -16,3 +16,15 @@ The Program is written in python 2.7. Just Use
 ```
 
 to start - No Dependencies Needed
+
+## Game Details
+
+### Currently implemented Anomalies:
+- Planet: Buy goods at the Merchant, Sell goods at the Trader
+- Starbase: Buy Rooms at the Equipment Dealer
+- Spacegate: Travel anywhere in the Universe at the Gateport
+
+### View Details
+
+Visualization is done in the bash.
+Currently its optimized for a 13" Screen. Customization will be added soon ;)

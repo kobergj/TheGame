@@ -17,6 +17,9 @@ class Universe():
         # Coordinates Cursor
         self.coCursor = [-1, 0]
 
+        # Flag for update
+        self.request_update = True
+
     def __iter__(self):
         self.coCursor = [-1, 0]
 

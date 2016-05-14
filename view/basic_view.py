@@ -1,5 +1,5 @@
 import copy
-import sys
+import time
 
 import configuration.log_details as log
 
@@ -57,10 +57,8 @@ class View:
         log.log('Adding borders to %s' % [pl_view, anm_view, uv_view])
         complete_view = self.border(pl_view, anm_view, uv_view)
 
-        # print '\n' * 1000
-        # sys.stdout.write("\033[F")
+        print '\n' * 100
         print complete_view
-
         choice = raw_input()
 
         self.uvMatrix = copy.deepcopy(self._uvMatrix)

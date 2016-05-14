@@ -262,6 +262,9 @@ class randomProducer():
             change_function(universe, player)
 
     def update(self, universe, player):
+        if not universe.request_update:
+            return
+
         for anomaly in universe:
             # Get Enemy from Queue
             newEnemy = produceEnemy(self.db)
@@ -292,6 +295,14 @@ class randomProducer():
                     anomaly.addRoomForSale(room)
             except AttributeError:
                 pass
+
+        # Demock Stats
+        player.currentShip.maxTravelDistance.demock()
+        player.currentShip.maintenanceCosts.demock()
+
+
+        universe.request_update = False
+
 
     def fill_universe(self, universe, NumberOfAnomalies):
         for i in range(NumberOfAnomalies):

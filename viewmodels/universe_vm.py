@@ -32,8 +32,10 @@ class UniverseViewModel(bvm.BasicViewModel):
 
             self.Travel(anomaly, player)
 
-        if self.player_choice == 1:
-            player.land()
+            universe.request_update = True
+
+        # if self.player_choice == 1:
+        #     player.land()
 
         return
 
@@ -70,11 +72,6 @@ class UniverseViewModel(bvm.BasicViewModel):
         Player.spendCredits(costs)
         log.log('Traveling to %(name)s' % Anomaly.__dict__)
         Player.travelTo(Anomaly.coordinates)
-
-        # Demock Stats
-        Player.currentShip.maxTravelDistance.demock()
-        Player.currentShip.maintenanceCosts.demock()
-
 
     def get_available_anomalies(self, universe, player):
 

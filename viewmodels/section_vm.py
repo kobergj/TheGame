@@ -188,9 +188,6 @@ class Gateport(AnomalySection):
         self.cost_for_use = self.anomaly.costForUse
 
     def __call__(self, universe, player):
-        if not self.player_choice:
-            return
-
         player.spendCredits(self.cost_for_use)
 
         player.currentShip.maxTravelDistance.mock(9999999)

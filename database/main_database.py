@@ -3,8 +3,10 @@ import ship_db as sh_db
 import starting_stats as st_cf
 import content_db as c_db
 import view_db as v_db
+import game_config as g_cf
 
-class DynamicDatabase:
+
+class Database:
 
     StartConfiguration = st_cf.StartConfiguration
 
@@ -25,3 +27,5 @@ class DynamicDatabase:
     Rooms = c_db.Rooms
 
     TerminalView = v_db.TerminalView
+
+    GameConfiguration = g_cf.GameConfiguration

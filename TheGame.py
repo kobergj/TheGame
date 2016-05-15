@@ -12,12 +12,16 @@ import view.basic_view as vwf
 # Starting Time Stamp
 start = dt.now()
 
-# Init Log
-logging.basicConfig(filename='configuration/basic.log', level=logging.INFO,
-                    filemode='w', format='%(asctime)s, %(filename)s --  %(message)s')
+# Init Database
+database = db.Database
 
-logging.info('Init Database')
-database = db.DynamicDatabase
+# Init Log
+logging.basicConfig(filename=database.GameConfiguration.LogFile, 
+                    level=logging.__dict__[database.GameConfiguration.LogLevel],
+                    filemode=database.GameConfiguration.LogFileAccessMode,
+                    format=database.GameConfiguration.LogFormat)
+
+logging.critical('Starting -- %s' % start)
 
 logging.info('Creating Connections')
 model_connection = mp.Pipe()

@@ -1,19 +1,22 @@
-# Models
-import producing.models.anomalies as mod
-import producing.models.ships as msp
-import producing.models.ship_content as mro
-import producing.models.universe as muv
-import producing.models.player as mpl
-
-# Generators
-import producing.generator.ships as gsp
-import producing.generator.rooms as gro
-
-import threading
+import multiprocessing
 import random
 
 
-def produceUniverse(MaxCoordinates, MinCoordinates=[0, 0]):
+# Models
+import models.anomaly_models as mod
+import models.ship_models as msp
+import models.content_models as mro
+import models.universe_models as muv
+import models.player_models as mpl
+
+# Generators
+import controller.generator.ships as gsp
+import controller.generator.rooms as gro
+
+# Log
+import logging
+
+def produceUniverse(MaxCoordinates=[15, 15], MinCoordinates=[0, 0]):
     """Produces a Universe with the given Coordinates """
     universe = muv.Universe(MinCoordinates, MaxCoordinates)
 
@@ -209,26 +212,126 @@ class randomProducer():
             Enemies"""
 
     # For the Moment Only One Universe per Producer
-    def __init__(self, Database, Universe):
+    def __init__(self, database, connection):
         # Create Producer Thread
-        self.producingThread = threading.Thread(
-            name='ProducingThread',
-            target=self.producingFunction,
-            args=(Database, Universe)
+        self.producingThread = multiprocessing.Process(
+            name='ModelProducer',
+            target=self.__call__,
+            # args=(database)
             )
         # Make Him a Daemon
-        self.producingThread.daemon = True
+        # self.producingThread.daemon = True
 
         # Set Kill Switch
         self.dead = False
 
+        self.conn = connection
+
+        self.db = database
+
+    def __call__(self):
+        logging.info('Creating Player')
+        player = producePlayer(self.db.StartConfiguration.PlayerInfo)
+
+        logging.info('Generating Universe')
+        universe = produceUniverse(self.db.StartConfiguration.MaxCoordinates,
+                                   self.db.StartConfiguration.MinCoordinates)
+
+        logging.info('Craft Ship')
+        startingShip = produceShip(self.db, self.db.StartConfiguration.StartingShipStats)
+
+        logging.info('Board Ship')
+        player.switchShip(startingShip)
+
+        logging.info('Set Starting Anomaly')
+        startingAnomaly = produceAnomaly(self.db)
+        universe.addAnomaly(startingAnomaly)
+        player.travelTo(startingAnomaly.coordinates)
+
+        logging.info('Fill Universe')
+        self.fill_universe(universe, self.db.StartConfiguration.NumberOfAnomalies)
+
+        while not self.dead:
+            logging.info('Update Universe')
+            self.update(universe, player)
+            logging.info('Sending Models')
+            self.conn.send([universe, player])
+            logging.info('Awaiting Input')
+            change_function = self.conn.recv()
+
+            if change_function is None:
+                break
+
+            logging.info('Executing Input')
+            change_function(universe, player)
+
+        logging.info('Model Producer Dead and gone')
+
+    def update(self, universe, player):
+        if not universe.request_update:
+            return
+
+        for anomaly in universe:
+            # Get Enemy from Queue
+            newEnemy = produceEnemy(self.db)
+            # Append to Enemy List
+            if newEnemy:
+                anomaly.enemies.append(newEnemy)
+
+            try:
+                # Get Ship
+                ship = produceShip(self.db)
+
+                # Attach Ship to Station
+                anomaly.changeShipForSale(ship)
+            except AttributeError:
+                pass
+
+            try:
+                # Delete One Room
+                if anomaly.roomsForSale:
+                    anomaly.roomsForSale.pop(0)
+
+                # Fill Room List
+                while len(anomaly.roomsForSale) < anomaly.maxRoomsForSale:
+                    # Get Room
+                    room = produceRoom(self.db)
+
+                    # Add Room
+                    anomaly.addRoomForSale(room)
+            except AttributeError:
+                pass
+
+        # Demock Stats
+        player.currentShip.maxTravelDistance.demock()
+        player.currentShip.maintenanceCosts.demock()
+
+
+        universe.request_update = False
+
+
+    def fill_universe(self, universe, NumberOfAnomalies):
+        for i in range(NumberOfAnomalies):
+            # Get Anomaly
+            anomaly = produceAnomaly(self.db)
+            # Add Anomaly
+            universe.addAnomaly(anomaly)
+
+
     def startProducing(self):
         self.producingThread.start()
+
+    def stopProducing(self):
+        # Stop Process
+        # self.killProducer()
+        self.producingThread.join()
 
     def killProducer(self):
         self.dead = True
 
     def producingFunction(self, Database, Universe):
+
+        logging.info('Start Model Producing')
 
         while not self.dead:
             # Anomalies
@@ -262,3 +365,5 @@ class randomProducer():
 
                 # Put in Q
                 Universe.enemyQ.put(enemy)
+
+        logging.info('Model Producer dead and gone')

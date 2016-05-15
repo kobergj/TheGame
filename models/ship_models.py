@@ -1,4 +1,4 @@
-import producing.models.ship_content as cont
+import models.content_models as cont
 
 # Generic Ship. No special Abilites.
 class Ship():

@@ -1,7 +1,7 @@
 import multiprocessing as mp
 from datetime import datetime as dt
 
-import configuration.database as db
+import database.main_database as db
 import logging
 
 import controller.model_fabric as mf

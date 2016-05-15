@@ -2,64 +2,42 @@ import copy
 
 import logging
 
-import view.gameinfo_view as gv
-import view.infoframe_view as iv
-import view.statframe_view as sv
-import view.mainframe_view as mv
+import gameinfo_view as gv
+import infoframe_view as iv
+import statframe_view as sv
+import mainframe_view as mv
 
 
 class View:
     # Where to store them best? 7   '01234567890'
-    mapIdentifiers = {'Empty':      '           ',
-                      'Unknown':[   '           ',
-                                    '     ?     ',
-                                ],
-                      'Planet':[    '    /Pl\   ',
-                                    '    \__/   ',
-                                ],    
-                      'Spacegate':[ '     SG    ',
-                                    '    /__\   ',
-                                ],      
-                      'Starbase':[  '    |SB|   ',
-                                    '    |__|   ',
-                                ],    
-                      'Highlight':[ '   ->  <-   ',
-                                    '   Travel   '
-                                ],    
-                      'Current': [  '   You are  ',
-                                    '    Here    '
-                                ],   
-                      'CurHigh': [  '    Land    ',
-                                    '    Here    '
-                                ]
-                      }
 
     def __init__(self, database):
+        self.view_db = database.TerminalView
+
         self.uvMatrix = self.drawMap(database.StartConfiguration)
         self._uvMatrix = copy.deepcopy(self.uvMatrix)
 
-        self.point_len = len(self.mapIdentifiers['Empty'])
+        self.point_len = len(self.view_db.MapIdentifiers['Empty'])
         self.map_len = len(self.uvMatrix[0]) * self.point_len
 
     def __call__(self, view_model):
         logging.info('Getting Windows Of %s' % view_model.__class__.__name__)
-        windows, positions = mv.get_view(view_model, self.mapIdentifiers)
+        windows, positions = mv.get_view(view_model, self.view_db)
 
         logging.info('Inserting %s at %s' % (windows, positions))
         self.window_inserter(windows, positions)
 
         # Game Frame
-        ga_view = gv.gameinfo_view(view_model)
-
+        ga_view = gv.gameinfo_view(view_model, db=self.view_db)
         # Stat Frame
-        pl_view = sv.stat_view(view_model.player)
+        pl_view = sv.stat_view(view_model.player, db=self.view_db)
         # Anm Frame
-        anm_view = iv.info_view(view_model.anomaly)
+        anm_view = iv.info_view(view_model.anomaly, db=self.view_db)
         # Universe Frame
-        uv_view = mv.mainframe_view(self.uvMatrix)
+        uv_view = mv.mainframe_view(self.uvMatrix, db=self.view_db)
 
         logging.info('Adding borders to %s' % [pl_view, anm_view, uv_view])
-        complete_view = self.border(ga_view, pl_view, anm_view, uv_view)
+        complete_view = self.border(ga_view, pl_view, anm_view, uv_view, db=self.view_db)
 
         print '\n' * 100
         print complete_view
@@ -94,8 +72,8 @@ class View:
 
                 choice = raw_input()
 
-    def border(self, ga_frame, pl_frame, an_frame, uv_frame):
-        border_char = '#'
+    def border(self, ga_frame, pl_frame, an_frame, uv_frame, db=None):
+        border_char = db.BorderChar
 
         def seperator():
             sep = border_char * (self.map_len + 2)
@@ -157,7 +135,7 @@ class View:
             verticalSlice = list()
 
             for point_in_space in range(universeExpansion_x):
-                point_in_space = [self.mapIdentifiers['Empty'], self.mapIdentifiers['Empty']]
+                point_in_space = [self.view_db.MapIdentifiers['Empty'], self.view_db.MapIdentifiers['Empty']]
 
                 verticalSlice.append(point_in_space)
 

@@ -1,6 +1,6 @@
 import logging
 
-def mainframe_view(Matrix):
+def mainframe_view(Matrix, db=None):
     """Returns Universe Map as String."""
     universeString = ''
 
@@ -21,10 +21,10 @@ def mainframe_view(Matrix):
     return universeString
 
 
-def get_view(view_model, mapIdents):
+def get_view(view_model, db=None):
     try:
         view_model.anomaly_availability
-        uv_windows, uv_positions = universe_view(view_model, mapIdents)
+        uv_windows, uv_positions = universe_view(view_model, db.MapIdentifiers)
         return uv_windows, uv_positions
     except AttributeError:
         pass

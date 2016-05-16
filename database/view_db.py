@@ -1,7 +1,9 @@
 
 
 class TerminalView:
-    MapIdentifiers = {'Empty':      '           ',
+    MapIdentifiers = {'Empty': [    '           ',
+                                    '           '
+                                ],
                       'Unknown':[   '           ',
                                     '     ?     ',
                                 ],

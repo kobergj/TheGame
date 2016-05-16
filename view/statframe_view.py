@@ -1,14 +1,8 @@
 
 
-playerStatsTemplate ="""    Current Stats:
-    Credits: %(credits)s    Reachable Planets: %(maxTravelDistance)s  Maintenance Costs: %(maintCosts)s
-    Attack:  %(attackPower)s    Defense: %(curDef)s/%(maxDef)s  
-
-    Cargo Bay: %(currentCargo)s/%(maxCargo)s -> %(inCargo)s
-    Rooms:  %(currentRooms)s/%(maxRooms)s -> %(roomList)s"""
 
 
-def stat_view(Player):
+def stat_view(Player, db=None):
     playerStats = {
         'credits': Player.credits,
         'attackPower': Player.currentShip.attackPower(),
@@ -24,7 +18,7 @@ def stat_view(Player):
         'roomList': roomString(Player.currentShip.rooms)
     }
 
-    return playerStatsTemplate % playerStats
+    return db.PlayerStatsTemplate % playerStats
 
 def cargoString(CargoBay):
     cargo_string = ''

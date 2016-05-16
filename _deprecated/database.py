@@ -1,3 +1,19 @@
+import ConfigParser
+
+
+class InitializedDatabase():
+    def __init__(self):
+        config = ConfigParser.ConfigParser()
+
+        config.read('database/goods.ini')
+
+        self.Goods = config.items('GoodsConsumed')
+
+        self.Rooms = ConfigParser.ConfigParser()
+
+        self.Rooms.read('database/rooms.ini')
+
+
 
 class DynamicDatabase:
     class StartConfiguration:

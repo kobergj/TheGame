@@ -1,7 +1,8 @@
 
 
 
-def info_view(Anomaly):
+def info_view(Anomaly, db=None):
+    # Needs to be made configurable
     if not Anomaly:
         return ' '
 

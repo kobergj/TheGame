@@ -88,7 +88,10 @@ class UniverseViewModel(bvm.BasicViewModel):
 
         while len(available_anomalies) < player.currentShip.maxTravelDistance():
             try:
-                available_anomalies.append(distance_list.pop(0)[0])
+                anomaly, distance = distance_list.pop(0)
+                available_anomalies.append(anomaly)
+                anomaly.setTravelCosts(self.calculateTravelCosts(player, distance))
+
             except IndexError:
                 return available_anomalies, not_available_anomalies
 

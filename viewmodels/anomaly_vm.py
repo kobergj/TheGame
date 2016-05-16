@@ -9,7 +9,7 @@ class AnomalyViewModel(bvm.BasicViewModel):
         """Checks for possible Actions with Anomaly"""
         Anomaly = Universe[Player.currentPosition]
 
-        bvm.BasicViewModel.__init__(self, Anomaly, Player)
+        bvm.BasicViewModel.__init__(self, Anomaly, Player, UniverseViewModel)
 
         section_vm_list = [
             svm.Merchant, svm.Trader, svm.EquipmentDealer, svm.Gateport
@@ -28,8 +28,6 @@ class AnomalyViewModel(bvm.BasicViewModel):
                 pass
 
         self.choice_list = availableViewModels
-
-        self.parent = UniverseViewModel
 
     def __iter__(self):
         return iter(self.sections)

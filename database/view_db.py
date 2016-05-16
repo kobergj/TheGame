@@ -37,6 +37,14 @@ class TerminalView:
 
     BorderChar = '#'
 
+    FightTemplate =\
+"""     FIGHT
+    You:    Enemy:
+    %(pl_curDef)s/%(pl_maxDef)s     %(em_curDef)s/%(em_maxDef)s
+    %(pl_atk)s      %(em_atk)s
+    [ENTER] Attack   --   [1] Flee
+"""
+
 
     # Anomaly Info View not yet configurable
 

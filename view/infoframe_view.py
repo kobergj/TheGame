@@ -15,7 +15,7 @@ def info_view(Anomaly, db=None):
     for enemy in Anomaly.enemies:
         information += 'X'
 
-    information += '%s %s ' % (amytype, amyname)
+    information += ' %s %s ' % (amytype, amyname)
 
     information += ' Cost To Travel Here: %s ' % Anomaly.travelCosts
 

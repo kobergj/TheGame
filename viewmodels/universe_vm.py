@@ -1,63 +1,50 @@
 import math
 
-import viewmodels.basic_vm as bvm
-import viewmodels.anomaly_vm as avm
+import basic_vm as bvm
+import anomaly_vm as avm
+import fight_vm as fvm
 
 import logging
 
 class UniverseViewModel(bvm.BasicViewModel):
 
     scan_index = 0
-    update = False
 
-    def __init__(self, universe, player, update):
+    def __init__(self, universe, player, *args):
 
         self.anomaly_availability = self.get_available_anomalies(universe, player)
 
-        available_anomalies = self.anomaly_availability[0]
+        anomaly = self.anomaly_availability[0][self.scan_index]
 
-        bvm.BasicViewModel.__init__(self, available_anomalies[self.scan_index], player)
-
-        self.choice_list = [True, False]
-
-        self.parent = update
-
-        # if self.parent:
-        #     logging.info('Update Universe')
-        #     universe.update(player)
+        bvm.BasicViewModel.__init__(self, anomaly, player, UniverseViewModel)
 
     def __call__(self, universe, player):
         if self.player_choice == 0:
             anomaly = universe[self.anomaly.coordinates]
 
             self.Travel(anomaly, player)
-
             universe.request_update = True
-
-        # if self.player_choice == 1:
-        #     player.land()
-
-        return
 
     def next(self, player_choice):
         choice = self.choice_list[player_choice]
 
         if choice:
+            UniverseViewModel.scan_index = 0
+            self.player_choice = 0
+
+            if self.anomaly.enemies:
+                return fvm.FightViewModel
+
             if self.anomaly.coordinates == self.player.currentPosition:
-                self.parent = UniverseViewModel
                 self.player_choice = 1
                 return avm.AnomalyViewModel
 
-            UniverseViewModel.scan_index = 0
-            self.parent = True
-            self.player_choice = 0
             return UniverseViewModel
 
         UniverseViewModel.scan_index += 1
         if UniverseViewModel.scan_index >= len(self.anomaly_availability[0]):
             UniverseViewModel.scan_index = 0
 
-        self.parent = False
         self.player_choice = 2
         return UniverseViewModel
 

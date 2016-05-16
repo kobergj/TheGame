@@ -1,5 +1,6 @@
 import logging
-import viewmodels.basic_vm as bvm
+
+import basic_vm as bvm
 
 # Anomaly Sections
 class AnomalySection(bvm.BasicViewModel):
@@ -17,12 +18,10 @@ class AnomalySection(bvm.BasicViewModel):
     def __init__(self, Universe, Player, AnomalyViewModel):
         Anomaly = Universe[Player.currentPosition]
 
-        bvm.BasicViewModel.__init__(self, Anomaly, Player)
+        bvm.BasicViewModel.__init__(self, Anomaly, Player, AnomalyViewModel)
 
         # Interaction Type says what you can actualy DO with a Section
         self.interactionType = 'Nothing'
-
-        self.parent = AnomalyViewModel
 
         self.choice_list = [None]
 

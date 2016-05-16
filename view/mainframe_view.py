@@ -36,6 +36,13 @@ def get_view(view_model, db=None):
     except AttributeError:
         pass
 
+    try:
+        view_model.enemy
+        fight_window = fight_view(view_model, db)
+        return [fight_window], [view_model.anomaly.coordinates]
+    except AttributeError:
+        pass
+
     anomaly_window = anomaly_view(view_model)
     return [anomaly_window], [view_model.anomaly.coordinates]
 
@@ -106,3 +113,17 @@ def section_view(view_model):
         interactionInfo += " [%s] %s for %s\n" % (i, item.name, item.price)
 
     return interactionInfo
+
+def fight_view(view_model, db):
+
+    fight_info = {
+        'pl_curDef': view_model.player.currentShip.shieldStrength(),
+        'pl_maxDef': view_model.player.currentShip.shieldStrength.startValue,
+        'pl_atk':    view_model.player.currentShip.attackPower(),
+
+        'em_curDef': view_model.enemy.shieldStrength(),
+        'em_maxDef': view_model.enemy.shieldStrength.startValue,
+        'em_atk':    view_model.enemy.attackPower(),
+    }
+
+    return db.FightTemplate % fight_info

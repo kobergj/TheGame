@@ -28,4 +28,3 @@ class Database:
 
     TerminalView = v_db.TerminalView
 
-    GameConfiguration = g_cf.GameConfiguration

@@ -45,6 +45,10 @@ class TerminalView:
     [ENTER] Attack   --   [1] Flee
 """
 
+    VictoryTemplate =\
+""" Congrats. You won. Earned Credits: %(credits)s, Earned Goods: %(goods)s"""
+
+
 
     # Anomaly Info View not yet configurable
 

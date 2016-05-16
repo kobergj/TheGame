@@ -32,9 +32,6 @@ class AnomalyViewModel(bvm.BasicViewModel):
     def __iter__(self):
         return iter(self.sections)
 
-    def __call__(self, universe, player):
-        return
-
     def next(self, player_choice):
         self.player_choice = player_choice
 

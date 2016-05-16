@@ -94,6 +94,10 @@ class Enemy(Ship):
 
         # Loot
         self.lootableCredits = 0
+        self.lootableGoods = list()
 
     def addMoreCredits(self, Amount):
         self.lootableCredits += Amount
+
+    def addMoreGoods(self, good):
+        self.lootableGoods.append(good)

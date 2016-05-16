@@ -1,5 +1,7 @@
 import logging
 
+log = logging.getLogger('model')
+
 
 class Player():
     def __init__(self, playerInfo):
@@ -41,5 +43,5 @@ class Player():
         self.currentShip = Ship
 
     def travelTo(self, Coordinates):
-        logging.info('Player travelled to %s' % str(Coordinates))
+        log.info('Player travelled to %s' % str(Coordinates))
         self.currentPosition = Coordinates

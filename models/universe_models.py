@@ -3,6 +3,8 @@ import random
 import logging
 # import math
 
+log = logging.getLogger('model')
+
 class Universe():
     def __init__(self, minCoordinates, maxCoordinates):
         # Init Queues
@@ -79,7 +81,7 @@ class Universe():
         self.Map[y][x] = Anomaly
 
         Anomaly.getCoordinates([x, y])
-        logging.info('Assigned Coordinates %(name)s: %(coordinates)s' % Anomaly.__dict__)
+        log.info('Assigned Coordinates %(name)s: %(coordinates)s' % Anomaly.__dict__)
 
     def drawUniverseMap(self, minCoordinates, maxCoordinates):
         universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
@@ -113,7 +115,7 @@ class Universe():
     #         # Calculate Travel Costs
     #         distance = self.calculateDistance(Player.currentPosition, anomaly.coordinates)
     #         costs = self.calculateTravelCosts(Player, distance)
-    #         logging.info('Assigning TravelCosts %s to %s (dist: %s)' % (costs, anomaly.coordinates, distance))
+    #         log.info('Assigning TravelCosts %s to %s (dist: %s)' % (costs, anomaly.coordinates, distance))
     #         anomaly.setTravelCosts(costs)
 
     #         try:

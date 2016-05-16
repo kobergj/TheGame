@@ -6,6 +6,8 @@ import fight_vm as fvm
 
 import logging
 
+log = logging.getLogger('viewmodel')
+
 class UniverseViewModel(bvm.BasicViewModel):
 
     scan_index = 0
@@ -55,9 +57,9 @@ class UniverseViewModel(bvm.BasicViewModel):
         distance = dist_calc(Anomaly.coordinates)
         costs = self.calculateTravelCosts(Player, distance)
 
-        logging.info('Pay Costs of %(travelCosts)s' % Anomaly.__dict__)
+        log.info('Pay Costs of %(travelCosts)s' % Anomaly.__dict__)
         Player.spendCredits(costs)
-        logging.info('Traveling to %(name)s' % Anomaly.__dict__)
+        log.info('Traveling to %(name)s' % Anomaly.__dict__)
         Player.travelTo(Anomaly.coordinates)
 
     def get_available_anomalies(self, universe, player):

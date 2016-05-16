@@ -38,6 +38,8 @@ class Good():
 
         self.price = price
 
+    def __str__(self):
+        return self.name
 
     def changePrice(self, NewPrice):
         self.price = NewPrice

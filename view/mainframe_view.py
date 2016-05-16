@@ -1,5 +1,7 @@
 import logging
 
+log = logging.getLogger('view')
+
 def mainframe_view(Matrix, db=None):
     """Returns Universe Map as String."""
     universeString = ''
@@ -10,7 +12,7 @@ def mainframe_view(Matrix, db=None):
 
         for x, point in enumerate(row):
 
-            logging.debug('Drawing %s' % point)
+            log.debug('Drawing %s' % point)
             first_line += point[0]
             second_line += point[1]
 
@@ -33,6 +35,13 @@ def get_view(view_model, db=None):
         view_model.interactionType
         section_window = section_view(view_model)
         return [section_window], [view_model.anomaly.coordinates]
+    except AttributeError:
+        pass
+
+    try:
+        view_model.earned_goods
+        victory_window = victory_view(view_model, db)
+        return [victory_window], [view_model.anomaly.coordinates]
     except AttributeError:
         pass
 
@@ -87,7 +96,7 @@ def universe_view(view_model, mapIdentifiers):
 def anomaly_view(view_model):
     sectionInfo = 'Welcome to %s %s\n' % (view_model.anomaly.__class__.__name__, view_model.anomaly.name)
 
-    logging.info('Pick Anomaly Section from %s' % view_model.choice_list)
+    log.info('Pick Anomaly Section from %s' % view_model.choice_list)
     for i, section in enumerate(view_model.choice_list):
 
         if i == 0:
@@ -104,7 +113,7 @@ def section_view(view_model):
     interactionInfo += "%s %s" % (view_model.anomaly.__class__.__name__, view_model.anomaly.name)
     interactionInfo += " -- %s\n"  % view_model.__class__.__name__
 
-    logging.info('Generating Sections string for %s' % view_model.choice_list)
+    log.info('Generating Sections string for %s' % view_model.choice_list)
     for i, item in enumerate(view_model.choice_list):
         if i == 0:
             interactionInfo += " [0] Back\n"
@@ -127,3 +136,13 @@ def fight_view(view_model, db):
     }
 
     return db.FightTemplate % fight_info
+
+
+def victory_view(view_model, db):
+
+    victory_info = {
+        'credits': view_model.earned_creds,
+        'goods': map(str, view_model.earned_goods)
+    }
+
+    return db.VictoryTemplate % victory_info

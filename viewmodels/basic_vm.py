@@ -13,3 +13,6 @@ class BasicViewModel:
         # Parent View Model
         self.parent = parent_viewmodel
 
+    def __call__(self, universe, player):
+        return
+

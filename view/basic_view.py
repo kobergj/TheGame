@@ -7,6 +7,7 @@ import infoframe_view as iv
 import statframe_view as sv
 import mainframe_view as mv
 
+log = logging.getLogger('view')
 
 class View:
     # Where to store them best? 7   '01234567890'
@@ -21,10 +22,10 @@ class View:
         self.map_len = len(self.uvMatrix[0]) * self.point_len
 
     def __call__(self, view_model):
-        logging.info('Getting Windows Of %s' % view_model.__class__.__name__)
+        log.info('Getting Windows Of %s' % view_model.__class__.__name__)
         windows, positions = mv.get_view(view_model, self.view_db)
 
-        logging.info('Inserting %s at %s' % (windows, positions))
+        log.info('Inserting %s at %s' % (windows, positions))
         self.window_inserter(windows, positions)
 
         # Game Frame
@@ -36,21 +37,21 @@ class View:
         # Universe Frame
         uv_view = mv.mainframe_view(self.uvMatrix, db=self.view_db)
 
-        logging.info('Adding borders to %s' % [pl_view, anm_view, uv_view])
+        log.info('Adding borders to %s' % [pl_view, anm_view, uv_view])
         complete_view = self.border(ga_view, pl_view, anm_view, uv_view, db=self.view_db)
 
         print '\n' * 100
         print complete_view
 
         choice = raw_input()
-        logging.info('Player choose %s' % choice)
+        log.info('Player choose %s' % choice)
 
         self.uvMatrix = copy.deepcopy(self._uvMatrix)
 
         while True:
             try:
                 if choice == 'q':
-                    logging.info('Kill Flag. Shutting Down')
+                    log.info('Kill Flag. Shutting Down')
                     return None
 
                 if choice == '':
@@ -146,24 +147,24 @@ class View:
     def window_inserter(self, window_list, position_list):
 
         for i, window in enumerate(window_list):
-            logging.info('Get Position')
+            log.info('Get Position')
             position = position_list[i]
 
-            logging.info('Convert String to Matrix')
+            log.info('Convert String to Matrix')
             matrix = self.string2matrix(window)
 
-            logging.info('Calc Window Position')
+            log.info('Calc Window Position')
             x_rng, y_rng = self.calculate_window_range(matrix, position)
 
-            logging.info('Insert Window')
+            log.info('Insert Window')
             self.insert_window(matrix, [x_rng, y_rng])
 
 
     def calculate_window_range(self, matrix, position):
 
-        logging.info('Needed Rows: %s, Needed Points: %s' % (len(matrix), len(matrix[0])))
+        log.info('Needed Rows: %s, Needed Points: %s' % (len(matrix), len(matrix[0])))
 
-        logging.info('Starting Coordinates %s' % position)
+        log.info('Starting Coordinates %s' % position)
         anm_y = position[1]
         anm_x = position[0]
 
@@ -213,7 +214,7 @@ class View:
                 except IndexError:
                     point_one = ' ' * self.point_len
 
-                logging.info('Overwriting %s with %s [%s]' % (
+                log.info('Overwriting %s with %s [%s]' % (
                                     self.uvMatrix[map_y][map_x][0], point_one, [map_x, map_y])
                                     )
 
@@ -223,7 +224,7 @@ class View:
                 except IndexError:
                     point_two = ' ' * self.point_len
 
-                logging.info('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][1], point_two))
+                log.info('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][1], point_two))
 
                 self.uvMatrix[map_y][map_x] = [point_one, point_two]
 
@@ -234,7 +235,7 @@ class View:
 
     def string2matrix(self, rawString):
         row_splitted = rawString.split('\n')
-        logging.info('Splitted String to %s' % row_splitted)
+        log.info('Splitted String to %s' % row_splitted)
 
         matrix = list()
 
@@ -285,14 +286,14 @@ class View:
                 if not row_string:
                     break
 
-            logging.debug('Make same length: %s, %s' % (row_one, row_two))
+            log.debug('Make same length: %s, %s' % (row_one, row_two))
             while len(row_one) < len(row_two):
                 row_one.append(' ' * self.point_len)
 
             while len(row_two) < len(row_one):
                 row_two.append(' ' * self.point_len)
 
-            logging.info('Zipping: %s, %s' % (row_one, row_two))
+            log.info('Zipping: %s, %s' % (row_one, row_two))
             for i, unn in enumerate(row_one):
 
                 row.append([row_one[i], row_two[i]])
@@ -302,7 +303,7 @@ class View:
 
             matrix.append(row)
 
-        logging.info('Matrix Generated: %s' % matrix)
+        log.info('Matrix Generated: %s' % matrix)
         return matrix
 
 

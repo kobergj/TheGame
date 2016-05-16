@@ -2,6 +2,8 @@ import logging
 
 import basic_vm as bvm
 
+log = logging.getLogger('viewmodel')
+
 # Anomaly Sections
 class AnomalySection(bvm.BasicViewModel):
     """ Each Section of the Anomaly Contains the Interaction Information.
@@ -24,10 +26,6 @@ class AnomalySection(bvm.BasicViewModel):
         self.interactionType = 'Nothing'
 
         self.choice_list = [None]
-
-    def __call__(self, Anomaly, Player, *args):
-        # Needs A Call Method which executes the Interaction
-        pass
 
     def __iter__(self):
         # For iteration
@@ -100,7 +98,7 @@ class Trader(AnomalySection):
         sharedGoods = list()
 
         for good in Universe[Player.currentPosition].goodsConsumed:
-            logging.info('Checking for Similarities: %s - %s' % (good.name, Player.currentShip.inCargo.keys()))
+            log.info('Checking for Similarities: %s - %s' % (good.name, Player.currentShip.inCargo.keys()))
             if good.name in Player.currentShip.inCargo:
                 sharedGoods.append(good)
 

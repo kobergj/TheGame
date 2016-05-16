@@ -1,7 +1,9 @@
 
-class GameConfiguration:
+class Log:
+    Format = '%(asctime)s, %(filename)s --  %(message)s'
+    Level = 'INFO'
+    AccessMode = 'w'
 
-    LogFile = 'logbook.log'
-    LogLevel = 'INFO'
-    LogFileAccessMode = 'w'
-    LogFormat = '%(asctime)s, %(filename)s --  %(message)s'
+    ViewFilename = 'logbook/view.log'
+    ModelFilename = 'logbook/model.log'
+    ViewModelFilename = 'logbook/viewmodel.log'

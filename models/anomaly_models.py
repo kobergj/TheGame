@@ -8,11 +8,18 @@ class Anomaly():
         self.coordinates = None
         # Enemies in Orbit
         self.enemies = list()
+        # Enemy Graveyard
+        self.dead_enemies = list()
         # Cost To Get here
         self.travelCosts = None
 
     def addEnemy(self, enemy):
         self.enemies.append(enemy)
+
+    def killEnemy(self, enemyindex=0):
+        enemy = self.enemies.pop(enemyindex)
+
+        self.dead_enemies.append(enemy)
 
     def getCoordinates(self, Coordinates):
         self.coordinates = Coordinates

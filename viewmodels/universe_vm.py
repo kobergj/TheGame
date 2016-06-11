@@ -6,6 +6,8 @@ import fight_vm as fvm
 
 import logging
 
+import controller.model_operations as mo
+
 log = logging.getLogger('viewmodel')
 
 class UniverseViewModel(bvm.BasicViewModel):

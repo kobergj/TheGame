@@ -2,44 +2,52 @@ import random
 
 
 class ShipContent:
-    def __init__(self, name, ap_costs):
+    def __init__(self, name, capacity=0, energycosts=0):
         self.name = name
 
-        self.ap_costs = AP_Boost(ap_costs)
+        self._encost = Stat(energycosts)
 
-    def __call__(self, ship):
-        self.ap_costs(ship)
-
-        response = self.activate()
-
-        return response
+        self._cap = Stat(capacity)
 
     def __str__(self):
         return self.name
 
-    def activate(self):
-        return
+    def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def costs(self, *informations):
+        return int(self.energy_costs)
 
 
 class Weapon(ShipContent):
     def __init__(self, name, ap_costs, attack_range):
-        ShipContent.__init__(self, name, ap_costs)
-        self.attack_range = attack_range
+        ShipContent.__init__(self, name, ap_costs, attack_range[0])
 
-    def activate(self):
-        return random.randint(self.attack_range)
+        self._maxcap = Stat(attack_range[1])
 
+    def fire(self):
+        return int(self._cap), int(self._cap)
+
+class Engine(ShipContent):
+    def max_distance(self):
+        return int(self._cap)
+
+class Shield(ShipContent):
+    def __init__(self, name, energycosts, maxstrength):
+        ShipContent.__init__(self, name, energycosts, maxstrength)
 
 class EnergyCore(ShipContent):
-    def __init__(self, name, max_energy):
-        ShipContent.__init__(self, name, 0)
+    def __init__(self, name, refillrate, max_energy):
+        ShipContent.__init__(self, name, -refillrate, max_energy)
 
-        self.energy = max_energy
+        self.energy = Stat(max_energy)
 
 class CargoBay(ShipContent):
     def __init__(self, name, size):
-        ShipContent.__init__(self, name, 0)
-        self.size = Stat(size)
+        ShipContent.__init__(self, name, capacity=size)
 
         self.cargo_list = list()
 
@@ -63,24 +71,20 @@ class CargoBay(ShipContent):
 
 
 class Good(ShipContent):
-    def __init__(self, name, price=None):
-        ShipContent.__init__(self, name, 0)
+    def __init__(self, name, price=0):
+        ShipContent.__init__(self, name)
 
         self.price = price
-
-    def __eq__(self, other):
-        return str(self) == str(other)
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
 
     def changePrice(self, NewPrice):
         self.price = NewPrice
 
 
-class Room:
+class Room(ShipContent):
     def __init__(self, roomInformation):
-        self.name = roomInformation['name']
+
+        ShipContent.__init__(self, roomInformation['name'])
+
 
         self.price = roomInformation['price']
 
@@ -112,11 +116,15 @@ class Room:
 
 # Class For Stats
 class Stat:
-    def __init__(self, StartValue=0):
+    def __init__(self, StartValue=0, MaxStartValue=None):
         # The Value of the Stat
         self.startValue = StartValue
+        # Max Value
+        self.maxstartValue = MaxStartValue
         # Space for boosts
         self.boosts = list()
+        # Max Boosts
+        self.maxboosts = list()
         # Free Space For Mocking
         self.tempValue = None
 
@@ -126,6 +134,33 @@ class Stat:
 
         for boost in self.boosts:
             value += boost
+
+        if self.maxstartValue:
+
+            maxvalue = self.maxstartValue
+
+            for boost in self.maxboosts:
+                maxvalue += boost
+
+            return value, maxvalue
+
+        return value
+
+    def __int__(self):
+        # Returns Current Value
+        value = self.startValue
+
+        for boost in self.boosts:
+            value += boost
+
+        if self.maxstartValue:
+
+            maxvalue = self.maxstartValue
+
+            for boost in self.maxboosts:
+                maxvalue += boost
+
+            return value, maxvalue
 
         return value
 
@@ -198,10 +233,10 @@ class StatBoost(Stat):
         stat.increment(self.startValue*-1)
 
 # Boosts Action Points
-class AP_Boost(StatBoost):
+class EnergyBoost(StatBoost):
     statName = 'Action Points'
     def correspondingStat(self, ship):
-        return ship.action_points
+        return ship.energy
 
 # Boosts Cargo Capacity
 class CargoBoost(StatBoost):

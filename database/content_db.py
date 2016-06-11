@@ -26,3 +26,17 @@ class Rooms:
         'attackPower':          [3, 6],
         'shieldStrength':       [2, 6]
     }
+
+
+class EnergyCore:
+    Capacity = [3, 20]
+
+    PricePerCapacity = [80, 85]
+    EnergyPerCapacity = 0
+
+class Engine:
+    MinCapacity = 1
+    MaxCapacity = 8
+
+    PricePerCapacity = 125
+    EnergyPerCapacity = 

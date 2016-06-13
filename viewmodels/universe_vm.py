@@ -15,6 +15,7 @@ class UniverseViewModel(bvm.BasicViewModel):
     scan_index = 0
 
     def __init__(self, universe, player, *args):
+        self.distance_calculator = DistanceCalculator(player.currentPosition)
 
         self.anomaly_availability = self.get_available_anomalies(universe, player)
 
@@ -22,35 +23,38 @@ class UniverseViewModel(bvm.BasicViewModel):
 
         bvm.BasicViewModel.__init__(self, anomaly, player, UniverseViewModel)
 
-    def __call__(self, universe, player):
+    def D__call__(self, universe, player):
         if self.player_choice == 0:
             anomaly = universe[self.anomaly.coordinates]
 
             self.Travel(anomaly, player)
             universe.request_update = True
 
-    def next(self, player_choice):
+    def __call__(self, player_choice):
         choice = self.choice_list[player_choice]
 
         if choice:
             UniverseViewModel.scan_index = 0
             self.player_choice = 0
 
+            cords = self.anomaly.coordinates
+            dstc = self.distance_calculator(self.anomaly.coordinates)
+
             if self.anomaly.enemies:
-                return fvm.FightViewModel
+                return fvm.FightViewModel, mo.Travel(cords, dstc)
 
             if self.anomaly.coordinates == self.player.currentPosition:
                 self.player_choice = 1
-                return avm.AnomalyViewModel
+                return avm.AnomalyViewModel, mo.Pass()
 
-            return UniverseViewModel
+            return UniverseViewModel, mo.Travel(cords, dstc)
 
         UniverseViewModel.scan_index += 1
         if UniverseViewModel.scan_index >= len(self.anomaly_availability[0]):
             UniverseViewModel.scan_index = 0
 
         self.player_choice = 2
-        return UniverseViewModel
+        return UniverseViewModel, mo.Pass()
 
     def Travel(self, Anomaly, Player):
         """Player travels to Anomaly."""
@@ -66,11 +70,9 @@ class UniverseViewModel(bvm.BasicViewModel):
 
     def get_available_anomalies(self, universe, player):
 
-        dist_calc = DistanceCalculator(player.currentPosition)
-
         distance_list=list()
         for anomaly in universe:
-            distance_list.append([anomaly, dist_calc(anomaly.coordinates)])
+            distance_list.append([anomaly, self.distance_calculator(anomaly.coordinates)])
 
         distance_list.sort(key=(lambda x: x[1]))
 

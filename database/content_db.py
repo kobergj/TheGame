@@ -32,11 +32,11 @@ class EnergyCore:
     Capacity = [3, 20]
 
     PricePerCapacity = [80, 85]
-    EnergyPerCapacity = 0
+    EnergyPerCapacity = [-4, -1]
 
 class Engine:
     MinCapacity = 1
     MaxCapacity = 8
 
     PricePerCapacity = 125
-    EnergyPerCapacity = 
+    EnergyPerCapacity = 0

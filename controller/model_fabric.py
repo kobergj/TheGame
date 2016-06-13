@@ -331,6 +331,8 @@ class randomProducer():
     def killProducer(self):
         self.dead = True
 
+    ## Deprecated
+
     def producingFunction(self, Database, Universe):
 
         log.info('Start Model Producing')

@@ -56,10 +56,10 @@ class ViewModelProducer:
                 break
 
             log.info('Execute %s' % view_model)
-            view_model_class = view_model.next(players_choice)
+            view_model_class, change_func = view_model(players_choice)
 
             log.info('Sending Changes')
-            self.model_conn.send(view_model)
+            self.model_conn.send(change_func)
 
             log.info('Getting New Models')
             universe, player = self.model_conn.recv()

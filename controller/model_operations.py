@@ -9,7 +9,7 @@ class BuyGood:
 
         player.spendCredits(self.good.price)
 
-class TravelTo:
+class Travel:
     def __init__(self, coordinates, distance):
         self.destination = coordinates
 
@@ -23,6 +23,8 @@ class TravelTo:
         energycore(energy_costs)
 
         player.travelTo(self.destination)
+
+        universe.request_update = True
 
 class Fight:
     """Basic Class for Fights"""

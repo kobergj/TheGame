@@ -12,19 +12,21 @@ class Database:
 
     Goods = c_db.Goods
 
-    Planets = a_db.Planets
+    Anomalies = a_db.Anomalies
 
-    Spacegates = a_db.Spacegates
+    # Planets = a_db.Planets
 
-    Starbases = a_db.Starbases
+    # Spacegates = a_db.Spacegates
 
-    Universe = st_cf.Universe
+    # Starbases = a_db.Starbases
 
-    Ships = sh_db.Ships
+    # Universe = st_cf.Universe
 
-    Enemies = st_cf.Enemies
+    # Ships = sh_db.Ships
 
-    Rooms = c_db.Rooms
+    # Enemies = st_cf.Enemies
+
+    # Rooms = c_db.Rooms
 
     TerminalView = v_db.TerminalView
 

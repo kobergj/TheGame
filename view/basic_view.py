@@ -11,8 +11,8 @@ class View:
     def __init__(self, database):
         self.view_db = database.TerminalView
 
-        main_window_len = database.StartConfiguration.MaxCoordinates[1]
-        main_window_height = database.StartConfiguration.MaxCoordinates[0]
+        main_window_len = database.StartConfiguration.Universe.MaxCoordinates[1]
+        main_window_height = database.StartConfiguration.Universe.MaxCoordinates[0]
         self.main_window = Window(database.TerminalView, [main_window_len, main_window_height])
 
         stat_window_len = main_window_len / 2

@@ -3,14 +3,14 @@ import logging
 log = logging.getLogger('model')
 
 
-class Player():
-    def __init__(self, playerInfo):
+class Player:
+    def __init__(self, name, startcredits=0, ship=None):
         # Player Name
-        self.name = playerInfo['name']
+        self.name = name
         # Number Of Credits
-        self.credits = playerInfo['startingCredits']
+        self.credits = startcredits
         # Ship
-        self.currentShip = None
+        self.currentShip = ship
         # List of Old Ships
         self.deprecatedShips = list()
         # Current Postion

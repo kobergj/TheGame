@@ -23,31 +23,32 @@ class ShipContent:
 
 
 class Weapon(ShipContent):
-    def __init__(self, name, ap_costs, attack_range):
-        ShipContent.__init__(self, name, ap_costs, attack_range[0])
+    def __init__(self, attack_range, ap_costs):
+        ShipContent.__init__(self, 'weapon', attack_range[0], ap_costs)
 
         self._maxcap = Stat(attack_range[1])
 
     def fire(self):
-        return int(self._cap), int(self._cap)
+        return int(self._cap), int(self._maxcap)
 
 class Engine(ShipContent):
+    def __init__(self, maxtraveldist, encosts):
+        ShipContent.__init__(self, 'engine', maxtraveldist, encosts)
+
     def max_distance(self):
         return int(self._cap)
 
 class Shield(ShipContent):
-    def __init__(self, name, energycosts, maxstrength):
-        ShipContent.__init__(self, name, energycosts, maxstrength)
+    def __init__(self, maxstrength, energycosts):
+        ShipContent.__init__(self, 'shield', maxstrength, energycosts)
 
 class EnergyCore(ShipContent):
-    def __init__(self, name, refillrate, max_energy):
-        ShipContent.__init__(self, name, -refillrate, max_energy)
-
-        self.energy = Stat(max_energy)
+    def __init__(self, max_energy, refillrate):
+        ShipContent.__init__(self, 'energycore', max_energy, refillrate)
 
 class CargoBay(ShipContent):
-    def __init__(self, name, size):
-        ShipContent.__init__(self, name, capacity=size)
+    def __init__(self, size, energycosts=0):
+        ShipContent.__init__(self, 'cargobay', size, energycosts)
 
         self.cargo_list = list()
 

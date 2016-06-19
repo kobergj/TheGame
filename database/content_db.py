@@ -7,6 +7,9 @@ class Goods:
     MinBuyPrice = 6
     MaxBuyPrice = 11
 
+    MinPrice = 1
+    MaxPrice = 14
+
     ListOfNames = ['Gin', 'Tobacco', 'Oil', 'BloodySweaters', 'Meat', 'Airplanes', 'Potatoes']
 
 

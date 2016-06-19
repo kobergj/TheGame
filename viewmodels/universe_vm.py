@@ -79,7 +79,8 @@ class UniverseViewModel(bvm.BasicViewModel):
         available_anomalies = list()
         not_available_anomalies = list()
 
-        while len(available_anomalies) < player.currentShip.maxTravelDistance():
+        engine = player.currentShip.access_content('engine')
+        while len(available_anomalies) < engine.max_distance():
             try:
                 anomaly, distance = distance_list.pop(0)
                 available_anomalies.append(anomaly)

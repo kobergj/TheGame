@@ -33,6 +33,12 @@ class Universe():
 
         return self.Map[vSlice][point]
 
+    def __len__(self):
+        i = 0
+        for anomaly in self:
+            i += 1
+        return i
+
     def next(self, infinity=False, start=None):
         # Init
         anomaly = None

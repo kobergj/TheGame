@@ -1,109 +1,214 @@
 import random
 import multiprocessing as mp
+import logging
 
 import models.universe_models as um
 import models.player_models as pm
 import models.anomaly_models as am
 import models.content_models as cm
+import models.ship_models as sm
 
 
 # Generic Class
 
+log = logging.getLogger('model')
+
 class ModelProducer:
-    def __init__(self, model):
+    def __init__(self, database):
 
-        self.model_class = model
+        self._database = database
 
-    def __call__(self, *args):
-        model = self.model_class(*args)
+        self._usednames = list()
+
+    def starting_universe(self):
+        db = self._database.StartConfiguration.Universe
+
+        universe = um.Universe(db.MinCoordinates, db.MaxCoordinates)
+
+        log.info('Filling Universe')
+        while len(universe) < db.NumberOfAnomalies:
+            kwargsdict = {'Planet': dict(merchant=True),
+                          'Spacegate': dict(jumpgate=True)
+                          }
+
+            anmytype = random.choice(kwargsdict.keys())
+
+            anomaly = self.random_anomaly(anmytype, **kwargsdict[anmytype])
+            universe.addAnomaly(anomaly)
+
+        return universe
+
+    def starting_player(self):
+        db = self._database.StartConfiguration.Player
+
+        name = db.PlayerName
+        crds = db.PlayerCredits
+
+        ship = self.starting_ship()
+
+        model = pm.Player(name, crds, ship)
 
         return model
 
-    def random(self, listofnames):
-        name = random.choice(listofnames)
+    def starting_ship(self):
+        shipdb = self._database.StartConfiguration.Ship
 
-        return self(name)
+        name = shipdb.Name
 
-# General Classes
+        cargobay = cm.CargoBay(*shipdb.CargoBay)
 
-class UniverseProducer(ModelProducer):
-    def random(self):
-        minco = self.db.MinCoordinates
-        maxco = self.db.MaxCoordinates
+        energycore = cm.EnergyCore(*shipdb.EnergyCore)
 
-        return self(minco, maxco)
+        engine = cm.Engine(*shipdb.Engine)
 
-class PlayerProducer(ModelProducer):
-    def random(self):
-        pl_info = self.db.PlayerInfo
+        weapon = cm.Weapon(*shipdb.Weapon)
 
-        return self(pl_info)
+        shield = cm.Shield(*shipdb.Shield)
 
-# Anomalies
+        ship = sm.Ship(name, [cargobay, energycore, engine, weapon, shield])
 
-class PlanetProducer(ModelProducer):
-    def random(self):
-        if not self.db.ListOfNames:
-            # Returns None if no Names left
-            return
+        return ship
 
-        name = random.choice(self.db.ListOfNames)
+    def random_anomaly(self, anmtype, merchant=False, jumpgate=False):
+        db = self._database.Anomalies
 
-        self.db.ListOfNames.remove(name)
+        log.info('Generating Planet Name')
+        possiblenames = [name for name in db.ListOfNames if name not in self._usednames]
+        planetname = random.choice(possiblenames)
+        self._usednames.append(planetname)
 
-        return self(name)
+        goods = None
+        if merchant:
+            log.info('Generating Goods')
+            i = random.randint(*db.NumberOfGoods)
+            goods = self.random_goodlist(i)
 
-class SpacegateProducer(ModelProducer):
-    def random(self):
-        name = self.db.IdentifiersList[0]
+        jg_costs = None
+        if jumpgate:
+            log.info('Calculating SG Costs')
+            jg_costs = random.randint(*db.SpaceGateCosts)
 
-        while name in self.db.IdentifiersList:
+        log.info('Generating Enemies')
+        enemies = list()
 
-            currentId = random.randint(1, 1000)
+        model = am.Anomaly(planetname, anmtype, enemies, goods, jg_costs)
 
-            name += str(currentId)
+        return model
 
-        self.db.IdentifiersList.append(name)
+    def random_goodlist(self, length):
+        db = self._database.Goods
+        goods = list()
 
-        return self(name)
+        while length > 0:
+            name = random.choice(db.ListOfNames)
 
-class StarbaseProducer(ModelProducer):
-    def random(self):
-        if not self.db.ListOfNames:
-            return
+            price = random.randint(db.MinPrice, db.MaxPrice)
 
-        name = random.choice(self.db.ListOfNames)
+            good = cm.Good(name, price)
 
-        self.db.ListOfNames.remove(name)
+            goods.append(good)
 
-        return self(name)
+            length -= 1
 
-class GoodProducer(ModelProducer):
-    def random(self):
-        name = random.choice(self.db.ListOfNames)
+        return goods
 
-        return self(name)
 
-class ModelProducerProcess(mp.Process):
+    # def random_ship(self):
+    #     db = self._database.Ships
+
+    #     name = random.choice(db.ListOfNames)
+
+    #     starting_content = [cm.CargoBay(), cm.EnergyCore(), cm.Engine(), cm.Weapon(), cm.Shield()]
+
+    #     ship = sm.Ship(name, starting_content)
+
+    #     return ship
+
+# class SpacegateProducer(ModelProducer):
+#     def random(self):
+#         name = self.db.IdentifiersList[0]
+
+#         while name in self.db.IdentifiersList:
+
+#             currentId = random.randint(1, 1000)
+
+#             name += str(currentId)
+
+#         self.db.IdentifiersList.append(name)
+
+#         return self(name)
+
+# class StarbaseProducer(ModelProducer):
+#     def random(self):
+#         if not self.db.ListOfNames:
+#             return
+
+#         name = random.choice(self.db.ListOfNames)
+
+#         self.db.ListOfNames.remove(name)
+
+#         return self(name)
+
+# class GoodProducer(ModelProducer):
+#     def random(self):
+#         name = random.choice(self.db.ListOfNames)
+
+#         return self(name)
+
+class ModelHandler(mp.Process):
     def __init__(self, database, connection):
         mp.Process.__init__(self, name='ModelProducer')
 
-        self.connection = connection
+        self._connection = connection
 
-        self._universeproducer = UniverseProducer(database.Universe)
-
-        self._playerproducer = PlayerProducer(database.StartConfiguration)
-
-        self._planetproducer = PlanetProducer(database.Planets)
-        self._starbaseproducer = StarbaseProducer(database.Starbases)
-        self._spacegateproducer = SpacegateProducer(database.Spacegates)
-
-        self._goodproducer = GoodProducer(database.Goods)
+        self._modelproducer = ModelProducer(database)
 
     def run(self):
-        player = self._playerproducer.random()
+        log.info('Creating Player')
+        player = self._modelproducer.starting_player()
+        log.info('Generating Universe')
+        universe = self._modelproducer.starting_universe()
+        log.info('Travel To Starting Anomaly')
+        player.travelTo(random.choice([anomaly.coordinates for anomaly in universe]))
 
-        universe = self._universeproducer.random()
+        log.info('Entering Main Loop')
+        while True:
+
+            if universe.request_update:
+                self._updateuniverse(universe, player)
+
+            log.info('Sending Models')
+            self._connection.send([universe, player])
+            log.info('Awaiting Input')
+            change_function = self.conn.recv()
+
+            if change_function is None:
+                break
+
+            log.info('Executing Input')
+            change_function(universe, player)
+
+        log.info('Model Producer Dead and gone')
+
+
+    def _updateuniverse(self, universe, player):
+        # for anomaly in universe:
+        #     # Demock Stats
+        #     player.currentShip.maxTravelDistance.demock()
+        #     player.currentShip.maintenanceCosts.demock()
+
+
+            universe.request_update = False
+
+
+
+    # def _generateuniverse(self):
+    #     db = self._database.Universe
+
+    #     universe = self._modelproducer.static_universe()
+
+
+    #     return universe
 
 
 

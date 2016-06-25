@@ -40,7 +40,7 @@ class UniverseViewModel(bvm.BasicViewModel):
             cords = self.anomaly.coordinates
             dstc = self.distance_calculator(self.anomaly.coordinates)
 
-            if self.anomaly.enemies:
+            if not self.anomaly.orbit.empty():
                 return fvm.FightViewModel, mo.Travel(cords, dstc)
 
             if self.anomaly.coordinates == self.player.currentPosition:
@@ -94,9 +94,11 @@ class UniverseViewModel(bvm.BasicViewModel):
 
         return available_anomalies, not_available_anomalies
 
-    def calculateTravelCosts(self, Player, Distance):
+    def calculateTravelCosts(self, player, distance):
+        # Get Engine
+        engine = player.currentShip.access_content('engine')
         # Calculate Costs
-        travelCosts = int(Distance * Player.currentShip.maintenanceCosts())
+        travelCosts = engine.costs(distance)
 
         return travelCosts
 

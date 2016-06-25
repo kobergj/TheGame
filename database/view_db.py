@@ -50,6 +50,9 @@ class TerminalView:
     VictoryTemplate =\
 """ Congrats. You won. Earned Credits: %(credits)s, Earned Goods: %(goods)s"""
 
+    InfoFrameTemplate =\
+"""     [ENTER] %(emyAmount) """
+
 
 
     # Anomaly Info View not yet configurable

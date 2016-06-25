@@ -1,7 +1,7 @@
 
 
 
-def info_view(Anomaly, db=None):
+def info_view(Anomaly, db):
     # Needs to be made configurable
     if not Anomaly:
         return ' '
@@ -12,12 +12,12 @@ def info_view(Anomaly, db=None):
 
     information = '    [ENTER]  ' # % Anomaly.coordinates
 
-    for enemy in Anomaly.enemies:
+    for enemy in Anomaly.orbit:
         information += 'X'
 
     information += ' %s %s ' % (amytype, amyname)
 
-    information += ' Cost To Travel Here: %s ' % Anomaly.travelCosts
+    information += ' Cost To Travel Here: %s '   # % Anomaly.travelCosts
 
     # Buys It Goods?
     try:

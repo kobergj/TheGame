@@ -27,7 +27,7 @@ class View:
 
         log.info('Inserting %s at %s' % (windows, positions))
         self.main_window.insert(windows, positions)
-        self.stat_window.insert([sv.stat_view(view_model.player, db=self.view_db)], [[0, 0]])
+        self.stat_window.insert([sv.stat_view(view_model, db=self.view_db)], [[0, 0]])
 
         # Game Frame
         ga_view = gv.gameinfo_view(view_model, db=self.view_db)
@@ -56,6 +56,7 @@ class View:
                     return None
 
                 if choice == '':
+                    log.info('Player pressed ENTER.')
                     choice = 0
 
                 choice = int(choice)

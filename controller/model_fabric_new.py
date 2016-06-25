@@ -102,6 +102,9 @@ class ModelProducer:
         while length > 0:
             name = random.choice(db.ListOfNames)
 
+            if name in goods:
+                continue
+
             price = random.randint(db.MinPrice, db.MaxPrice)
 
             good = cm.Good(name, price)
@@ -177,12 +180,13 @@ class ModelHandler(mp.Process):
             if universe.request_update:
                 self._updateuniverse(universe, player)
 
-            log.info('Sending Models')
+            log.info('Sending %s' % [universe, player])
             self._connection.send([universe, player])
             log.info('Awaiting Input')
-            change_function = self.conn.recv()
+            change_function = self._connection.recv()
 
             if change_function is None:
+                log.info('Got Dead Signal. Quitting...')
                 break
 
             log.info('Executing Input')

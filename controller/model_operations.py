@@ -5,9 +5,43 @@ class BuyGood:
         self.amount = amount
 
     def __call__(self, universe, player):
-        player.currentShip.loadCargo(self.good, self.amount)
+        if not self.good:
+            return
 
-        player.spendCredits(self.good.price)
+        cargobay = player.currentShip.access_content('cargobay')
+
+        cargobay.load(self.good, self.amount)
+
+        price = self.good.price
+
+        player.spendCredits(price)
+
+        return
+
+class SellGood(BuyGood):
+    def __call__(self, universe, player):
+        cargobay = player.currentShip.access_content('cargobay')
+
+        cargobay.unload(self.good)
+
+        price = self.good.price
+
+        player.earnCredits(price)
+
+        return
+
+class EnterJumpgate:
+    def __init__(self, price):
+        self.price = price
+
+    def __call__(self, universe, player):
+        player.spendCredits(self.price)
+
+        engine = player.currentShip.access_content('engine')
+
+        engine.enter_hyperspace()
+
+        return
 
 class Travel:
     def __init__(self, coordinates, distance):
@@ -18,11 +52,13 @@ class Travel:
     def __call__(self, universe, player):
         engine, energycore = player.currentShip.access_content('engine', 'energycore')
 
-        energy_costs = engine(self.distance)
+        energy_costs = engine.costs(self.distance)
 
         energycore(energy_costs)
 
         player.travelTo(self.destination)
+
+        engine.exit_hyperspace()
 
         universe.request_update = True
 

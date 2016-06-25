@@ -1,7 +1,12 @@
 # import logbook.configuration as log
+import logging
 
 import viewmodels.basic_vm as bvm
 import viewmodels.section_vm as svm
+
+import controller.model_operations as mo
+
+log = logging.getLogger('viewmodel')
 
 class AnomalyViewModel(bvm.BasicViewModel):
 
@@ -24,7 +29,8 @@ class AnomalyViewModel(bvm.BasicViewModel):
 
                 availableViewModels.append(possibleSection)
 
-            except AttributeError:
+            except AttributeError as e:
+                log.info('%s not available: %s' % (possibleSection, e))
                 pass
 
         self.choice_list = availableViewModels
@@ -32,10 +38,10 @@ class AnomalyViewModel(bvm.BasicViewModel):
     def __iter__(self):
         return iter(self.sections)
 
-    def next(self, player_choice):
+    def __call__(self, player_choice):
         self.player_choice = player_choice
 
         next_view_model = self.choice_list[player_choice]
 
-        return next_view_model
+        return next_view_model, mo.Pass()
 

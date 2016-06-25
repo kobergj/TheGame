@@ -19,17 +19,26 @@ class ShipContent:
         return not self.__eq__(other)
 
     def costs(self, *informations):
-        return int(self.energy_costs)
+        return int(self._encost)
+
+    def capacity(self):
+        return int(self._cap)
+
+    def maxcapacity(self):
+        return self._cap.startValue
 
 
 class Weapon(ShipContent):
     def __init__(self, attack_range, ap_costs):
         ShipContent.__init__(self, 'weapon', attack_range[0], ap_costs)
 
-        self._maxcap = Stat(attack_range[1])
+        self._mincap = Stat(attack_range[1])
 
     def fire(self):
-        return int(self._cap), int(self._maxcap)
+        return random.randint(int(self._mincap), int(self._cap))
+
+    def capacity(self):
+        return int(self._mincap), int(self._cap)
 
 class Engine(ShipContent):
     def __init__(self, maxtraveldist, encosts):
@@ -37,6 +46,17 @@ class Engine(ShipContent):
 
     def max_distance(self):
         return int(self._cap)
+
+    def costs(self, distance):
+        return int(self._encost) * distance
+
+    def enter_hyperspace(self):
+        self._cap.mock(99999999999)
+        self._encost.mock(0.000000000001)
+
+    def exit_hyperspace(self):
+        self._cap.demock()
+        self._encost.demock()
 
 class Shield(ShipContent):
     def __init__(self, maxstrength, energycosts):
@@ -46,26 +66,39 @@ class EnergyCore(ShipContent):
     def __init__(self, max_energy, refillrate):
         ShipContent.__init__(self, 'energycore', max_energy, refillrate)
 
+    def __call__(self, energy):
+        self._cap.addBoost(-energy)
+
 class CargoBay(ShipContent):
     def __init__(self, size, energycosts=0):
         ShipContent.__init__(self, 'cargobay', size, energycosts)
 
         self.cargo_list = list()
 
+    def __iter__(self):
+        return iter(self.cargo_list)
+
+    def asdict(self):
+        return {g.name: self.cargo_list.count(g.name) for g in self.cargo_list}
+
     def amount(self, good):
         return map(str, self.cargo_list).count(str(good))
 
-    def load(self, good):
-        self.cargo_list.append(good)
+    def load(self, good, amount=1):
+        for _ in range(amount):
+            self.cargo_list.append(good)
+
+        self._cap.addBoost(-amount)
 
     def unload(self, good_to_unload):
         for i, good in enumerate(self.cargo_list):
             if good == good_to_unload:
                 self.cargo_list.pop(i)
+                self._cap.addBoost(1)
                 return
 
     def free_space(self):
-        return self.size - len(self.cargo_list)
+        return int(self._cap)  # - len(self.cargo_list)
 
     def full(self):
         return self.free_space() <= 0
@@ -136,14 +169,14 @@ class Stat:
         for boost in self.boosts:
             value += boost
 
-        if self.maxstartValue:
+        # if self.maxstartValue:
 
-            maxvalue = self.maxstartValue
+        #     maxvalue = self.maxstartValue
 
-            for boost in self.maxboosts:
-                maxvalue += boost
+        #     for boost in self.maxboosts:
+        #         maxvalue += boost
 
-            return value, maxvalue
+        #     return value, maxvalue
 
         return value
 
@@ -154,14 +187,14 @@ class Stat:
         for boost in self.boosts:
             value += boost
 
-        if self.maxstartValue:
+        # if self.maxstartValue:
 
-            maxvalue = self.maxstartValue
+        #     maxvalue = self.maxstartValue
 
-            for boost in self.maxboosts:
-                maxvalue += boost
+        #     for boost in self.maxboosts:
+        #         maxvalue += boost
 
-            return value, maxvalue
+        #     return value, maxvalue
 
         return value
 

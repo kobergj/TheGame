@@ -58,7 +58,7 @@ class ViewModelProducer:
             log.info('Execute %s' % view_model)
             view_model_class, change_func = view_model(players_choice)
 
-            log.info('Sending Changes')
+            log.info('Sending %s' % change_func)
             self.model_conn.send(change_func)
 
             log.info('Getting New Models')

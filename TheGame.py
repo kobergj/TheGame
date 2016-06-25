@@ -45,11 +45,11 @@ if __name__ == '__main__':
     players_choice = True
 
     while players_choice is not None:
-        # Get View Model
+        log.info('Get View Model')
         view_model = view_connection[1].recv()
-        # Show View Model
+        log.info('Show View Model')
         players_choice = view(view_model)
-        # Return Answer
+        log.info('Sending %s' % players_choice)
         view_connection[1].send(players_choice)
 
 
@@ -57,5 +57,5 @@ if __name__ == '__main__':
     log.info('Killing ViewModel Producer')
     viewmodelProducer.stopProducing()
     log.info('Killing Model Producer')
-    modelProducer.stopProducing()
+    modelProducer.join()
     log.info('Done. Session %s' % (dt.now() - start))

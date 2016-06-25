@@ -63,7 +63,7 @@ def universe_view(view_model, mapIdentifiers):
     available_anomalies = view_model.anomaly_availability[0]
 
     for anomaly in available_anomalies:
-        win = mapIdentifiers[anomaly.__class__.__name__]
+        win = mapIdentifiers[anomaly.anomalytype]
         pos = anomaly.coordinates
 
         if anomaly.coordinates == view_model.anomaly.coordinates:
@@ -110,16 +110,20 @@ def anomaly_view(view_model):
 def section_view(view_model):
     # Build Information
     interactionInfo = ''
-    interactionInfo += "%s %s" % (view_model.anomaly.__class__.__name__, view_model.anomaly.name)
+    interactionInfo += "%s %s" % (view_model.anomaly.anomalytype, view_model.anomaly.name)
     interactionInfo += " -- %s\n"  % view_model.__class__.__name__
 
-    log.info('Generating Sections string for %s' % view_model.choice_list)
+    log.info('Generating Sections string for %s' % map(str, view_model.choice_list))
     for i, item in enumerate(view_model.choice_list):
         if i == 0:
             interactionInfo += " [0] Back\n"
             continue
 
-        interactionInfo += " [%s] %s for %s\n" % (i, item.name, item.price)
+        # x = 'Buy'
+        # if item in view_model.choice_list[:i]:
+        #     x = 'Sell'
+
+        interactionInfo += " [%s] %s %s for %s\n" % (i, view_model.interactionType, item.name, item.price)
 
     return interactionInfo
 

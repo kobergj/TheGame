@@ -93,7 +93,7 @@
 
 class Anomaly:
     def __init__(self, name, anomalytype='Anomaly', enemies=list(), goods=None, jumpgatecosts=None):
-        self.name =name
+        self.name = name
         self.anomalytype = anomalytype
         # Coordinates
         self.coordinates = None
@@ -143,11 +143,19 @@ class _Orbit:
         self._enemies = enemies
         self._deadenemies = list()
 
+    def __iter__(self):
+        return iter(self._enemies)
+
+    def get_enemy(self):
+        return self._enemies[0]
+
     def add_enemy(self, enemy):
         self._enemies.append(enemy)
 
     def remove_enemy(self, enemyindex=0):
         enemy = self._enemies.pop(enemyindex)
+        self._deadenemies.append(enemy)
 
-        self.dead_enemies.append(enemy)
+    def empty(self):
+        return len(self._enemies) == 0
 

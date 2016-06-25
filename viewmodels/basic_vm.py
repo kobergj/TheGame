@@ -13,6 +13,34 @@ class BasicViewModel:
         # Parent View Model
         self.parent = parent_viewmodel
 
+        # Info Stats
+        self.playerinfo = self.getplayerinfo(player)
+
     def __call__(self, universe, player):
-        return
+        return self.parent
+
+    def getplayerinfo(self, player):
+
+        def cap(contentname):
+            cnt = player.currentShip.access_content(contentname)
+            return cnt.capacity()
+
+        def maxcap(contentname):
+            cnt = player.currentShip.access_content(contentname)
+            return cnt.maxcapacity()
+
+        return {
+            'credits': player.credits,
+            'attackPower': cap('weapon'),
+            'curDef': cap('shield'),
+            'maxDef': maxcap('shield'),
+            'maxTravelDistance': cap('engine'),
+            'maintCosts': None,
+            'currentCargo': cap('cargobay'),
+            'maxCargo': maxcap('cargobay'),
+            'inCargo': player.currentShip.access_content('cargobay').asdict(),
+            'currentRooms': 0,  #Player.currentShip.spaceForRooms.startValue - Player.currentShip.spaceForRooms(),
+            'maxRooms': 0,  # Player.currentShip.spaceForRooms.startValue,
+            'roomList': []
+            }
 

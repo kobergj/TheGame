@@ -92,7 +92,9 @@
 ## TESTING SECTION ###
 
 class Anomaly:
-    def __init__(self, name, anomalytype='Anomaly', enemies=list(), goods=None, jumpgatecosts=None):
+    def __init__(self, name, anomalytype='Anomaly', enemies=list(), goods=None,
+                    jumpgatecosts=None, rooms=None):
+
         self.name = name
         self.anomalytype = anomalytype
         # Coordinates
@@ -105,6 +107,9 @@ class Anomaly:
 
         if jumpgatecosts is not None:
             self.jumpgate = _JumpGate(jumpgatecosts)
+
+        if rooms is not None:
+            self.eqdealer = _EqDealer(rooms)
 
     def addEnemy(self, enemy):
         self.enemies.append(enemy)
@@ -137,6 +142,10 @@ class _JumpGate:
 
     def show_price(self):
         return int(self._costforuse)
+
+class _EqDealer:
+    def __init__(self, rooms):
+        self._rooms = rooms
 
 class _Orbit:
     def __init__(self, enemies=list()):

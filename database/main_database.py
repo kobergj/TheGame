@@ -14,6 +14,8 @@ class Database:
 
     Anomalies = a_db.Anomalies
 
+    Rooms = c_db.Rooms
+
     # Planets = a_db.Planets
 
     # Spacegates = a_db.Spacegates

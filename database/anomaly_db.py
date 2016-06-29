@@ -27,4 +27,6 @@ class Anomalies:
 
     SpaceGateCosts = [0, 0]
 
+    NumberOfRooms = [2, 4]
+
 

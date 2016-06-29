@@ -69,7 +69,7 @@ class ModelProducer:
 
         return ship
 
-    def random_anomaly(self, anmtype, merchant=False, jumpgate=False):
+    def random_anomaly(self, anmtype, merchant=False, jumpgate=False, eqdealer=False):
         db = self._database.Anomalies
 
         log.info('Generating Planet Name')
@@ -88,10 +88,16 @@ class ModelProducer:
             log.info('Calculating SG Costs')
             jg_costs = random.randint(*db.SpaceGateCosts)
 
+        rooms = None
+        if eqdealer:
+            log.info('Creating Content for EqDealer')
+            i = random.randint(*db.NumberOfRooms)
+            rooms = self.random_roomlist(i)
+
         log.info('Generating Enemies')
         enemies = list()
 
-        model = am.Anomaly(planetname, anmtype, enemies, goods, jg_costs)
+        model = am.Anomaly(planetname, anmtype, enemies, goods, jg_costs, rooms)
 
         return model
 
@@ -99,7 +105,7 @@ class ModelProducer:
         db = self._database.Goods
         goods = list()
 
-        while length > 0:
+        while len(goods) < length:
             name = random.choice(db.ListOfNames)
 
             if name in goods:
@@ -111,9 +117,35 @@ class ModelProducer:
 
             goods.append(good)
 
-            length -= 1
-
         return goods
+
+    def random_roomlist(self, length):
+        db = self._database.Rooms
+
+        av_rdbs = [db.EnergyCore, db.Shield, db.Weapon, db.CargoBay, db.Engine]
+        corresponding_models = [cm.EnergyCore, cm.Shield, cm.Weapon, cm.CargoBay, cm.Engine]
+
+        def init_room(index):
+            r_db = av_rdbs[i]
+            r_mo = corresponding_models[i]
+
+            cap = random.randint(*r_db.Capacity)
+            enc = random.randint(*r_db.Energy)
+
+            r = r_mo(cap, enc)
+
+            return r
+
+
+        rooms = []
+        while len(rooms) < length:
+            i = random.randint(0, len(av_rdbs))
+
+            room = init_room(i)
+            rooms.append(room)
+
+
+
 
 
     # def random_ship(self):

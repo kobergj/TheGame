@@ -16,6 +16,8 @@ import controller.generator.rooms as gro
 # Log
 import logging
 
+log = logging.getLogger('model')
+
 def produceUniverse(MaxCoordinates=[15, 15], MinCoordinates=[0, 0]):
     """Produces a Universe with the given Coordinates """
     universe = muv.Universe(MinCoordinates, MaxCoordinates)
@@ -177,7 +179,7 @@ def produceEnemy(Database, enemyInfo=None):
     for i in range(random.randint(1, 5)):
         good_to_loot = produceGood(Database)
 
-        enemy.loadCargo(good_to_loot)
+        enemy.addMoreGoods(good_to_loot)
 
     # Random Number
     i = random.randint(0, 100)
@@ -230,42 +232,42 @@ class randomProducer():
         self.db = database
 
     def __call__(self):
-        logging.info('Creating Player')
+        log.info('Creating Player')
         player = producePlayer(self.db.StartConfiguration.PlayerInfo)
 
-        logging.info('Generating Universe')
+        log.info('Generating Universe')
         universe = produceUniverse(self.db.StartConfiguration.MaxCoordinates,
                                    self.db.StartConfiguration.MinCoordinates)
 
-        logging.info('Craft Ship')
+        log.info('Craft Ship')
         startingShip = produceShip(self.db, self.db.StartConfiguration.StartingShipStats)
 
-        logging.info('Board Ship')
+        log.info('Board Ship')
         player.switchShip(startingShip)
 
-        logging.info('Set Starting Anomaly')
+        log.info('Set Starting Anomaly')
         startingAnomaly = produceAnomaly(self.db)
         universe.addAnomaly(startingAnomaly)
         player.travelTo(startingAnomaly.coordinates)
 
-        logging.info('Fill Universe')
+        log.info('Fill Universe')
         self.fill_universe(universe, self.db.StartConfiguration.NumberOfAnomalies)
 
         while not self.dead:
-            logging.info('Update Universe')
+            log.info('Update Universe')
             self.update(universe, player)
-            logging.info('Sending Models')
+            log.info('Sending Models')
             self.conn.send([universe, player])
-            logging.info('Awaiting Input')
+            log.info('Awaiting Input')
             change_function = self.conn.recv()
 
             if change_function is None:
                 break
 
-            logging.info('Executing Input')
+            log.info('Executing Input')
             change_function(universe, player)
 
-        logging.info('Model Producer Dead and gone')
+        log.info('Model Producer Dead and gone')
 
     def update(self, universe, player):
         if not universe.request_update:
@@ -329,9 +331,11 @@ class randomProducer():
     def killProducer(self):
         self.dead = True
 
+    ## Deprecated
+
     def producingFunction(self, Database, Universe):
 
-        logging.info('Start Model Producing')
+        log.info('Start Model Producing')
 
         while not self.dead:
             # Anomalies
@@ -366,4 +370,4 @@ class randomProducer():
                 # Put in Q
                 Universe.enemyQ.put(enemy)
 
-        logging.info('Model Producer dead and gone')
+        log.info('Model Producer dead and gone')

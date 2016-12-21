@@ -1,3 +1,5 @@
+import copy
+
 import logging
 
 import gameinfo_view as gv
@@ -8,35 +10,32 @@ import mainframe_view as mv
 log = logging.getLogger('view')
 
 class View:
+    # Where to store them best? 7   '01234567890'
+
     def __init__(self, database):
         self.view_db = database.TerminalView
 
-        main_window_len = database.StartConfiguration.Universe.MaxCoordinates[1]
-        main_window_height = database.StartConfiguration.Universe.MaxCoordinates[0]
-        self.main_window = Window(database.TerminalView, [main_window_len, main_window_height])
+        self.uvMatrix = self.drawMap(database.StartConfiguration)
+        self._uvMatrix = copy.deepcopy(self.uvMatrix)
 
-        stat_window_len = main_window_len / 2
-        stat_window_height = 3
-        self.stat_window = Window(self.view_db, [stat_window_len, stat_window_height])
-
-        self.window_len = main_window_len * self.main_window.point_len
+        self.point_len = len(self.view_db.MapIdentifiers['Empty'])
+        self.map_len = len(self.uvMatrix[0]) * self.point_len
 
     def __call__(self, view_model):
         log.info('Getting Windows Of %s' % view_model.__class__.__name__)
         windows, positions = mv.get_view(view_model, self.view_db)
 
         log.info('Inserting %s at %s' % (windows, positions))
-        self.main_window.insert(windows, positions)
-        self.stat_window.insert([sv.stat_view(view_model, db=self.view_db)], [[0, 0]])
+        self.window_inserter(windows, positions)
 
         # Game Frame
         ga_view = gv.gameinfo_view(view_model, db=self.view_db)
         # Stat Frame
-        pl_view = str(self.stat_window)
+        pl_view = sv.stat_view(view_model.player, db=self.view_db)
         # Anm Frame
         anm_view = iv.info_view(view_model.anomaly, db=self.view_db)
         # Universe Frame
-        uv_view = str(self.main_window)
+        uv_view = mv.mainframe_view(self.uvMatrix, db=self.view_db)
 
         log.info('Adding borders to %s' % [pl_view, anm_view, uv_view])
         complete_view = self.border(ga_view, pl_view, anm_view, uv_view, db=self.view_db)
@@ -47,7 +46,7 @@ class View:
         choice = raw_input()
         log.info('Player choose %s' % choice)
 
-        self.main_window.reset()
+        self.uvMatrix = copy.deepcopy(self._uvMatrix)
 
         while True:
             try:
@@ -56,7 +55,6 @@ class View:
                     return None
 
                 if choice == '':
-                    log.info('Player pressed ENTER.')
                     choice = 0
 
                 choice = int(choice)
@@ -79,14 +77,14 @@ class View:
         border_char = db.BorderChar
 
         def seperator():
-            sep = border_char * (self.window_len + 2)
+            sep = border_char * (self.map_len + 2)
             sep += '\n'
 
             return sep
 
         final_string = seperator()
 
-        while len(ga_frame) < self.window_len:
+        while len(ga_frame) < self.map_len:
             ga_frame += ' '
 
         final_string += border_char + ga_frame + border_char + '\n'
@@ -97,7 +95,7 @@ class View:
         for line in spl_player_frame:
             line_string = border_char + line
 
-            while len(line_string) <= self.window_len:
+            while len(line_string) <= self.map_len:
                 line_string += ' '
 
             line_string += border_char + '\n'
@@ -106,7 +104,7 @@ class View:
 
         final_string += seperator()
 
-        while len(an_frame) < self.window_len:
+        while len(an_frame) < self.map_len:
             an_frame += ' '
 
         final_string += border_char + an_frame + border_char + '\n'
@@ -121,42 +119,32 @@ class View:
 
         return final_string
 
+    def drawMap(self, startConfig):
+        maxCoordinates = startConfig.MaxCoordinates
+        minCoordinates = startConfig.MinCoordinates
 
-class Window:
-    def __init__(self, view_db, size):
-        self.view_db = view_db
+        universeExpansion_x = maxCoordinates[0] - minCoordinates[0]
+        universeExpansion_y = maxCoordinates[1] - minCoordinates[1]
 
-        rows = size[1]
-        fields = size[0]
-
-        self.matrix = self.initialize(rows, fields)
-        # self._matrix = copy.deepcopy(self.uvMatrix)
-
-        self.point_len = len(self.view_db.MapIdentifiers['Empty'][0])
-
-
-    def initialize(self, rownumber, fieldnumber):
         # VizUniverse Map
-        windowMatrix = list()
+        universeMatrix = list()
 
+        # Problems with negative Coordinates
         # Currently 2-Dims Only
-        for verticalSlice in range(rownumber):
+        for verticalSlice in range(universeExpansion_y):
             # Vertical Slices through Space
             verticalSlice = list()
 
-            for point_in_space in range(fieldnumber):
-                point_in_space = self.view_db.MapIdentifiers['Empty']
+            for point_in_space in range(universeExpansion_x):
+                point_in_space = [self.view_db.MapIdentifiers['Empty'], self.view_db.MapIdentifiers['Empty']]
 
                 verticalSlice.append(point_in_space)
 
-            windowMatrix.append(verticalSlice)
+            universeMatrix.append(verticalSlice)
 
-        return windowMatrix
+        return universeMatrix
 
-    def reset(self):
-        self.matrix = self.initialize(len(self.matrix), len(self.matrix[0]))
-
-    def insert(self, window_list, position_list):
+    def window_inserter(self, window_list, position_list):
 
         for i, window in enumerate(window_list):
             log.info('Get Position')
@@ -172,9 +160,9 @@ class Window:
             self.insert_window(matrix, [x_rng, y_rng])
 
 
-    def calculate_window_range(self, insertmatrix, position):
+    def calculate_window_range(self, matrix, position):
 
-        log.info('Needed Rows: %s, Needed Points: %s' % (len(insertmatrix), len(insertmatrix[0])))
+        log.info('Needed Rows: %s, Needed Points: %s' % (len(matrix), len(matrix[0])))
 
         log.info('Starting Coordinates %s' % position)
         anm_y = position[1]
@@ -185,24 +173,24 @@ class Window:
             anm_y += 1
 
         # Calculate End Row Index
-        end_row = anm_y + len(insertmatrix)
+        end_row = anm_y + len(matrix)
 
         # Fit in Map?
-        while end_row > len(self.matrix):
+        while end_row > len(self.uvMatrix):
             anm_y -= 1
-            end_row = anm_y + len(insertmatrix)
+            end_row = anm_y + len(matrix)
 
         # Should not happen
         while anm_x < 0:
             anm_x += 1
 
         # Calculate End Point Index
-        end_point = anm_x + len(insertmatrix[0])
+        end_point = anm_x + len(matrix[0])
 
         # Fit In Map?
-        while end_point > len(self.matrix[0]):
+        while end_point > len(self.uvMatrix[0]):
             anm_x -= 1
-            end_point = anm_x + len(insertmatrix[0])
+            end_point = anm_x + len(matrix[0])
 
         y_range = [anm_y, end_row]
         x_range = [anm_x, end_point]
@@ -227,7 +215,7 @@ class Window:
                     point_one = ' ' * self.point_len
 
                 log.info('Overwriting %s with %s [%s]' % (
-                                    self.matrix[map_y][map_x][0], point_one, [map_x, map_y])
+                                    self.uvMatrix[map_y][map_x][0], point_one, [map_x, map_y])
                                     )
 
                 try:
@@ -236,9 +224,9 @@ class Window:
                 except IndexError:
                     point_two = ' ' * self.point_len
 
-                log.info('Overwriting %s with %s' % (self.matrix[map_y][map_x][1], point_two))
+                log.info('Overwriting %s with %s' % (self.uvMatrix[map_y][map_x][1], point_two))
 
-                self.matrix[map_y][map_x] = [point_one, point_two]
+                self.uvMatrix[map_y][map_x] = [point_one, point_two]
 
                 matrix_x += 1
 
@@ -318,23 +306,4 @@ class Window:
         log.info('Matrix Generated: %s' % matrix)
         return matrix
 
-    def __str__(self):
-        """Returns Universe Map as String."""
-        windowstring = ''
-
-        for y, row in enumerate(self.matrix):
-            first_line = ''
-            second_line = ''
-
-            for x, point in enumerate(row):
-
-                log.debug('Drawing %s' % point)
-                first_line += point[0]
-                second_line += point[1]
-
-            windowstring += first_line + '\n' + second_line + '\n'
-
-        windowstring = windowstring[:-1]
-
-        return windowstring
 

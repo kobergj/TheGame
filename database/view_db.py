@@ -1,7 +1,9 @@
 
 
 class TerminalView:
-    MapIdentifiers = {'Empty':      '           ',
+    MapIdentifiers = {'Empty': [    '           ',
+                                    '           '
+                                ],
                       'Unknown':[   '           ',
                                     '     ?     ',
                                 ],
@@ -36,6 +38,21 @@ class TerminalView:
     Rooms:  %(currentRooms)s/%(maxRooms)s -> %(roomList)s"""
 
     BorderChar = '#'
+
+    FightTemplate =\
+"""     FIGHT
+    You:    Enemy:
+    %(pl_curDef)s/%(pl_maxDef)s     %(em_curDef)s/%(em_maxDef)s
+    %(pl_atk)s      %(em_atk)s
+    [ENTER] Attack   --   [1] Flee
+"""
+
+    VictoryTemplate =\
+""" Congrats. You won. Earned Credits: %(credits)s, Earned Goods: %(goods)s"""
+
+    InfoFrameTemplate =\
+"""     [ENTER] %(emyAmount) """
+
 
 
     # Anomaly Info View not yet configurable

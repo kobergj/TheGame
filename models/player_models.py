@@ -1,20 +1,20 @@
 import logging
 
+log = logging.getLogger('model')
 
-class Player():
-    def __init__(self, playerInfo):
+
+class Player:
+    def __init__(self, name, startcredits=0, ship=None):
         # Player Name
-        self.name = playerInfo['name']
+        self.name = name
         # Number Of Credits
-        self.credits = playerInfo['startingCredits']
+        self.credits = startcredits
         # Ship
-        self.currentShip = None
+        self.currentShip = ship
         # List of Old Ships
         self.deprecatedShips = list()
         # Current Postion
         self.currentPosition = None
-        # At Anomaly?
-        self.atAnomaly = False
         # Lets say you are alive at the beginning
         self.dead = False
 
@@ -43,5 +43,5 @@ class Player():
         self.currentShip = Ship
 
     def travelTo(self, Coordinates):
-        logging.info('Player travelled to %s' % str(Coordinates))
+        log.info('Player travelled to %s' % str(Coordinates))
         self.currentPosition = Coordinates

@@ -1,3 +1,5 @@
+import logger as h
+
 
 class Container:
     def __init__(self, capacity=0):
@@ -13,6 +15,7 @@ class Container:
     def __sub__(self, item):
         return self.manipulate(item, -1)
 
+    @h.Logger()
     def manipulate(self, item, amount):
         self._cap -= amount
 

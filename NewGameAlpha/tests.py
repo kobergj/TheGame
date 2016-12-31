@@ -2,10 +2,10 @@
 import unittest
 from nose_parameterized import parameterized, param
 
-import gamestats as c
+import container as c
 import models as m
 import actions as a
-import player as p
+import interfaces as i
 
 
 class ContainerTests(unittest.TestCase):
@@ -56,7 +56,6 @@ class ActionTests(unittest.TestCase):
     @parameterized.expand([
         param(
             item=m.Cargo('Some Cargo', 2),
-            player=p.Player('Some Player', None),
             startCredits=4,
             expectedCredits=6,
             expectedCargo={
@@ -65,7 +64,6 @@ class ActionTests(unittest.TestCase):
         ),
         param(
             item=m.Cargo('Some Cargo', 91),
-            player=p.Player('Some Player', None),
             startCredits=12,
             expectedCredits=103,
             expectedCargo={
@@ -73,7 +71,9 @@ class ActionTests(unittest.TestCase):
             },
         ),
     ])
-    def test_buyitem(self, item, player, startCredits, expectedCredits, expectedCargo):
+    def test_buyitem(self, item, startCredits, expectedCredits, expectedCargo):
+        player = i.PlayerInterface('')
+
         action = a.BuyItem('BuyItem', item)
 
         player.Credits(startCredits)
@@ -83,3 +83,19 @@ class ActionTests(unittest.TestCase):
         self.assertEqual(player.Credits(), expectedCredits)
 
         self.assertEqual(player.Cargo()._items, expectedCargo)
+
+    @parameterized.expand([
+        param(
+            action=a.BuyItem('', m.Cargo('Some Cargo', 3)),
+            credits=5,
+            expected=True,
+        ),
+    ])
+    def test_buyitem_available(self, action, credits, expected):
+        player = i.PlayerInterface('')
+
+        player.Credits(credits)
+
+        actual = action.available(player)
+
+        self.assertEqual(actual, expected)

@@ -30,3 +30,11 @@ class Cargo(BaseModel):
 class Currency(BaseModel):
     def __init__(self, name):
         self.name = name
+
+
+class Player(BaseModel):
+    def __init__(self, name, cargoInterface, creditsInterface, choiceInterface):
+        self.name = name
+        self.cargoInterface = cargoInterface
+        self.creditsInterface = creditsInterface
+        self.choiceInterface = choiceInterface

@@ -12,6 +12,10 @@ class Action:
         # For Ex
         return True
 
+    def available(self, player):
+        # Returns True if Action is available for player
+        return True
+
 
 # Action BuyItem
 class BuyItem(Action):
@@ -22,6 +26,14 @@ class BuyItem(Action):
         player.Cargo(item)
 
         return
+
+    def available(self, player):
+        item = self.context
+
+        if player.Credits() >= item.price:
+            return True
+
+        return False
 
 
 # Action Travel
@@ -39,5 +51,5 @@ class Travel(Action):
 # Action Quit
 class Quit(Action):
     def __call__(self, player):
-        player._ingamingmood = False
+        player.ingamingmood = False
         return False

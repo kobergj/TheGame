@@ -1,11 +1,11 @@
-import game_controller as gc
-import harbor_models as hm
-import terminal_view as tv
+import setup as h
+import interfaces as p
+import sys
 
 if __name__ == '__main__':
-    player = gc.Player('My Name', hm.Harbor('Safe Harbor'))
+    terminal = h.SetUp(sys.argv)
 
-    terminal = tv.Terminal()
+    player = p.PlayerInterface('My Name')
 
     while player:
         nextaction = terminal(player)

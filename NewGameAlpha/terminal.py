@@ -3,8 +3,6 @@ class Terminal:
     def __init__(self, config=None):
         self.choicemessage = 'Make Your Choice  -->  '
 
-        self._alive = True
-
     def __call__(self, player):
         controller = TerminalController(self.choicemessage)
 

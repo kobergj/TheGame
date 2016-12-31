@@ -15,7 +15,7 @@ class Container:
     def __sub__(self, item):
         return self.manipulate(item, -1)
 
-    @h.Logger()
+    @h.Logger('Manipulate Container')
     def manipulate(self, item, amount):
         self._cap -= amount
 

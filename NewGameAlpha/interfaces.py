@@ -1,13 +1,15 @@
 import actions as act
 import container as gs
+import factory as fac
 
 import models as m
+import logger as log
 
 CREDITCURRENCYNAME = "Credits"
-STARTHARBORNAME = "Safe Harbor"
 
-SAMPLECARGO = "Sample Cargo"
-SAMPLEPRICE = 12
+BUYMESSAGE = "Buy Cargo '%s'"
+TRAVELMESSAGE = "Travel to '%s'"
+QUITMESSAGE = "Quit Game"
 
 
 class PlayerInterface:
@@ -19,7 +21,9 @@ class PlayerInterface:
             choiceInterface=ChoiceInterface(),
         )
 
-        self._harbor = m.Harbor(STARTHARBORNAME)
+        self._harborfactory = fac.SampleHarborFactory()
+
+        self._harbor = self._harborfactory.RandomHarbor()
 
         self.ingamingmood = True
 
@@ -36,18 +40,20 @@ class PlayerInterface:
         return self._player.cargoInterface(cargo)
 
     def Choices(self):
-        harbor = self._harbor
-
-        return self._player.choiceInterface(harbor)
+        return self._player.choiceInterface(self)
 
     def CurrentHarbor(self):
         return self._harbor
+
+    def NextHarbor(self):
+        return self._harborfactory.RandomHarbor()
 
 
 class CargoInterface:
     def __init__(self):
         self._cargo = gs.Container()
 
+    @log.Logger('Call Cargo Interface')
     def __call__(self, cargo=None):
         if not cargo:
             return self._cargo
@@ -59,6 +65,7 @@ class CreditInterface:
     def __init__(self, startCredits=0):
         self._credits = gs.Container()
 
+    @log.Logger('Call Credit Interface')
     def __call__(self, amount=1):
         c = m.Currency(CREDITCURRENCYNAME)
         return self._credits.manipulate(c, amount)[1]
@@ -68,8 +75,23 @@ class ChoiceInterface:
     def __init__(self):
         self._choices = None
 
-    def __call__(self, harbor):
-        return [
-            act.BuyItem('Buy Item %s' % SAMPLECARGO, m.Cargo(SAMPLECARGO, SAMPLEPRICE)),
-            act.Quit('Quit Game', None)
-        ]
+    @log.Logger('Call Choices Interface')
+    def __call__(self, player):
+        harbor = player.CurrentHarbor()
+        actions = list()
+
+        # Items
+        for cargo in harbor.cargo:
+            action = act.BuyItem(BUYMESSAGE % str(cargo), cargo)
+
+            if action.available(player):
+                actions.append(action)
+
+        # Travel
+        dest = player.NextHarbor()
+        actions.append(act.Travel(TRAVELMESSAGE % str(dest), m.Space(dest)))
+
+        # Quit
+        actions.append(act.Quit(QUITMESSAGE, None))
+
+        return actions

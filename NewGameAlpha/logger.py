@@ -6,12 +6,13 @@ FUNCTIONDONELOG = "Function '%s' finished with result %s"
 
 
 class Logger:
-    def __init__(self, name=''):
-        self.logger = logging.getLogger(name)
+    def __init__(self, identifier, logger=''):
+        self.logger = logging.getLogger(logger)
+        self.identifier = identifier
 
     def __call__(self, func):
         log = self.logger
-        fn = func.__name__
+        fn = self.identifier
 
         def newfunc(*args, **kwargs):
             log.info(FUNCTIONUPLOG % (fn, args, kwargs))

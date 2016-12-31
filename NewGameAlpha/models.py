@@ -11,8 +11,9 @@ class BaseModel:
 
 
 class Harbor(BaseModel):
-    def __init__(self, name):
+    def __init__(self, name, cargo):
         self.name = name
+        self.cargo = cargo
 
 
 class Space(BaseModel):

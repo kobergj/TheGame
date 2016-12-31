@@ -5,11 +5,13 @@ class Terminal:
     def __init__(self, config=None):
         self.choicemessage = 'Make Your Choice  -->  '
 
-    @h.Logger()
+    @h.Logger('Call Terminal')
     def __call__(self, player):
         controller = TerminalController(self.choicemessage)
 
-        choices, harbor = player.Choices(), player.CurrentHarbor()
+        harbor = player.CurrentHarbor()
+
+        choices = player.Choices()
 
         with TerminalView(choices, harbor) as view:
             choice = controller(choices)
@@ -39,16 +41,16 @@ class TerminalView:
 
     def __exit__(self, type, value, tb):
         # Tear things down
-        print '\n' * 5
-        print ' -----  ----- ----- '
-        print '\n' * 5
+        print '\n'
+        print ' ----- ----- ----- ------'
+        print '\n'
 
 
 class TerminalController:
     def __init__(self, inputmessage):
         self.inputmessage = inputmessage
 
-    @h.Logger()
+    @h.Logger('Call Terminal Controller')
     def __call__(self, choicelist):
         numberofchoices = len(choicelist)
 

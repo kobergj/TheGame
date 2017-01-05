@@ -1,4 +1,4 @@
-import logger as h
+import helpers.logger as h
 
 
 class Container:
@@ -29,7 +29,7 @@ class Container:
 
         key = str(item)
         if key in self._items:
-            self._items[key][1] = self._items[key][1] + amount
+            self._items[key][1] += amount
         else:
             self._items[key] = [item, amount]
 

@@ -3,36 +3,24 @@ import container as c
 
 import random
 
-SAMPLECARGO = ["Sample Cargo", "Another Cargo"]
-SAMPLEHARBORS = ["Safe Harbor", "Even safer Harbor"]
-
-
-def SampleHarborFactory():
-    cf = CargoFactory(*SAMPLECARGO)
-
-    return HarborFactory(cf, *SAMPLEHARBORS)
-
 
 class HarborFactory:
-    def __init__(self, cargofactory, *harbornames):
+    def __init__(self, harbornames):
         self.harbornames = harbornames
-        self.cargofactory = cargofactory
 
-    def RandomHarbor(self):
+    def RandomHarbor(self, cargofactory):
         name = random.choice(self.harbornames)
-
-        pricefactory = PriceFactory([5, 10])
 
         num = random.randint(1, 4)
         cargocontainer = c.Container()
-        for cargo in self.cargofactory.RandomCargoList(num):
+        for cargo in cargofactory.RandomCargoList(num):
             cargocontainer + cargo
 
-        return m.Harbor(name, cargocontainer, pricefactory)
+        return m.Harbor(name, cargocontainer)
 
 
 class CargoFactory:
-    def __init__(self, *cargonames):
+    def __init__(self, cargonames):
         self.cargonames = cargonames
 
     def RandomCargo(self):

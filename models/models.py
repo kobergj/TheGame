@@ -10,17 +10,24 @@ class BaseModel:
         return not self.__eq__(other)
 
 
+class Action(BaseModel):
+    def __init__(self, name, options, execfunc):
+        self.name = name
+        self.options = options
+        self.execfunc = execfunc
+
+
 class Harbor(BaseModel):
-    def __init__(self, name, cargo, pricefactory):
+    def __init__(self, name, cargo):
         self.name = name
         self.cargo = cargo
-        self.pricefactory = pricefactory
 
 
-class Space(BaseModel):
-    def __init__(self, nextHarbor):
-        self.name = "Space"
-        self.destination = nextHarbor
+class Universe(BaseModel):
+    def __init__(self, name, harbornames, cargonames):
+        self.name = name
+        self.harbornames = harbornames
+        self.cargonames = cargonames
 
 
 class Cargo(BaseModel):

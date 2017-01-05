@@ -12,18 +12,23 @@ TRAVELMESSAGE = "Travel to '%s'"
 QUITMESSAGE = "Quit Game"
 
 
-class PlayerInterface:
+class LogicInterface:
     def __init__(self, playername):
-        self._player = m.Player(
-            name=playername,
-            cargoInterface=CargoInterface(),
-            creditsInterface=CreditInterface(),
-            choiceInterface=ChoiceInterface(),
-        )
+        player = m.Player(name=playername)
+        self._playerInterface = PlayerInterface(player)
 
-        self._harborfactory = fac.SampleHarborFactory()
+        space = m.Space()
+        self._spaceInterface = SpaceInterface(space)
 
-        self._harbor = self._harborfactory.RandomHarbor()
+        self._priceInterface = PriceInterface()
+
+
+class PlayerInterface:
+    def __init__(self, player):
+        self._player = player
+
+        self._cargoInterface = CargoInterface()
+        self._creditsInterface = CreditInterface()
 
         self.ingamingmood = True
 
@@ -34,19 +39,10 @@ class PlayerInterface:
         return self.ingamingmood
 
     def Credits(self, amount=0):
-        return self._player.creditsInterface(amount)
+        return self._creditsInterface(amount)
 
     def Cargo(self, cargo=None):
-        return self._player.cargoInterface(cargo)
-
-    def Choices(self):
-        return self._player.choiceInterface(self)
-
-    def CurrentHarbor(self):
-        return self._harbor
-
-    def NextHarbor(self):
-        return self._harborfactory.RandomHarbor()
+        return self._cargoInterface(cargo)
 
 
 class CargoInterface:
@@ -95,3 +91,40 @@ class ChoiceInterface:
         actions.append(act.Quit(QUITMESSAGE, None))
 
         return actions
+
+
+class SpaceInterface:
+    def __init__(self, space):
+        self._space = space
+        self._harborfactory = fac.SampleHarborFactory()
+
+        self.SwitchHarbor(self.NewHarbor())
+
+    def SwitchHarbor(self, harbor):
+        self._currentHarbor = harbor
+
+    def GetHarbor(self):
+        return self._currentHarbor
+
+    def NewHarbor(self):
+        return HarborInterface(self._harborfactory.RandomHarbor())
+
+
+class HarborInterface:
+    def __init__(self, harbor):
+        self._harbor = harbor
+
+    def IterateCargo(self):
+        for cargo in self._harbor.cargo:
+            yield cargo
+
+    def GetPrice(self, cargo):
+        return self._harbor.pricefactory(cargo)
+
+
+class PriceInterface:
+    def __init__(self):
+        self._priceFactory = fac.PriceFactory()
+
+    def __call__(self, item):
+        return self._priceFactory(item)

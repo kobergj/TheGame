@@ -11,9 +11,10 @@ class BaseModel:
 
 
 class Harbor(BaseModel):
-    def __init__(self, name, cargo):
+    def __init__(self, name, cargo, pricefactory):
         self.name = name
         self.cargo = cargo
+        self.pricefactory = pricefactory
 
 
 class Space(BaseModel):
@@ -34,8 +35,5 @@ class Currency(BaseModel):
 
 
 class Player(BaseModel):
-    def __init__(self, name, cargoInterface, creditsInterface, choiceInterface):
+    def __init__(self, name):
         self.name = name
-        self.cargoInterface = cargoInterface
-        self.creditsInterface = creditsInterface
-        self.choiceInterface = choiceInterface

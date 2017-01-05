@@ -9,11 +9,19 @@ class Container:
     def __getitem__(self, item):
         return self._items[str(item)]
 
+    def __iter__(self):
+        for item, amount in self._items.values():
+            if amount > 0:
+                yield item
+
     def __add__(self, item):
         return self.manipulate(item, 1)
 
     def __sub__(self, item):
         return self.manipulate(item, -1)
+
+    def __int__(self):
+        return self._cap
 
     @h.Logger('Manipulate Container')
     def manipulate(self, item, amount):

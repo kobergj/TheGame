@@ -1,7 +1,7 @@
 import player as p
 import universe as u
 
-import models as m
+import models.models as m
 
 PLAYERNAME = "Players Name"
 
@@ -10,37 +10,23 @@ TRAVELMESSAGE = "Travel to '%s'"
 QUITMESSAGE = "Quit Game"
 
 UNIVERSENAME = ["Pegasus"]
-SAMPLECARGO = ["Sample Cargo", "Another Cargo"]
-SAMPLEHARBORS = ["Safe Harbor", "Even safer Harbor"]
+SAMPLECARGO = [[m.Cargo("Sample Cargo"), 1], [m.Cargo("Another Cargo"), 1]]
+SAMPLEHARBORS = [[m.Harbor("Safe Harbor"), 1], [m.Harbor("Even safer Harbor"), 0]]
+
+STARTCURRENCY = [m.Currency("Credits"), 12]
 
 
 class LogicController:
-    def __init__(self):
-        player = m.Player(PLAYERNAME)
+    def __init__(self, player, universe):
         self._playerInterface = p.PlayerController(player)
 
-        universe = m.Universe(UNIVERSENAME, SAMPLEHARBORS, SAMPLECARGO)
-        self._universeInterface = u.UniverseController(universe)
+        self._universeController = u.UniverseController(universe)
 
         self._priceInterface = u.PriceController()
-
-    def CargoBuyOptions(self):
-        harbor = u.HarborController(self._universeInterface.GetHarbor())
-
-        options = list()
-        for cargo in harbor.IterateCargo():
-            price = self._priceInterface(cargo)
-            options.append((cargo, price))
-
-        def buy(i):
-            cargo, price = options[i]
-            self.TradeCargo(cargo, -price)
-
-        return m.Action(BUYMESSAGE, options, buy)
 
     def TradeCargo(self, cargo, credits):
         self._player.Credits(credits)
         self._player.AddCargo(cargo)
 
     def Travel(self, harbor):
-        self._universeInterface.SwitchHarbor(harbor)
+        self._universeInterface.Travel(harbor)

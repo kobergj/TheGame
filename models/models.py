@@ -1,3 +1,5 @@
+import implementations.container as c
+
 
 class BaseModel:
     def __str__(self):
@@ -9,31 +11,26 @@ class BaseModel:
     def __ne__(self, other):
         return not self.__eq__(other)
 
-
-class Action(BaseModel):
-    def __init__(self, name, options, execfunc):
-        self.name = name
-        self.options = options
-        self.execfunc = execfunc
+    def __hash__(self):
+        return hash(self.name)
 
 
 class Harbor(BaseModel):
-    def __init__(self, name, cargo):
+    def __init__(self, name, cargo=[]):
         self.name = name
-        self.cargo = cargo
+        self.cargo = c.Container(cargo)
 
 
 class Universe(BaseModel):
-    def __init__(self, name, harbornames, cargonames):
+    def __init__(self, name, harbors, cargos):
         self.name = name
-        self.harbornames = harbornames
-        self.cargonames = cargonames
+        self.harbors = c.Container(harbors)
+        self.cargos = c.Container(cargos)
 
 
 class Cargo(BaseModel):
-    def __init__(self, name, price=0):
+    def __init__(self, name):
         self.name = name
-        self.price = price
 
 
 class Currency(BaseModel):
@@ -42,5 +39,8 @@ class Currency(BaseModel):
 
 
 class Player(BaseModel):
-    def __init__(self, name):
+    def __init__(self, name, startCurrency=0):
         self.name = name
+
+        self.cargo = c.Container()
+        self.currency = c.Container(startCurrency)

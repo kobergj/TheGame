@@ -6,19 +6,15 @@ PRICERANGE = [5, 14]
 class UniverseController:
     def __init__(self, universe):
         self._universe = universe
-        self._harborfactory = fac.HarborFactory(universe.harbornames)
-        self._cargofactory = fac.CargoFactory(universe.cargonames)
 
-        self.SwitchHarbor(self.NewHarbor())
+    def Travel(self, harbor):
+        con = self._universe.harbors
+        for h, a in con:
+            if a > 0:
+                con - harbor
 
-    def SwitchHarbor(self, harbor):
-        self._currentHarbor = harbor
-
-    def GetHarbor(self):
-        return self._currentHarbor
-
-    def NewHarbor(self):
-        return self._harborfactory.RandomHarbor(self._cargofactory)
+            if h == harbor:
+                con + harbor
 
 
 class HarborController:

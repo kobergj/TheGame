@@ -1,4 +1,3 @@
-import terminal as t
 import logging as logging
 
 
@@ -10,5 +9,3 @@ def SetUp(commandlineargs):
         # format="[%(levelname)s] %(filename)s // %(funcName)s: %(message)s "
     )
     logging.critical('Logbook Initialized')
-
-    return t.Terminal()

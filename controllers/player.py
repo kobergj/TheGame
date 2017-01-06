@@ -1,5 +1,4 @@
 import helpers.logger as log
-import implementations.container as gs
 import models.models as m
 
 CREDITCURRENCYNAME = "Credits"
@@ -9,8 +8,8 @@ class PlayerController:
     def __init__(self, player):
         self._player = player
 
-        self._cargoController = CargoController()
-        self._currencyController = CurrencyController()
+        self._cargoController = CargoController(player.cargo)
+        self._currencyController = CurrencyController(player.currency)
 
     def Trade(self, credits=0, cargo=None):
         self._currencyController.TradeCredits(credits)
@@ -24,12 +23,12 @@ class PlayerController:
 
 
 class CargoController:
-    def __init__(self):
-        self._cargo = gs.Container()
+    def __init__(self, startCargo):
+        self._cargo = startCargo
 
     @log.Logger('Call Cargo Controller')
     def GetCargoAmount(self, item):
-        return self._cargo[item][1]
+        return self._cargo[item]
 
     def AddCargo(self, cargo):
         self._cargo + cargo
@@ -39,13 +38,13 @@ class CargoController:
 
 
 class CurrencyController:
-    def __init__(self):
-        self._credits = gs.Container()
+    def __init__(self, startCredits):
+        self._credits = startCredits
 
     @log.Logger('Call Credit Controller')
     def GetCredits(self):
         c = m.Currency(CREDITCURRENCYNAME)
-        return self._credits[c][1]
+        return self._credits[c]
 
     def TradeCredits(self, amount):
         c = m.Currency(CREDITCURRENCYNAME)

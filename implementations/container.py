@@ -2,15 +2,18 @@ import helpers.logger as h
 
 
 class Container:
-    def __init__(self, capacity=0):
+    def __init__(self, capacity=0, startItems=[]):
         self._cap = capacity
         self._items = dict()
 
+        for item, amount in startItems:
+            self.manipulate(item, amount)
+
     def __getitem__(self, item):
-        return self._items[str(item)]
+        return self._items[item]
 
     def __iter__(self):
-        for item, amount in self._items.values():
+        for item, amount in self._items.iteritems():
             if amount > 0:
                 yield item
 
@@ -27,10 +30,10 @@ class Container:
     def manipulate(self, item, amount):
         self._cap -= amount
 
-        key = str(item)
-        if key in self._items:
-            self._items[key][1] += amount
+        # key = str(item)
+        if item in self._items:
+            self._items[item] += amount
         else:
-            self._items[key] = [item, amount]
+            self._items[item] = amount
 
-        return self._items[key]
+        return item, self._items[item]

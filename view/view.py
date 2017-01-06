@@ -1,15 +1,21 @@
+import player as p
+import universe as u
+
 
 CONTINUE = "[ENTER] Continue"
 QUIT = "[q] Quit Game"
 
 
-class ViewInterface:
-    def __init__(self):
+class View:
+    def __init__(self, player, universe):
+        self._player = p.PlayerViewer(player)
+        self._universe = u.UniverseViewer(universe)
+
         self._stringer = Stringer()
         self._alive = True
 
-    def __call__(self, logicInterface):
-        buyoptions = logicInterface.CargoBuyOptions()
+    def __call__(self):
+        buyoptions = u.CargoBuyOptions()
 
         controller = Controller(buyoptions)
 

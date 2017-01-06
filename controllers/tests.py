@@ -2,7 +2,7 @@ import unittest
 from nose_parameterized import parameterized, param
 
 import models.models as m
-import player as p
+import controllers.player as p
 
 
 class PlayerControllerTests(unittest.TestCase):
@@ -11,27 +11,48 @@ class PlayerControllerTests(unittest.TestCase):
         param(
             item=m.Cargo('Some Cargo'),
             credits=-2,
-            startCredits=4,
+            startArgs=[
+                m.Player(''),
+                [],
+                4,
+            ],
             expectedCredits=2,
             expectedAmount=1
         ),
         param(
             item=m.Cargo('Some Cargo'),
             credits=91,
-            startCredits=12,
+            startArgs=[
+                m.Player(''),
+                [[m.Cargo('Some Cargo'), 11]],
+                12,
+            ],
             expectedCredits=103,
-            expectedAmount=-1
+            expectedAmount=10
+        ),
+        param(
+            item=m.Cargo('Some Cargo'),
+            credits=-11,
+            startArgs=[
+                m.Player(''),
+                [[m.Cargo('Another Cargo'), 99]],
+                12,
+            ],
+            expectedCredits=1,
+            expectedAmount=1
         ),
     ])
-    def test_trade(self, item, credits, startCredits, expectedCredits, expectedAmount):
-        player = p.PlayerController(m.Player(''))
-        player._currencyController.TradeCredits(startCredits)
+    def test_trade(self, item, credits, startArgs, expectedCredits, expectedAmount):
+        player = p.PlayerController(*startArgs)
 
         player.Trade(credits, item)
 
         self.assertEqual(player._currencyController.GetCredits(), expectedCredits)
 
-        self.assertEqual(player._cargoController.GetCargoAmount(item), expectedAmount)
+        actualAmount = player._cargoController._cargo[item]
+        self.assertEqual(actualAmount, expectedAmount)
+
+
 """
     @parameterized.expand([
         param(

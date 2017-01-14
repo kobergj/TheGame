@@ -1,19 +1,11 @@
 import player as p
 import universe as u
 
-import models.models as m
-
 PLAYERNAME = "Players Name"
 
 BUYMESSAGE = "Buy Cargo '%s' for %s"
 TRAVELMESSAGE = "Travel to '%s'"
 QUITMESSAGE = "Quit Game"
-
-UNIVERSENAME = ["Pegasus"]
-SAMPLECARGO = [[m.Cargo("Sample Cargo"), 1], [m.Cargo("Another Cargo"), 1]]
-SAMPLEHARBORS = [[m.Harbor("Safe Harbor"), 1], [m.Harbor("Even safer Harbor"), 0]]
-
-STARTCURRENCY = [m.Currency("Credits"), 12]
 
 
 class LogicController:

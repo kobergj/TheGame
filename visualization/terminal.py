@@ -1,6 +1,4 @@
-import player as p
-import universe as u
-
+import strviz as s
 
 CONTINUE = "[ENTER] Continue"
 BUYMESSAGE = "[%s] Buy Cargo '%s'"
@@ -10,6 +8,10 @@ QUIT = "[q] Quit Game"
 class View:
     def __init__(self):
         self._alive = True
+
+        def extractBuyInfo(info):
+            return info[0], info[1]
+        self._buystringer = s.RegistryStringer(extractBuyInfo, BUYMESSAGE)
 
     def __nonzero__(self):
         return self._alive

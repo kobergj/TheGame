@@ -7,11 +7,20 @@ class PlayerViewer:
     def __init__(self, player):
         self._player = player
 
-        self.CargoViewer = CargoViewer(player.cargo)
-        self.CurrencyViewer = CurrencyViewer(player.currency)
+        self._cargoViewer = CargoViewer(player.cargo)
+        self._currencyViewer = CurrencyViewer(player.currency)
 
     def Name(self):
         return self._player.name
+
+    def GetCargo(self):
+        return self._cargoViewer.GetAll()
+
+    def GetCargoAmount(self, cargo):
+        return self._cargoViewer.GetCargoAmount(cargo)
+
+    def GetCredits(self):
+        return self._currencyViewer.GetCreditAmount()
 
 
 class CargoViewer:

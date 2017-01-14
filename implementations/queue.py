@@ -1,0 +1,29 @@
+
+
+class RefillingQueue:
+    def __init__(self, factory, cache=0):
+        self._lifeline = list()
+        self._factory = factory
+        self._current = factory()
+
+        for _ in range(cache):
+            self.Add(factory())
+
+    def Get(self, amount=1):
+        yield self.Current()
+        for i in range(1, amount):
+            yield self.Shift()
+
+    def LookUp(self, index=0):
+        return self._lifeline[:index]
+
+    def Shift(self):
+        self.Add(self._factory())
+        self._current = self._lifeline.pop(0)
+        return self.Current()
+
+    def Current(self):
+        return self._current
+
+    def Add(self, item):
+        self._lifeline.append(item)

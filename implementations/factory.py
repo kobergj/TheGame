@@ -1,20 +1,23 @@
-import models as m
-import container as c
+import models.models as m
+import helpers.logger as log
 
 import random
 
 
 class HarborFactory:
-    def __init__(self, harbornames):
+    def __init__(self, harbornames, cargofactory):
         self.harbornames = harbornames
+        self.cargofactory = cargofactory
 
-    def RandomHarbor(self, cargofactory):
+    @log.Logger('Random Harbor')
+    def RandomHarbor(self):
         name = random.choice(self.harbornames)
 
         num = random.randint(1, 4)
-        cargocontainer = c.Container()
-        for cargo in cargofactory.RandomCargoList(num):
-            cargocontainer + cargo
+        cargocontainer = list()
+        for cargo in self.cargofactory.RandomCargoList(num):
+            item = [cargo, 1]
+            cargocontainer.append(item)
 
         return m.Harbor(name, cargocontainer)
 
@@ -23,11 +26,13 @@ class CargoFactory:
     def __init__(self, cargonames):
         self.cargonames = cargonames
 
+    @log.Logger('Random Cargo')
     def RandomCargo(self):
         name = random.choice(self.cargonames)
         cargo = m.Cargo(name)
         return cargo
 
+    @log.Logger('Random Cargo List')
     def RandomCargoList(self, length):
         for _ in range(length):
             yield self.RandomCargo()

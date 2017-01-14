@@ -1,29 +1,29 @@
 import implementations.factory as fac
 
 PRICERANGE = [5, 14]
+HARBORCONTROLLERCACHE = 5
 
 
 class UniverseController:
     def __init__(self, universe):
         self._universe = universe
 
+        self._destinationController = DestinationController(universe.harbors)
+
     def Travel(self, harbor):
-        con = self._universe.harbors
-        for h, a in con:
-            if a > 0:
-                con - harbor
+        return self._destinationController.Travel(harbor)
 
+
+class DestinationController:
+    def __init__(self, harbors):
+        self._harbors = harbors
+        self._current = harbors.Current()
+
+    def Travel(self, harbor):
+        while True:
+            h = self._harbors.Get()
             if h == harbor:
-                con + harbor
-
-
-class HarborController:
-    def __init__(self, harbor):
-        self._harbor = harbor
-
-    def IterateCargo(self):
-        for cargo in self._harbor.cargo:
-            yield cargo
+                break
 
 
 class PriceController:

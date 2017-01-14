@@ -1,4 +1,7 @@
 import implementations.container as c
+import implementations.queue as q
+
+QUEUECAP = 5
 
 
 class BaseModel:
@@ -16,16 +19,15 @@ class BaseModel:
 
 
 class Harbor(BaseModel):
-    def __init__(self, name, cargo=[]):
+    def __init__(self, name, cargo):
         self.name = name
-        self.cargo = c.Container(cargo)
+        self.cargo = c.Container(startItems=cargo)
 
 
 class Universe(BaseModel):
-    def __init__(self, name, harbors, cargos):
+    def __init__(self, name, harborfactory):
         self.name = name
-        self.harbors = c.Container(harbors)
-        self.cargos = c.Container(cargos)
+        self.harbors = q.RefillingQueue(harborfactory, cache=QUEUECAP)
 
 
 class Cargo(BaseModel):

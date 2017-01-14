@@ -13,8 +13,6 @@ class PlayerControllerTests(unittest.TestCase):
             credits=-2,
             startArgs=[
                 m.Player(''),
-                [],
-                4,
             ],
             expectedCredits=2,
             expectedAmount=1
@@ -24,8 +22,6 @@ class PlayerControllerTests(unittest.TestCase):
             credits=91,
             startArgs=[
                 m.Player(''),
-                [[m.Cargo('Some Cargo'), 11]],
-                12,
             ],
             expectedCredits=103,
             expectedAmount=10
@@ -35,8 +31,6 @@ class PlayerControllerTests(unittest.TestCase):
             credits=-11,
             startArgs=[
                 m.Player(''),
-                [[m.Cargo('Another Cargo'), 99]],
-                12,
             ],
             expectedCredits=1,
             expectedAmount=1

@@ -2,9 +2,14 @@ import player as p
 import universe as u
 
 
-CONTINUE = "[ENTER] Continue"
-BUYMESSAGE = "[%s] Buy Cargo '%s'"
-QUIT = "[q] Quit Game"
+STATSTEMPLATE = """
+    -- Welcome To %s --
+[Credits] %s  [Cargo] %s
+[ENTER] Continue  [q] Quit Game
+"""
+
+BUYMESSAGE = "[%s] Buy Cargo '%s' for %s Credits"
+TRAVELMESSAGE = "[%s] Travel to '%s'"
 
 
 class View:
@@ -14,32 +19,38 @@ class View:
     def __nonzero__(self):
         return self._alive
 
-    def BuyOptions(self, buyreg):
+    def __call__(self, reg):
+        con = Controller(reg)
 
-        controller = Controller(buyreg)
+        s = Stringer(reg["0"].Unpack())
+        for key, _ in reg:
+            if key != "0":
+                s.AddLine(reg[key].Unpack(key))
 
-        stringer = Stringer()
-        stringer.AddLine("You are at %s" % '')
-        stringer.AddLine(CONTINUE)
-        stringer.AddBuyAction(buyreg)
-        stringer.AddLine(QUIT)
+        c, self._alive = con(str(s))
 
-        result, self._alive = controller(str(stringer))
+        reg(c)
 
-        return result
+
+class Info:
+    def __init__(self, template, *args):
+        self._template = template
+        self._args = args
+
+    def Unpack(self, key=None):
+        allargs = []
+        if key:
+            allargs.append(key)
+        allargs.extend(a for a in self._args)
+        return self._template.format(*allargs)
 
 
 class Stringer:
-    def __init__(self):
-        self._string = ""
+    def __init__(self, start):
+        self._string = start
 
     def __str__(self):
         return self._string
-
-    def AddBuyAction(self, buyreg):
-        for key, info in buyreg:
-            line = BUYMESSAGE % (key, info)
-            self.AddLine(line)
 
     def AddLine(self, string):
         self._string += "\n"
@@ -47,17 +58,31 @@ class Stringer:
 
 
 class Controller:
-    def __init__(self, buyreg):
-        self._buyreg = buyreg
+    def __init__(self, reg):
+        self._validator = Validator(reg)
 
     def __call__(self, info):
         print info
-        c = None
 
-        while c not in self._buyreg:
+        c = None
+        while not self._validator(c):
             c = raw_input()
 
             if c == "q":
                 return None, False
 
-        return self._buyreg(c), True
+            if c == "":
+                return "0", True
+
+        return c, True
+
+
+class Validator:
+    def __init__(self, accepted):
+        self._accepted = accepted
+
+    def __call__(self, candidate):
+        if candidate in self._accepted:
+            return True
+
+        return False

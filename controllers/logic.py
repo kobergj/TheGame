@@ -10,15 +10,14 @@ QUITMESSAGE = "Quit Game"
 
 class LogicController:
     def __init__(self, player, universe):
-        self._playerInterface = p.PlayerController(player)
+        self._player = p.PlayerController(player)
 
-        self._universeController = u.UniverseController(universe)
+        self._universe = u.UniverseController(universe)
 
         self._priceInterface = u.PriceController()
 
     def TradeCargo(self, cargo, credits):
-        self._player.Credits(credits)
-        self._player.AddCargo(cargo)
+        self._player.Trade(credits, cargo)
 
     def Travel(self, harbor):
-        self._universeInterface.Travel(harbor)
+        self._universe.Travel(harbor)

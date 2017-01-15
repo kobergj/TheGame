@@ -41,8 +41,8 @@ class Currency(BaseModel):
 
 
 class Player(BaseModel):
-    def __init__(self, name, startCurrency=0):
+    def __init__(self, name, startCurrency):
         self.name = name
 
         self.cargo = c.Container()
-        self.currency = c.Container(startCurrency)
+        self.currency = c.Container(startItems=startCurrency)

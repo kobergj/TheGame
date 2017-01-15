@@ -5,6 +5,7 @@ from nose_parameterized import parameterized, param
 import container as c
 import queue as q
 import registry as r
+import book as b
 
 import models.models as m
 
@@ -110,7 +111,7 @@ class RegistryTests(unittest.TestCase):
         ),
         param(
             info='Another Info',
-            func=lambda x, y: x+y,
+            func=lambda x, y: x + y,
             fargs=[11, 23],
             fkwargs={},
             expinfo='Another Info',
@@ -128,6 +129,29 @@ class RegistryTests(unittest.TestCase):
         self.assertEqual(reg(key), expfresult)
 
 
+class BookTests(unittest.TestCase):
+    @parameterized.expand([
+        param(
+            pages=['One', 'Two', 'Three'],
+            turns=1,
+            expectedContent='Two',
+        ),
+        param(
+            pages=['One', 'Two', 'Three'],
+            turns=2,
+            expectedContent='One',
+        ),
+        param(
+            pages=['One', 'Two', 'Three'],
+            turns=3,
+            expectedContent='Three',
+        ),
+    ])
+    def test_turnpage(self, pages, turns, expectedContent):
+        book = b.Book(*pages)
 
+        # Test
+        for _ in range(turns):
+            book.TurnPage()
 
-
+        self.assertEqual(book.Read(), expectedContent)

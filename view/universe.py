@@ -7,15 +7,13 @@ class UniverseViewer:
         self._harborViewer = HarborViewer(universe.harbors)
 
     def CurrentHarborCargo(self):
-        for c in self._harborViewer.GetCargoList():
-            price = 0  # Some price Interface Magic
-            yield c, price
+        return self._harborViewer.GetCargoList()
 
     def CurrentHarborName(self):
         return self._harborViewer.Name()
 
     def Destinations(self, amount):
-        return self._harborViewer.Destinations()
+        return self._harborViewer.Destinations(amount)
 
 
 class HarborViewer:
@@ -27,7 +25,8 @@ class HarborViewer:
 
     @log.Logger('Get Cargo List')
     def GetCargoList(self):
-        return list(iter(self._current().cargo))
+        for cargo in self._current().cargo:
+            yield cargo
 
     def Destinations(self, amount):
         return self._harbors.LookUp(amount)

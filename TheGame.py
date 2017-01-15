@@ -11,7 +11,7 @@ UNIVERSENAME = ["Pegasus"]
 SAMPLECARGO = ["Sample Cargo", "Another Cargo"]
 SAMPLEHARBORS = ["Safe Harbor", "Even safer Harbor"]
 
-STARTCURRENCY = [m.Currency("Credits"), 12]
+STARTCURRENCY = [[m.Currency("Credits"), 12]]
 
 
 if __name__ == '__main__':
@@ -30,4 +30,4 @@ if __name__ == '__main__':
 
     while game:
         # Lean Back and relax
-        pass
+        game()

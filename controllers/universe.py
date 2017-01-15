@@ -20,10 +20,11 @@ class DestinationController:
         self._current = harbors.Current()
 
     def Travel(self, harbor):
-        while True:
-            h = self._harbors.Get()
-            if h == harbor:
-                break
+        t = True
+        while t:
+            for h in self._harbors.Get():
+                if h == harbor:
+                    t = False
 
 
 class PriceController:

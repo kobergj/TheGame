@@ -1,7 +1,8 @@
-import implementations.factory as fac
+import helpers.logger as log
 
-PRICERANGE = [5, 14]
+
 HARBORCONTROLLERCACHE = 5
+DESTINATIONS = 3
 
 
 class UniverseController:
@@ -19,17 +20,13 @@ class DestinationController:
         self._harbors = harbors
         self._current = harbors.Current()
 
+    @log.Logger("Call Destination Controller")
     def Travel(self, harbor):
         t = True
         while t:
-            for h in self._harbors.Get():
+            for h in self._harbors.Get(DESTINATIONS):
+                print h, harbor
                 if h == harbor:
+                    self._current = self._harbors.Current()
                     t = False
-
-
-class PriceController:
-    def __init__(self):
-        self._priceFactory = fac.PriceFactory(PRICERANGE)
-
-    def __call__(self, item):
-        return self._priceFactory.RandomPrice(item)
+                    break

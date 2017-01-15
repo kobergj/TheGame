@@ -14,7 +14,8 @@ class PlayerViewer:
         return self._player.name
 
     def GetCargo(self):
-        return self._cargoViewer.GetAll()
+        for cargo in self._cargoViewer.GetAll():
+            yield cargo, self.GetCargoAmount(cargo)
 
     def GetCargoAmount(self, cargo):
         return self._cargoViewer.GetCargoAmount(cargo)
@@ -29,13 +30,13 @@ class CargoViewer:
 
     def GetAll(self):
         cargo = list()
-        for c, _ in self._cargo:
+        for c in self._cargo:
             cargo.append(c)
 
         return cargo
 
     def GetCargoAmount(self, key):
-        return self._cargo[key][1]
+        return self._cargo[key]
 
 
 class CurrencyViewer:

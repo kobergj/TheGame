@@ -1,7 +1,10 @@
 import universe as u
 import player as p
 
+import random
+
 NUMBEROFDESTINATIONS = 3
+PRICERANGE = [5, 14]
 
 
 class LogicViewer:
@@ -16,15 +19,17 @@ class LogicViewer:
         return self._player.GetCredits()
 
     def Cargo(self):
-        return str(self._player.GetCargo())
+        return self._player.GetCargo()
 
     def CargoBuyOptions(self):
         for cargo in self._universe.CurrentHarborCargo():
-            price = 0  # self._priceInterface(cargo)
-            yield cargo, price
+            yield cargo, self.Price(cargo)
 
     def TravelOptions(self):
         return self._universe.Destinations(NUMBEROFDESTINATIONS)
+
+    def Price(self, item):
+        return random.randint(*PRICERANGE)  # Only Temporary, should be replace by Logic
 
 
 class StrIntKeys:

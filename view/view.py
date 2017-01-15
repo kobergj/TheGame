@@ -1,5 +1,4 @@
-import player as p
-import universe as u
+import helpers.logger as log
 
 
 STATSTEMPLATE = """
@@ -19,6 +18,7 @@ class View:
     def __nonzero__(self):
         return self._alive
 
+    @log.Logger("Call Visualizing")
     def __call__(self, reg):
         con = Controller(reg)
 
@@ -29,7 +29,7 @@ class View:
 
         c, self._alive = con(str(s))
 
-        reg(c)
+        return reg(c)
 
 
 class Info:
@@ -61,6 +61,7 @@ class Controller:
     def __init__(self, reg):
         self._validator = Validator(reg)
 
+    @log.Logger("Call Terminal Controller")
     def __call__(self, info):
         print info
 

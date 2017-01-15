@@ -8,8 +8,10 @@ import sys
 PLAYERNAME = "Players Name"
 
 UNIVERSENAME = ["Pegasus"]
-SAMPLECARGO = ["Sample Cargo", "Another Cargo"]
-SAMPLEHARBORS = ["Safe Harbor", "Even safer Harbor"]
+SAMPLECARGO = ['Gin', 'Tobacco', 'Oil', 'BloodySweaters', 'Meat', 'Airplanes', 'Potatoes']
+SAMPLEHARBORS = ['Earth', 'Venus', 'Mars', 'SecretPlanet', 'A3X-424', 'Eden', 'Volcan', 'Endar',
+                 'Uranus', 'BingoPlanet', 'CrappyWorld', 'CC2', 'LaCathedral', 'TravelersInn',
+                 'GlibberStation', 'MaggysDiner', 'Nine-Ty-Nine']
 
 STARTCURRENCY = [[m.Currency("Credits"), 12]]
 

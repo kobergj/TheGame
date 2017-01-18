@@ -25,7 +25,6 @@ class DestinationController:
         t = True
         while t:
             for h in self._harbors.Get(DESTINATIONS):
-                print h, harbor
                 if h == harbor:
                     self._current = self._harbors.Current()
                     t = False

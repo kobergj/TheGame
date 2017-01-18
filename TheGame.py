@@ -30,6 +30,6 @@ if __name__ == '__main__':
         )
     )
 
-    while game:
+    while True:
         # Lean Back and relax
         game()

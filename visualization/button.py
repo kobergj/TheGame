@@ -2,10 +2,6 @@ import switch as s
 import fabric as f
 
 
-BLACK, WHITE = (0, 0, 0), (255, 255, 255)
-SOME, SOMEELSE = (123, 12, 178), (30, 200, 96)
-
-
 class Button:
     def __init__(self, text, rect, colswitch):
         self._text = text

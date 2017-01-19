@@ -3,7 +3,7 @@ import player as p
 
 import random
 
-NUMBEROFDESTINATIONS = 3
+NUMBEROFDESTINATIONS = 1
 PRICERANGE = [5, 14]
 
 
@@ -11,6 +11,7 @@ class LogicViewer:
     def __init__(self, player, universe):
         self._player = p.PlayerViewer(player)
         self._universe = u.UniverseViewer(universe)
+        self._priceregistry = PriceRegistry(PRICERANGE)
 
     def HarborName(self):
         return self._universe.CurrentHarborName()
@@ -29,13 +30,19 @@ class LogicViewer:
         return self._universe.Destinations(NUMBEROFDESTINATIONS)
 
     def Price(self, item):
-        return random.randint(*PRICERANGE)  # Only Temporary, should be replace by Logic
+        return self._priceregistry.Get(self._universe.CurrentHarborName(), item)
 
 
-class StrIntKeys:
-    def __init__(self, startIndex=-1):
-        self._index = startIndex
+class PriceRegistry:
+    def __init__(self, pricerange):
+        self._prices = {}
+        self._pricerange = pricerange
 
-    def __call__(self, info):
-        self._index += 1
-        return str(self._index)
+    def Get(self, harbor, cargo):
+        if harbor not in self._prices:
+            self._prices[harbor] = {}
+
+        if cargo not in self._prices[harbor]:
+            self._prices[harbor][cargo] = random.randint(*self._pricerange)
+
+        return self._prices[harbor][cargo]

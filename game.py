@@ -4,30 +4,26 @@ import implementations.registry as r
 import implementations.book as b
 
 import visualization.button as but
-import visualization.slide as v
+import visualization.view as v
 import visualization.switch as s
 
 
-STATSTEMPLATE = """
-    -- Welcome To {} --
-[Credits] {}  [Cargo] {}
-[ENTER] Continue  [q] Quit Game
-"""
-
 WELCOME = " -- Welcome To {} -- "
 CREDITS = "[Credits] {}"
-CARGO = "[Cargo] "
 CONTINUE = "[ENTER] Continue"
 
-CARGOTEMPLATE = "{}: {} (Sell for {})"
-NOCARGO = "[...]"
+CARGOTEMPLATE = "   {}: {} (Sell for {})"
+CARGO = "[Cargo] "
+NOCARGO = "[Cargo] ..."
 
 BUYMESSAGE = "Buy Cargo '{}' for {} Credits"
-SELLMESSAGE = "     Sell Cargo '{}' for {} Credits"
-TRAVELMESSAGE = "Travel to '{}'"
+TRAVELMESSAGE = "[CONTINUE] Next Stop: {}"
+
+FONTNAME = 'arial'
+FONTSIZE = 20
 
 WINDOWSIZE = 600, 400
-BUTTONSIZE = 600, 50
+BUTTONSIZE = 600, 30
 
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
 SOME, SOMEELSE = (123, 12, 178), (30, 200, 96)
@@ -51,16 +47,14 @@ class Game:
     def __init__(self, player, universe):
         self._logic = c.LogicController(player, universe)
         self._view = vl.LogicViewer(player, universe)
-        self._viz = v.View(WINDOWSIZE, BUTTONSIZE)
+        self._viz = v.View(WINDOWSIZE, BUTTONSIZE, FONTNAME, FONTSIZE, WHITE)
 
-        self._gamebook = b.Book(self.TravelInteraction, self.BuyInteraction)
+        self._gamebook = b.Book(self.BuyInteraction)
 
         self._showcargo = False
 
     # @log.Logger("Call Main Loop")
     def __call__(self):
-        self._viz.Handle()
-
         reg = ButtonRegistry(WINDOWSIZE, BUTTONSIZE)
 
         # Welcome part
@@ -74,8 +68,8 @@ class Game:
         # Info about Cargo
         reg = self.CargoInfo(reg)
 
-        # Next Slide
-        reg.RegisterClickable(CONTINUE, self._gamebook.TurnPage)
+        # Next Harbor
+        self.TravelInteraction(reg)
 
         # Options
         reg = self._gamebook.Read()(reg)

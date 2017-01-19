@@ -14,7 +14,7 @@ class RefillingQueue:
         for i in range(1, amount):
             yield self.Shift()
 
-    def LookUp(self, index=0):
+    def LookUp(self, index=1):
         return self._lifeline[:index]
 
     def Shift(self):

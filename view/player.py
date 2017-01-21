@@ -7,7 +7,7 @@ class PlayerViewer:
     def __init__(self, player):
         self._player = player
 
-        self._cargoViewer = CargoViewer(player.cargo)
+        self._cargoViewer = CargoViewer(player.cargo, player.cargocap)
         self._currencyViewer = CurrencyViewer(player.currency)
 
     def Name(self):
@@ -23,10 +23,14 @@ class PlayerViewer:
     def GetCredits(self):
         return self._currencyViewer.GetCreditAmount()
 
+    def FreeCargoSpace(self):
+        return self._cargoViewer.FreeSpace()
+
 
 class CargoViewer:
-    def __init__(self, cargo):
+    def __init__(self, cargo, cap):
         self._cargo = cargo
+        self._cap = cap
 
     def GetAll(self):
         cargo = list()
@@ -37,6 +41,9 @@ class CargoViewer:
 
     def GetCargoAmount(self, key):
         return self._cargo[key]
+
+    def FreeSpace(self):
+        return self._cap - self._cargo.Length
 
 
 class CurrencyViewer:

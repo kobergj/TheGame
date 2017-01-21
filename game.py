@@ -6,7 +6,7 @@ import visualization.fabric as f
 
 
 WELCOME = " -- Welcome To {} -- "
-CREDITS = "[Credits] {}"
+STATS = "[Credits] {} [Free Cargo Space] {}"
 CONTINUE = "[ENTER] Continue"
 
 SELLTEMPLATE = "   {}: {} (Sell for {})"
@@ -17,7 +17,7 @@ BUYTEMPLATE = "{} (Buy for {})   "
 BUY = "[Buy] "
 NOBUY = "... [BUY] "
 
-TRAVELMESSAGE = "[CONTINUE] Next Stop: {}"
+TRAVELMESSAGE = "Next Stop: {} (Travel for {})"
 
 FONTNAME = 'arial'
 FONTSIZE = 20
@@ -42,7 +42,7 @@ class Game:
         self._viz.Register(f.TOPMID, txt, None)
 
         # Info about Credits
-        txt = CREDITS.format(self._view.Credits())
+        txt = STATS.format(self._view.Credits(), self._view.FreeCargoSpace())
         self._viz.Register(f.TOPMID, txt, None)
 
         # Info about Cargo
@@ -57,8 +57,14 @@ class Game:
 
     def TravelInteraction(self):
         for harbor in self._view.TravelOptions():
-            info = TRAVELMESSAGE.format(harbor.name)
-            self._viz.Register(f.TOPMID, info, self._logic.Travel, harbor)
+            price = self._view.TravelPrice(harbor)
+            info = TRAVELMESSAGE.format(harbor.name, price)
+
+            trfunc = self._logic.Travel
+            if self._view.Credits() - price < 0:
+                trfunc = None
+
+            self._viz.Register(f.TOPMID, info, trfunc, harbor, price)
 
         return
 
@@ -91,10 +97,17 @@ class Game:
 
         self._viz.Register(f.BOTTOMRIGHT, BUY, expand)
         for cargo, price in self._view.CargoBuyOptions():
+
+            bfunc = self._logic.TradeCargo
+            if self._view.FreeCargoSpace() <= 0:
+                bfunc = None
+            if self._view.Credits() - price < 0:
+                bfunc = None
+
             self._viz.Register(
                 f.BOTTOMRIGHT,
                 BUYTEMPLATE.format(cargo, price),
-                self._logic.TradeCargo,
+                bfunc,
                 cargo, -price
             )
 

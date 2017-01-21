@@ -9,11 +9,11 @@ class LogicController:
 
         self._universe = u.UniverseController(universe)
 
-        # self._priceInterface = u.PriceController()
-
     def TradeCargo(self, cargo, credits):
         self._player.Trade(credits, cargo)
 
     @log.Logger("Call Logic Controller")
-    def Travel(self, harbor):
-        self._universe.Travel(harbor)
+    def Travel(self, harbor, price):
+        success = self._player.Trade(-price)
+        if success:
+            self._universe.Travel(harbor)

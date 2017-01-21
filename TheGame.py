@@ -14,6 +14,7 @@ SAMPLEHARBORS = ['Earth', 'Venus', 'Mars', 'SecretPlanet', 'A3X-424', 'Eden', 'V
                  'GlibberStation', 'MaggysDiner', 'Nine-Ty-Nine']
 
 STARTCURRENCY = [[m.Currency("Credits"), 12]]
+CARGOCAPACITY = 5
 
 
 if __name__ == '__main__':
@@ -23,6 +24,7 @@ if __name__ == '__main__':
         player=m.Player(
             name=PLAYERNAME,
             startCurrency=STARTCURRENCY,
+            cargocap=CARGOCAPACITY,
         ),
         universe=m.Universe(
             name=UNIVERSENAME,

@@ -5,6 +5,7 @@ import random
 
 NUMBEROFDESTINATIONS = 1
 PRICERANGE = [5, 14]
+TRAVELPRICE = 1
 
 
 class LogicViewer:
@@ -32,6 +33,12 @@ class LogicViewer:
 
     def Price(self, item):
         return self._priceregistry.Get(self._universe.CurrentHarborName(), item)
+
+    def TravelPrice(self, harbor):
+        return TRAVELPRICE
+
+    def FreeCargoSpace(self):
+        return self._player.FreeCargoSpace()
 
 
 class PriceRegistry:

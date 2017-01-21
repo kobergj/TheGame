@@ -2,8 +2,8 @@ import helpers.logger as h
 
 
 class Container:
-    def __init__(self, capacity=0, startItems=[]):
-        self._cap = capacity
+    def __init__(self, startItems=[]):
+        self.Length = 0
         self._items = dict()
 
         for item, amount in startItems:
@@ -28,7 +28,7 @@ class Container:
 
     @h.Logger('Manipulate Container')
     def manipulate(self, item, amount):
-        self._cap -= amount
+        self.Length += amount
 
         # key = str(item)
         if item in self._items:

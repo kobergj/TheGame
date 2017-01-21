@@ -21,6 +21,8 @@ class PlayerController:
             if credits > 0:
                 self._cargoController.RemoveCargo(cargo)
 
+        return True
+
 
 class CargoController:
     def __init__(self, startCargo):

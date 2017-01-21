@@ -1,39 +1,22 @@
-import switch as s
-import fabric as f
 
 
 class Button:
-    def __init__(self, text, rect, colswitch):
-        self._text = text
+    def __init__(self, txtswitch, colswitch, rect, txtcordfunc):
         self._rect = rect
-        self._colswitch = s.MouseStateSwitch(self._rect, colswitch)
+        self._colswitch = colswitch
+        self._textswitch = txtswitch
+
+        self.TextCoordinates = txtcordfunc
 
     def Rect(self):
-        return self._rect
+        col = self._colswitch(self._rect)
+        return self._rect, col
 
     def Text(self):
-        return self._text
-
-    def Color(self, mouse):
-        return self._colswitch(mouse)
+        return self._textswitch(self._rect)
 
     def Active(self):
         return self._colswitch.active
 
     def DeActivate(self):
         self._colswitch.deactivate()
-
-
-class ButtonKeys:
-    def __init__(self, windowsize, buttonsize):
-        self._recthandler = f.RectFabric(windowsize, buttonsize)
-
-    def __call__(self, info):
-        rect = self._recthandler()
-        return Button(info.text, rect, info.switch)
-
-
-class Info:
-    def __init__(self, text, colscheme):
-        self.text = text
-        self.switch = colscheme

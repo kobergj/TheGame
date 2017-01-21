@@ -20,7 +20,8 @@ class LogicViewer:
         return self._player.GetCredits()
 
     def Cargo(self):
-        return self._player.GetCargo()
+        for cargo, amount in self._player.GetCargo():
+            yield cargo, amount, self.Price(cargo)
 
     def CargoBuyOptions(self):
         for cargo in self._universe.CurrentHarborCargo():

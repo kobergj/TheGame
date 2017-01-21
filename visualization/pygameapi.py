@@ -19,13 +19,17 @@ class PyGameApi:
     def __exit__(self, type, value, tb):
         self._window.Update()
 
-    def RegisterButton(self, button):
-        rc, tc = button.Color(self._mouse)
-        text = self._font.Render(button.Text(), tc)
-        rect = button.Rect()
+    def GetMouse(self):
+        return self._mouse
 
-        self._window.DrawRectangle(rect, rc)
-        self._window.DrawText(text, rect)
+    def RegisterButton(self, button):
+        rect, rectcolor = button.Rect()
+        self._window.DrawRectangle(rect, rectcolor)
+
+        text, textcolor = button.Text()
+        size = self._font.Size(text)
+        pos = button.TextCoordinates(size)
+        self._window.DrawText(self._font.Render(text, textcolor), pos)
 
 
 class PyGameEventHandler:
@@ -53,8 +57,8 @@ class PyGameWindow:
             rect,
         )
 
-    def DrawText(self, renderedfont, rect):
-        self._screen.blit(renderedfont, rect)
+    def DrawText(self, txtimage, topleft):
+        self._screen.blit(txtimage, topleft)
 
     def Update(self):
         pygame.display.flip()
@@ -67,6 +71,9 @@ class PyGameFont:
 
     def Render(self, text, color):
         return self._font.render(text, True, color)
+
+    def Size(self, text):
+        return self._font.size(text)
 
 
 class PyGameMouse:

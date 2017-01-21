@@ -17,11 +17,7 @@ class Logger:
         def newfunc(*args, **kwargs):
             log.info(FUNCTIONUPLOG % (fn, args, kwargs))
 
-            try:
-                result = func(*args, **kwargs)
-            except Exception as error:
-                log.error(FUNCTIONERRORLOG % (fn, error))
-                raise error
+            result = func(*args, **kwargs)
 
             log.debug(FUNCTIONDONELOG % (fn, result))
 

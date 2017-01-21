@@ -1,22 +1,22 @@
 import controllers.logic as c
 import view.logic as vl
-import implementations.registry as r
-import implementations.book as b
 
-import visualization.button as but
 import visualization.view as v
-import visualization.switch as s
+import visualization.fabric as f
 
 
 WELCOME = " -- Welcome To {} -- "
 CREDITS = "[Credits] {}"
 CONTINUE = "[ENTER] Continue"
 
-CARGOTEMPLATE = "   {}: {} (Sell for {})"
-CARGO = "[Cargo] "
-NOCARGO = "[Cargo] ..."
+SELLTEMPLATE = "   {}: {} (Sell for {})"
+SELL = " [Sell] "
+NOSELL = " [SELL] ..."
 
-BUYMESSAGE = "Buy Cargo '{}' for {} Credits"
+BUYTEMPLATE = "{} (Buy for {})   "
+BUY = "[Buy] "
+NOBUY = "... [BUY] "
+
 TRAVELMESSAGE = "[CONTINUE] Next Stop: {}"
 
 FONTNAME = 'arial'
@@ -25,114 +25,110 @@ FONTSIZE = 20
 WINDOWSIZE = 600, 400
 BUTTONSIZE = 600, 30
 
-BLACK, WHITE = (0, 0, 0), (255, 255, 255)
-SOME, SOMEELSE = (123, 12, 178), (30, 200, 96)
-
-CLICKABLE = s.Switch(
-    on_passive=(WHITE, BLACK),
-    on_active=(WHITE, BLACK),
-    on_highlight=(SOME, SOMEELSE),
-    on_click=(SOMEELSE, SOME)
-)
-
-UNCLICKABLE = s.Switch(
-    on_passive=(WHITE, BLACK),
-    on_active=(WHITE, BLACK),
-    on_highlight=(WHITE, BLACK),
-    on_click=(WHITE, BLACK)
-)
-
 
 class Game:
     def __init__(self, player, universe):
         self._logic = c.LogicController(player, universe)
         self._view = vl.LogicViewer(player, universe)
-        self._viz = v.View(WINDOWSIZE, BUTTONSIZE, FONTNAME, FONTSIZE, WHITE)
+        self._viz = v.View(WINDOWSIZE, BUTTONSIZE, FONTNAME, FONTSIZE, v.BLACK)
 
-        self._gamebook = b.Book(self.BuyInteraction)
-
-        self._showcargo = False
+        self._showsell = True
+        self._showbuy = True
 
     # @log.Logger("Call Main Loop")
     def __call__(self):
-        reg = ButtonRegistry(WINDOWSIZE, BUTTONSIZE)
-
         # Welcome part
         txt = WELCOME.format(self._view.HarborName())
-        reg.RegisterUnClickable(txt, lambda: None)
+        self._viz.Register(f.TOPMID, txt, None)
 
         # Info about Credits
         txt = CREDITS.format(self._view.Credits())
-        reg.RegisterUnClickable(txt, lambda: None)
+        self._viz.Register(f.TOPMID, txt, None)
 
         # Info about Cargo
-        reg = self.CargoInfo(reg)
+        self.AddBuyInfo()
+        self.AddSellInfo()
 
         # Next Harbor
-        self.TravelInteraction(reg)
-
-        # Options
-        reg = self._gamebook.Read()(reg)
+        self.TravelInteraction()
 
         # Visualize
-        self._viz(reg.GetRegistry())
+        self._viz()
 
-    def TravelInteraction(self, reg):
+    def TravelInteraction(self):
         for harbor in self._view.TravelOptions():
             info = TRAVELMESSAGE.format(harbor.name)
-            reg.RegisterClickable(info, self._logic.Travel, harbor)
+            self._viz.Register(f.TOPMID, info, self._logic.Travel, harbor)
 
-        return reg
+        return
 
-    def BuyInteraction(self, reg):
-        for cargo, price in self._view.CargoBuyOptions():
-            info = BUYMESSAGE.format(cargo, price)
-            reg.RegisterClickable(info, self._logic.TradeCargo, cargo, -price)
-
-        return reg
-
-    def CargoInfo(self, reg):
+    def AddSellInfo(self):
         def expand():
-            self._showcargo = not self._showcargo
+            self._showsell = not self._showsell
 
-        if not self._showcargo:
-            reg.RegisterClickable(NOCARGO, expand)
-            return reg
+        if not self._showsell:
+            self._viz.Register(f.BOTTOMLEFT, NOSELL, expand)
+            return
 
-        reg.RegisterClickable(CARGO, expand)
-        for cargo, amount in self._view.Cargo():
-            price = self._view.Price(cargo)
-            reg.RegisterClickable(
-                CARGOTEMPLATE.format(cargo, amount, price),
+        self._viz.Register(f.BOTTOMLEFT, SELL, expand)
+        for cargo, amount, price in self._view.Cargo():
+            self._viz.Register(
+                f.BOTTOMLEFT,
+                SELLTEMPLATE.format(cargo, amount, price),
                 self._logic.TradeCargo,
                 cargo, price
             )
 
-        return reg
+        return
+
+    def AddBuyInfo(self):
+        def expand():
+            self._showbuy = not self._showbuy
+
+        if not self._showbuy:
+            self._viz.Register(f.BOTTOMRIGHT, NOBUY, expand)
+            return
+
+        self._viz.Register(f.BOTTOMRIGHT, BUY, expand)
+        for cargo, price in self._view.CargoBuyOptions():
+            self._viz.Register(
+                f.BOTTOMRIGHT,
+                BUYTEMPLATE.format(cargo, price),
+                self._logic.TradeCargo,
+                cargo, -price
+            )
+
+        return
 
 
-class ButtonRegistry:
-    def __init__(self, wsize, bsize):
-        buttonfabric = but.ButtonKeys(wsize, bsize)
+"""
+class ButtonRegistryBuilder:
+    def __init__(self, wsize, mouse):
+        buttonfabric = f.ButtonFabric(wsize, mouse)
         self._reg = r.ExecRegistry(buttonfabric)
 
     def RegisterClickable(self, msg, func, *args):
         self._reg.Register(
-            but.Info(
-                msg,
-                CLICKABLE,
+            m.ButtonInfo(
+                texts=m.Switch([msg, BLACK], on_highlight=[msg, SOMEELSE]),
+                colors=CLICKABLE,
+                position=f.TOPLEFT,
+                size=BUTTONSIZE,
             ),
             func, *args
         )
 
-    def RegisterUnClickable(self, msg, func, *args):
+    def RegisterUnClickable(self, msg):
         self._reg.Register(
-            but.Info(
-                msg,
-                UNCLICKABLE,
+            m.ButtonInfo(
+                texts=m.Switch([msg, BLACK], on_highlight=[msg, SOME]),
+                colors=UNCLICKABLE,
+                position=f.TOPLEFT,
+                size=BUTTONSIZE,
             ),
-            func, *args
+            lambda: None,
         )
 
     def GetRegistry(self):
         return self._reg
+"""

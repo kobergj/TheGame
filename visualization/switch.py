@@ -1,18 +1,18 @@
 
 
-class MouseStateSwitch:
-    def __init__(self, container, switch):
-        self._container = container
+class MouseTrigger:
+    def __init__(self, switch, mouse):
         self._switch = switch
+        self._mouse = mouse
         self.active = False
 
-    def __call__(self, mouse):
+    def __call__(self, rect):
         if self.active:
             return self._switch.OnActive
 
-        if mouse.IsOver(self._container):
+        if self._mouse.IsOver(rect):
 
-            if mouse.IsPressed():
+            if self._mouse.IsPressed():
                 self.active = True
                 return self._switch.OnClick
 
@@ -22,11 +22,3 @@ class MouseStateSwitch:
 
     def deactivate(self):
         self.active = False
-
-
-class Switch:
-    def __init__(self, on_passive=None, on_highlight=None, on_click=None, on_active=None):
-        self.OnHighlight = on_highlight
-        self.OnClick = on_click
-        self.OnPassive = on_passive
-        self.OnActive = on_active

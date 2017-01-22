@@ -11,8 +11,20 @@ class Initial:
     UniverseName = "Pegasus"
     # Credits you get on Startup
     StartCredits = 12
+    # Initial Ship
+    StartShipName = "Enterprise"
     # Initial Cargo Capacity
-    CargoCap = 3
+    CargoCap = 5
+    # Initial Travel Costs
+    TravelCosts = 1
+
+
+class Stats:
+    # The Amount of Cargo you can take with you
+    CargoCapacity = "Cargo Capacity"
+    # The Cost for an FTL Jump
+    TravelCosts = "Travel Costs"
+
 
 
 class Cargo:

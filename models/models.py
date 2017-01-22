@@ -1,5 +1,6 @@
 import implementations.container as c
 import implementations.queue as q
+import implementations.counter as s
 
 import helpers.kindaconfiguration as conf
 # Configuration Access
@@ -46,13 +47,25 @@ class Currency(BaseModel):
         self.name = name
 
 
+class Ship(BaseModel):
+    def __init__(self, name, statdict):
+        self.name = name
+        self.stats = s.StatServer(statdict)
+
+
 class Player(BaseModel):
-    def __init__(self, name, startCurrency, cargocap):
+    def __init__(self, name, startCurrency):
         self.name = name
 
         self.cargo = c.Container()
-        self.cargocap = cargocap
         self.currency = c.Container(startItems=startCurrency)
+
+
+class Fleet:
+    def __init__(self, ships=[]):
+        self.stats = s.StatServer()
+        self.activeships = c.Container()
+        self.standbyships = c.Container(ships)
 
 
 class ButtonInfo:

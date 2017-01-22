@@ -23,9 +23,9 @@ WINDOWSIZE = conf.Layout.WindowSize
 
 
 class Game:
-    def __init__(self, player, universe):
-        self._logic = c.LogicController(player, universe)
-        self._view = vl.LogicViewer(player, universe)
+    def __init__(self, player, universe, fleet):
+        self._logic = c.LogicController(player, universe, fleet)
+        self._view = vl.LogicViewer(player, universe, fleet)
         self._viz = v.View(WINDOWSIZE, FONTNAME, FONTSIZE, v.BLACK)
 
         self._showsell = True

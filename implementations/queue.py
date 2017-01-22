@@ -30,3 +30,20 @@ class RefillingQueue:
         while item in self._lifeline:
             item = self._factory()
         self._lifeline.append(item)
+
+
+class ActivationQueue:
+    def __init__(self, start=[]):
+        self._activeItems = []
+        self._standbyItems = []
+        for item in start:
+            self.Add(item)
+            self.Activate(item)
+
+    def Add(self, item):
+        self._standbyItems.append(item)
+
+    def Activate(self, item):
+        self._standbyItems.remove(item)
+        item()
+        self._active.append(item)

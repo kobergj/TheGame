@@ -1,5 +1,6 @@
 import universe as u
 import player as p
+import fleet as f
 
 import random
 
@@ -8,13 +9,16 @@ import helpers.kindaconfiguration as conf
 NUMBEROFDESTINATIONS = conf.Limits.NumberOfDestinations
 PRICERANGE = conf.Limits.PriceRange
 TRAVELPRICE = conf.Limits.TravelPrice
+CARGOCAP = conf.Stats.CargoCapacity
+TRAVELCOST = conf.Stats.TravelCosts
 # Configuration Access End
 
 
 class LogicViewer:
-    def __init__(self, player, universe):
+    def __init__(self, player, universe, fleet):
         self._player = p.PlayerViewer(player)
         self._universe = u.UniverseViewer(universe)
+        self._fleet = f.FleetViewer(fleet)
         self._priceregistry = PriceRegistry(PRICERANGE)
 
     def HarborName(self):
@@ -38,10 +42,12 @@ class LogicViewer:
         return self._priceregistry.Get(self._universe.CurrentHarborName(), item)
 
     def TravelPrice(self, harbor):
-        return TRAVELPRICE
+        return self._fleet.GetStat(TRAVELCOST)
 
     def FreeCargoSpace(self):
-        return self._player.FreeCargoSpace()
+        used = self._player.UsedCargoSpace()
+        cap = self._fleet.GetStat(CARGOCAP)
+        return cap - used
 
 
 class PriceRegistry:

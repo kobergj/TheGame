@@ -3,6 +3,7 @@ import unittest
 from nose_parameterized import parameterized, param
 
 import container as c
+import counter as cou
 import queue as q
 import registry as r
 import book as b
@@ -19,6 +20,12 @@ class FakeFactory:
     def __call__(self):
         self.i += 1
         return self.robjects[self.i]
+
+# Test Helper to generate Boosters
+class Booster:
+    def __init__(self, **kwargs):
+        for name, value in kwargs.iteritems():
+            setattr(self, name, value)
 
 
 class ContainerTests(unittest.TestCase):
@@ -82,10 +89,10 @@ class RefillingQueueTests(unittest.TestCase):
         ),
         param(
             amount=3,
-            factory=FakeFactory(1, 2, 3, 0, 0, 1, '2', '0'),
+            factory=FakeFactory(1, 2, 3, 0, 0, 1, '2', '0', '4'),
             cache=5,
             expectedResult=[1, 2, 3],
-            expectedQueue=[0, 0, 1, '2', '0'],
+            expectedQueue=[0, 1, '2', '0', '4'],
         ),
     ])
     def test_get(self, amount, factory, cache, expectedResult, expectedQueue):
@@ -155,3 +162,45 @@ class BookTests(unittest.TestCase):
             book.TurnPage()
 
         self.assertEqual(book.Read(), expectedContent)
+
+
+class StatServerTests(unittest.TestCase):
+    @parameterized.expand([
+        param(
+            boostStats=cou.StatServer({'cargocap': 4}),
+            initialStats=cou.StatServer({'cargocap': 1}),
+            valuetoget='cargocap',
+            expectedResult=5,
+        ),
+        param(
+            boostStats=cou.StatServer({'cargocap': 2, 'travelcost': 4}),
+            initialStats=cou.StatServer({'cargocap': 1}),
+            valuetoget='travelcost',
+            expectedResult=4,
+        ),
+    ])
+    def test_add(self, boostStats, initialStats, valuetoget, expectedResult):
+        # Test
+        initialStats += boostStats
+
+        self.assertEqual(initialStats[valuetoget], expectedResult)
+
+    @parameterized.expand([
+        param(
+            boostStats=cou.StatServer({'cargocap': 1}),
+            initialStats=cou.StatServer({'cargocap': 4}),
+            valuetoget='cargocap',
+            expectedResult=3,
+        ),
+        param(
+            boostStats=cou.StatServer({'cargocap': 2, 'travelcost': 4}),
+            initialStats=cou.StatServer({'cargocap': 1}),
+            valuetoget='travelcost',
+            expectedResult=-4,
+        ),
+    ])
+    def test_remove(self, boostStats, initialStats, valuetoget, expectedResult):
+        # Test
+        initialStats -= boostStats
+
+        self.assertEqual(initialStats[valuetoget], expectedResult)

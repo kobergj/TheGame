@@ -1,0 +1,100 @@
+
+class Currencies:
+    # Default Currency
+    Credits = "Credits"
+
+
+class Initial:
+    # Name of the Player - Just for Fun
+    PlayerName = "Dr. H. Odensaque"
+    # Name of the Universe
+    UniverseName = "Pegasus"
+    # Credits you get on Startup
+    StartCredits = 12
+    # Initial Cargo Capacity
+    CargoCap = 3
+
+
+class Cargo:
+    # List of Cargo Names
+    Names = ['Gin', 'Tobacco', 'Oil', 'BloodySweaters', 'Meat', 'Airplanes', 'Potatoes']
+
+
+class Harbors:
+    # List of Harbor Names
+    Names = ['Earth', 'Venus', 'Mars', 'SecretPlanet', 'A3X-424', 'Eden', 'Volcan',
+             'Endar', 'Uranus', 'BingoPlanet', 'CrappyWorld', 'CC2', 'LaCathedral',
+             'TravelersInn', 'GlibberStation', 'MaggysDiner', 'Nine-Ty-Nine']
+
+
+class Journey:
+    # Don't like it
+    NumberOfHarborsToSkipOnTravel = 3
+
+
+class Layout:
+    # Default Size of Buttons
+    ButtonSize = 300, 30
+    # Font For Texts
+    Font = 'arial'
+    # Size for Fonts
+    FontSize = 20
+    # Size of Game Window
+    WindowSize = 600, 400
+
+
+class Messages:
+    # Info Message for Welcome
+    Welcome = " -- Welcome To {} -- "
+    # Current Stats of Player
+    Stats = "[Credits] {} [Free Cargo Space] {}"
+    # Identifier for Sell Option
+    Sell = " [Sell] "
+    # Sell Option - UnExpanded
+    NoSell = " [SELL] ..."
+    # Sell Option - Line
+    SellLine = "   {}: {} (Sell for {})"
+    # Identifier for Buy Options
+    Buy = "[Buy] "
+    # Buy Option - UnExpanded
+    NoBuy = "... [BUY] "
+    # Buy Option - Line
+    BuyLine = "{} (Buy for {})   "
+    # Next Harbor Message
+    Travel = "Next Stop: {} (Travel for {})"
+
+
+class Colors:
+    # RGB Tuple Representations of Colors
+    Black = 0, 0, 0
+    White = 255, 255, 255
+    Green = 30, 200, 96
+    PurpleLike = 123, 12, 178
+
+
+class Limits:
+    # Number of Harbors in Travel Cache
+    HarborCache = 5
+    # Number of Destination to Choose from
+    NumberOfDestinations = 1
+    # Price Range - Should be Depended on Item
+    PriceRange = [5, 14]
+    # Price For Travel - Should be Depended on Fleet Size
+    TravelPrice = 1
+
+
+class Logger:
+    # Path to Log File
+    LogFile = "/Users/Kokweazel/TheGame/logbook.log"
+    # File Mode Used - should be 'w' or 'a'
+    WriteMode = "w"
+    # Level of Log Messages
+    Level = "ERROR"
+    # Format of Error Messages
+    Format = "[%(levelname)s] %(filename)s // %(funcName)s: %(message)s "
+    # Message that is shown on Logger Init
+    OnInitMessage = 'Logbook Initialized'
+    # Message that is shown when function is called
+    FuntionInvokedLogMessage = "Function '%s' invoked with args %s and kwargs %s"
+    # Message that is show when function is finished
+    FunctionFinishedLogMessage = "Function '%s' finished with result %s"

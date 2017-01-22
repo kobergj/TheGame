@@ -5,18 +5,21 @@ import implementations.registry as r
 import models.models as m
 
 
-BUTTONSIZE = 300, 30
-
-BLACK, WHITE = (0, 0, 0), (255, 255, 255)
-SOME, SOMEELSE = (123, 12, 178), (30, 200, 96)
+import helpers.kindaconfiguration as conf
+# Configuration Access
+BUTTONSIZE = conf.Layout.ButtonSize
+BLACK = conf.Colors.Black
+WHITE = conf.Colors.White
+SOME = conf.Colors.PurpleLike
+SOMEELSE = conf.Colors.Green
+# Configuration Access End
 
 CLICKABLE = m.Switch(BLACK)
-
 UNCLICKABLE = m.Switch(BLACK)
 
 
 class View:
-    def __init__(self, wsize, bsize, fontname, fontsize, bgcolor):
+    def __init__(self, wsize, fontname, fontsize, bgcolor):
         self._pygameapi = pg.PyGameApi(wsize, fontname, fontsize, bgcolor)
         self._brbuilder = ButtonRegistryBuilder(wsize, self._pygameapi.GetMouse())
 

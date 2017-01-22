@@ -1,11 +1,5 @@
-import logging as logging
+import logger as log
 
 
 def SetUp(commandlineargs):
-    logging.basicConfig(
-        filename='logbook.log',
-        filemode='w',
-        level=logging.DEBUG,
-        # format="[%(levelname)s] %(filename)s // %(funcName)s: %(message)s "
-    )
-    logging.critical('Logbook Initialized')
+    log.InitLoggers()

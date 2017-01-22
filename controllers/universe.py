@@ -1,8 +1,9 @@
 import helpers.logger as log
 
-
-HARBORCONTROLLERCACHE = 5
-DESTINATIONS = 3
+import helpers.kindaconfiguration as conf
+# Configuration Access
+DESTINATIONS = conf.Journey.NumberOfHarborsToSkipOnTravel
+# Configuration Access End
 
 
 class UniverseController:

@@ -1,8 +1,27 @@
 import logging as logging
 
-FUNCTIONUPLOG = "Function '%s' invoked with args %s and kwargs %s"
-FUNCTIONERRORLOG = "Function '%s' threw Error %s"
-FUNCTIONDONELOG = "Function '%s' finished with result %s"
+import helpers.kindaconfiguration as conf
+# Configuration Access
+LOGFILENAME = conf.Logger.LogFile
+LOGFILEMODE = conf.Logger.WriteMode
+LOGLEVEL = conf.Logger.Level
+LOGFORMAT = conf.Logger.Format
+LOGINITMESSAGE = conf.Logger.OnInitMessage
+FUNCTIONUPLOG = conf.Logger.FuntionInvokedLogMessage
+FUNCTIONDONELOG = conf.Logger.FunctionFinishedLogMessage
+# Configuration Access End
+
+
+def InitLoggers():
+    # Working with only one Logger at the Moment
+    # Should be Improved
+    logging.basicConfig(
+        filename=LOGFILENAME,
+        filemode=LOGFILEMODE,
+        level=LOGLEVEL,
+        format=LOGFORMAT,
+    )
+    logging.critical(LOGINITMESSAGE)
 
 
 class Logger:

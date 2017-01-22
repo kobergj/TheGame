@@ -5,17 +5,18 @@ import implementations.factory as f
 import game as g
 import sys
 
-PLAYERNAME = "Players Name"
+import helpers.kindaconfiguration as conf
+# Configuration Access
+PLAYERNAME = conf.Initial.PlayerName
+UNIVERSENAME = conf.Initial.UniverseName
+SAMPLECARGO = conf.Cargo.Names
+SAMPLEHARBORS = conf.Harbors.Names
+STARTCREDITS = conf.Initial.StartCredits
+CREDITS = conf.Currencies.Credits
+CARGOCAPACITY = conf.Initial.CargoCap
+# Configuration Access End
 
-UNIVERSENAME = ["Pegasus"]
-SAMPLECARGO = ['Gin', 'Tobacco', 'Oil', 'BloodySweaters', 'Meat', 'Airplanes', 'Potatoes']
-SAMPLEHARBORS = ['Earth', 'Venus', 'Mars', 'SecretPlanet', 'A3X-424', 'Eden', 'Volcan', 'Endar',
-                 'Uranus', 'BingoPlanet', 'CrappyWorld', 'CC2', 'LaCathedral', 'TravelersInn',
-                 'GlibberStation', 'MaggysDiner', 'Nine-Ty-Nine']
-
-STARTCURRENCY = [[m.Currency("Credits"), 12]]
-CARGOCAPACITY = 5
-
+STARTCURRENCY = [[m.Currency(CREDITS), STARTCREDITS]]
 
 if __name__ == '__main__':
     h.SetUp(sys.argv)

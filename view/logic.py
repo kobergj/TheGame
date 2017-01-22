@@ -3,9 +3,12 @@ import player as p
 
 import random
 
-NUMBEROFDESTINATIONS = 1
-PRICERANGE = [5, 14]
-TRAVELPRICE = 1
+import helpers.kindaconfiguration as conf
+# Configuration Access
+NUMBEROFDESTINATIONS = conf.Limits.NumberOfDestinations
+PRICERANGE = conf.Limits.PriceRange
+TRAVELPRICE = conf.Limits.TravelPrice
+# Configuration Access End
 
 
 class LogicViewer:

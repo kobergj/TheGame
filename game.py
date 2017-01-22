@@ -5,32 +5,28 @@ import visualization.view as v
 import visualization.fabric as f
 
 
-WELCOME = " -- Welcome To {} -- "
-STATS = "[Credits] {} [Free Cargo Space] {}"
-CONTINUE = "[ENTER] Continue"
-
-SELLTEMPLATE = "   {}: {} (Sell for {})"
-SELL = " [Sell] "
-NOSELL = " [SELL] ..."
-
-BUYTEMPLATE = "{} (Buy for {})   "
-BUY = "[Buy] "
-NOBUY = "... [BUY] "
-
-TRAVELMESSAGE = "Next Stop: {} (Travel for {})"
-
-FONTNAME = 'arial'
-FONTSIZE = 20
-
-WINDOWSIZE = 600, 400
-BUTTONSIZE = 600, 30
+import helpers.kindaconfiguration as conf
+# Configuration Access
+WELCOME = conf.Messages.Welcome
+STATS = conf.Messages.Stats
+SELLTEMPLATE = conf.Messages.SellLine
+SELL = conf.Messages.Sell
+NOSELL = conf.Messages.NoSell
+BUYTEMPLATE = conf.Messages.BuyLine
+BUY = conf.Messages.Buy
+NOBUY = conf.Messages.NoBuy
+TRAVELMESSAGE = conf.Messages.Travel
+FONTNAME = conf.Layout.Font
+FONTSIZE = conf.Layout.FontSize
+WINDOWSIZE = conf.Layout.WindowSize
+# Configuration Access End
 
 
 class Game:
     def __init__(self, player, universe):
         self._logic = c.LogicController(player, universe)
         self._view = vl.LogicViewer(player, universe)
-        self._viz = v.View(WINDOWSIZE, BUTTONSIZE, FONTNAME, FONTSIZE, v.BLACK)
+        self._viz = v.View(WINDOWSIZE, FONTNAME, FONTSIZE, v.BLACK)
 
         self._showsell = True
         self._showbuy = True
@@ -112,36 +108,3 @@ class Game:
             )
 
         return
-
-
-"""
-class ButtonRegistryBuilder:
-    def __init__(self, wsize, mouse):
-        buttonfabric = f.ButtonFabric(wsize, mouse)
-        self._reg = r.ExecRegistry(buttonfabric)
-
-    def RegisterClickable(self, msg, func, *args):
-        self._reg.Register(
-            m.ButtonInfo(
-                texts=m.Switch([msg, BLACK], on_highlight=[msg, SOMEELSE]),
-                colors=CLICKABLE,
-                position=f.TOPLEFT,
-                size=BUTTONSIZE,
-            ),
-            func, *args
-        )
-
-    def RegisterUnClickable(self, msg):
-        self._reg.Register(
-            m.ButtonInfo(
-                texts=m.Switch([msg, BLACK], on_highlight=[msg, SOME]),
-                colors=UNCLICKABLE,
-                position=f.TOPLEFT,
-                size=BUTTONSIZE,
-            ),
-            lambda: None,
-        )
-
-    def GetRegistry(self):
-        return self._reg
-"""

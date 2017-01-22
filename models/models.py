@@ -1,7 +1,10 @@
 import implementations.container as c
 import implementations.queue as q
 
-QUEUECAP = 5
+import helpers.kindaconfiguration as conf
+# Configuration Access
+QUEUECAP = conf.Limits.HarborCache
+# Configuration Access End
 
 
 class BaseModel:

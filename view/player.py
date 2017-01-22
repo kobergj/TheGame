@@ -1,6 +1,9 @@
 import models.models as m
 
-CREDITCURRENCYNAME = "Credits"
+import helpers.kindaconfiguration as conf
+# Configuration Access
+CREDITCURRENCYNAME = conf.Currencies.Credits
+# Configuration Access End
 
 
 class PlayerViewer:

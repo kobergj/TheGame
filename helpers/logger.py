@@ -1,6 +1,6 @@
 import logging as logging
 
-import helpers.kindaconfiguration as conf
+import kindaconfiguration as conf
 # Configuration Access
 LOGFILENAME = conf.Logger.LogFile
 LOGFILEMODE = conf.Logger.WriteMode

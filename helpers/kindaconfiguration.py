@@ -13,9 +13,9 @@ class Initial:
     StartCredits = 12
     # Initial Ship
     StartShipName = "Enterprise"
-    # Initial Cargo Capacity
+    # Initial Cargo Capacity of Ship
     CargoCap = 5
-    # Initial Travel Costs
+    # Initial Travel Costs of Ship
     TravelCosts = 1
 
 
@@ -24,7 +24,6 @@ class Stats:
     CargoCapacity = "Cargo Capacity"
     # The Cost for an FTL Jump
     TravelCosts = "Travel Costs"
-
 
 
 class Cargo:
@@ -91,8 +90,6 @@ class Limits:
     NumberOfDestinations = 1
     # Price Range - Should be Depended on Item
     PriceRange = [5, 14]
-    # Price For Travel - Should be Depended on Fleet Size
-    TravelPrice = 1
 
 
 class Logger:
@@ -102,7 +99,7 @@ class Logger:
     WriteMode = "w"
     # Level of Log Messages
     Level = "ERROR"
-    # Format of Error Messages
+    # Format of Log Messages
     Format = "[%(levelname)s] %(filename)s // %(funcName)s: %(message)s "
     # Message that is shown on Logger Init
     OnInitMessage = 'Logbook Initialized'

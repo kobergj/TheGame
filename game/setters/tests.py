@@ -2,7 +2,7 @@ import unittest
 from nose_parameterized import parameterized, param
 
 import models.models as m
-import controllers.player as p
+import player as p
 
 
 class PlayerControllerTests(unittest.TestCase):

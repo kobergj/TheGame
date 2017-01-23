@@ -4,22 +4,17 @@ import fleet as f
 
 import random
 
-import helpers.kindaconfiguration as conf
-# Configuration Access
-NUMBEROFDESTINATIONS = conf.Limits.NumberOfDestinations
-PRICERANGE = conf.Limits.PriceRange
-TRAVELPRICE = conf.Limits.TravelPrice
-CARGOCAP = conf.Stats.CargoCapacity
-TRAVELCOST = conf.Stats.TravelCosts
-# Configuration Access End
 
+class GameViewer:
+    def __init__(self, pricerange, destnumber, statnames):
+        self._priceregistry = PriceRegistry(pricerange)
+        self._numberofdest = destnumber
+        self._statnames = statnames
 
-class LogicViewer:
-    def __init__(self, player, universe, fleet):
+    def NewGame(self, player, universe, fleet):
         self._player = p.PlayerViewer(player)
         self._universe = u.UniverseViewer(universe)
         self._fleet = f.FleetViewer(fleet)
-        self._priceregistry = PriceRegistry(PRICERANGE)
 
     def HarborName(self):
         return self._universe.CurrentHarborName()
@@ -36,17 +31,17 @@ class LogicViewer:
             yield cargo, self.Price(cargo)
 
     def TravelOptions(self):
-        return self._universe.Destinations(NUMBEROFDESTINATIONS)
+        return self._universe.Destinations(self._numberofdest)
 
     def Price(self, item):
         return self._priceregistry.Get(self._universe.CurrentHarborName(), item)
 
     def TravelPrice(self, harbor):
-        return self._fleet.GetStat(TRAVELCOST)
+        return self._fleet.GetStat(self._statnames.TravelCosts)
 
     def FreeCargoSpace(self):
         used = self._player.UsedCargoSpace()
-        cap = self._fleet.GetStat(CARGOCAP)
+        cap = self._fleet.GetStat(self._statnames.CargoCapacity)
         return cap - used
 
 

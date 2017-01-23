@@ -1,4 +1,3 @@
-import pygameapi as pg
 import fabric as f
 
 import implementations.registry as r
@@ -19,9 +18,8 @@ UNCLICKABLE = m.Switch(BLACK)
 
 
 class View:
-    def __init__(self, wsize, fontname, fontsize, bgcolor):
-        self._pygameapi = pg.PyGameApi(wsize, fontname, fontsize, bgcolor)
-        self._brbuilder = ButtonRegistryBuilder(wsize, self._pygameapi.GetMouse())
+    def __init__(self, wsize, mouse):
+        self._brbuilder = ButtonRegistryBuilder(wsize, mouse)
 
     def Register(self, position, msg, func, *args):
         if func:
@@ -29,10 +27,10 @@ class View:
 
         return self._brbuilder.RegisterUnClickable(position, msg)
 
-    def __call__(self):
+    def __call__(self, vizapi):
         reg = self._brbuilder.GetRegistry()
 
-        with self._pygameapi as api:
+        with vizapi as api:
 
             for button, _ in reg:
                 api.RegisterButton(button)

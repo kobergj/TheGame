@@ -14,6 +14,16 @@ class RefillingQueue:
         for i in range(1, amount):
             yield self.Shift()
 
+    def Set(self, item):
+        self._current = item
+        self.Refill()
+
+    def Refill(self):
+        i = len(self._lifeline)
+        self._lifeline = []
+        for _ in range(i):
+            self.Add()
+
     def LookUp(self, index=1):
         return self._lifeline[:index]
 

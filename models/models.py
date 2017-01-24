@@ -5,6 +5,7 @@ import implementations.counter as s
 import helpers.kindaconfiguration as conf
 # Configuration Access
 QUEUECAP = conf.Limits.HarborCache
+CREDITCURRENCYNAME = conf.Currencies.Credits
 # Configuration Access End
 
 
@@ -47,6 +48,11 @@ class Currency(BaseModel):
         self.name = name
 
 
+class Credits(Currency):
+    def __init__(self):
+        Currency.__init__(self, CREDITCURRENCYNAME)
+
+
 class Ship(BaseModel):
     def __init__(self, name, statdict):
         self.name = name
@@ -69,11 +75,10 @@ class Fleet:
 
 
 class ButtonInfo:
-    def __init__(self, texts, colors, size, position):
-        self.texts = texts
+    def __init__(self, text, colors, position):
+        self.text = text
         self.colors = colors
         self.position = position
-        self.size = size
 
 
 class Switch:

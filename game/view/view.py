@@ -1,74 +1,50 @@
 import fabric as f
+import coordinates as c
 
 import implementations.registry as r
 import models.models as m
 
 
-import helpers.kindaconfiguration as conf
-# Configuration Access
-BUTTONSIZE = conf.Layout.ButtonSize
-BLACK = conf.Colors.Black
-WHITE = conf.Colors.White
-SOME = conf.Colors.PurpleLike
-SOMEELSE = conf.Colors.Green
-# Configuration Access End
-
-CLICKABLE = m.Switch(BLACK)
-UNCLICKABLE = m.Switch(BLACK)
-
-
 class View:
-    def __init__(self, wsize, mouse):
-        self._brbuilder = ButtonRegistryBuilder(wsize, mouse)
+    def __init__(self, wsize, margin):
+        self._brbuilder = ButtonRegistryBuilder(wsize, margin)
 
-    def Register(self, position, msg, func, *args):
-        if func:
-            return self._brbuilder.RegisterClickable(position, msg, func, *args)
+    def RegisterTopMid(self, col, msg, func, *args):
+        return self._brbuilder.Register(c.TOPMID, col, msg, func, *args)
 
-        return self._brbuilder.RegisterUnClickable(position, msg)
+    def RegisterBottomLeft(self, col, msg, func, *args):
+        return self._brbuilder.Register(c.BOTTOMLEFT, col, msg, func, *args)
 
-    def __call__(self, vizapi):
+    def RegisterBottomMid(self, col, msg, func, *args):
+        return self._brbuilder.Register(c.BOTTOMMID, col, msg, func, *args)
+
+    def RegisterBottomRight(self, col, msg, func, *args):
+        return self._brbuilder.Register(c.BOTTOMRIGHT, col, msg, func, *args)
+
+    def __call__(self):
         reg = self._brbuilder.GetRegistry()
-
-        with vizapi as api:
-
-            for button, _ in reg:
-                api.RegisterButton(button)
-                if button.Active():
-                    reg(button)
-                button.DeActivate()
-
         self._brbuilder.Reset()
+        return reg
 
 
 class ButtonRegistryBuilder:
-    def __init__(self, wsize, mouse):
-        self._wsize, self._mouse, self._reg = wsize, mouse, None
+    def __init__(self, wsize, margin):
+        self._wsize, self._reg, self._margin = wsize, None, margin
         self.Reset()
 
     def Reset(self):
-        buttonfabric = f.ButtonFabric(self._wsize, self._mouse)
+        buttonfabric = f.TextButtonFabric(self._wsize, self._margin)
         self._reg = r.ExecRegistry(buttonfabric)
 
-    def RegisterClickable(self, position, msg, func, *args):
+    def Register(self, position, colors, msg, func, *args):
         self._reg.Register(
             m.ButtonInfo(
-                texts=m.Switch([msg, WHITE], on_highlight=[msg, SOMEELSE]),
-                colors=CLICKABLE,
+                text=msg,
+                colors=m.Switch(*colors),
                 position=position,
-                size=BUTTONSIZE,
             ),
             func, *args
         )
-
-    def RegisterUnClickable(self, position, msg):
-        i = m.ButtonInfo(
-            texts=m.Switch([msg, WHITE]),
-            colors=UNCLICKABLE,
-            position=position,
-            size=BUTTONSIZE,
-        )
-        self._reg.Register(i, lambda: None)
 
     def GetRegistry(self):
         return self._reg

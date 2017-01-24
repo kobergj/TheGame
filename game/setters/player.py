@@ -1,11 +1,6 @@
 import helpers.logger as log
 import models.models as m
 
-import helpers.kindaconfiguration as conf
-# Configuration Access
-CREDITCURRENCYNAME = conf.Currencies.Credits
-# Configuration Access End
-
 
 class PlayerController:
     def __init__(self, player):
@@ -48,9 +43,7 @@ class CurrencyController:
 
     @log.Logger('Call Credit Controller')
     def GetCredits(self):
-        c = m.Currency(CREDITCURRENCYNAME)
-        return self._credits[c]
+        return self._credits[m.Credits()]
 
     def TradeCredits(self, amount):
-        c = m.Currency(CREDITCURRENCYNAME)
-        self._credits.manipulate(c, amount)
+        self._credits.manipulate(m.Credits(), amount)

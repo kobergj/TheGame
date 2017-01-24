@@ -11,22 +11,33 @@ class PyGameApi:
 
         self.bgcolor = bgcolor
 
-    def __enter__(self):
+    def __call__(self, buttonregistry):
         self._eventhandler()
         self._window.Fill(self.bgcolor)
-        return self
 
-    def __exit__(self, type, value, tb):
+        for button, _ in buttonregistry:
+            self.RegisterTextButton(button)
+            if button.Active():
+                buttonregistry(button)
+            button.DeActivate()
+
         self._window.Update()
 
     def GetMouse(self):
         return self._mouse
 
+    def RegisterTextButton(self, txtbut):
+        text = txtbut.Text()
+        size = self._font.Size(text)
+        rect = txtbut.Coordinates(size) + size
+        col = txtbut.Color(rect, self._mouse.IsOver, self._mouse.IsPressed)
+        self._window.DrawText(self._font.Render(text, col), rect)
+
     def RegisterButton(self, button):
-        rect, rectcolor = button.Rect()
+        rect, rectcolor = button.Rect(self._mouse.IsOver, self._mouse.IsPressed)
         self._window.DrawRectangle(rect, rectcolor)
 
-        text, textcolor = button.Text()
+        text, textcolor = button.Text(rect, self._mouse.IsOver, self._mouse.IsPressed)
         size = self._font.Size(text)
         pos = button.TextCoordinates(size)
         self._window.DrawText(self._font.Render(text, textcolor), pos)
@@ -38,9 +49,12 @@ class PyGameEventHandler:
 
     def __call__(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+            self.HandleEvent(event)
+
+    def HandleEvent(self, event):
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
 
 
 class PyGameWindow:
@@ -90,5 +104,5 @@ class PyGameMouse:
 
         return False
 
-    def IsPressed(self):
+    def IsPressed(self, rect):
         return self._mouse.get_pressed()[0]

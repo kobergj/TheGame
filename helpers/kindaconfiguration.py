@@ -50,6 +50,8 @@ class Layout:
     Font = 'arial'
     # Size for Fonts
     FontSize = 20
+    # The Amount of Pixels for One Line
+    Margin = 30
     # Size of Game Window
     WindowSize = 600, 400
 
@@ -81,6 +83,12 @@ class Colors:
     White = 255, 255, 255
     Green = 30, 200, 96
     PurpleLike = 123, 12, 178
+    Red = 250, 18, 18
+
+    # Color Schemes -- Like: Passive, Highlight, Click, Active
+    Clickable = White, Green, PurpleLike
+    Unclickable = White,
+    Blocked = White, Red
 
 
 class Limits:

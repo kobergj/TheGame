@@ -17,6 +17,7 @@ class ExecRegistry:
 
     def __call__(self, key):
         exe = self._execdict[key]
+
         return exe()
 
     def __contains__(self, key):
@@ -29,6 +30,8 @@ class ExecRegistry:
         self._infodict[key] = info
 
         def execute():
+            if not func:
+                return
             return func(*args, **kwargs)
 
         self._execdict[key] = execute

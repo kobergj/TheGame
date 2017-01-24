@@ -1,10 +1,5 @@
 import helpers.logger as log
 
-import helpers.kindaconfiguration as conf
-# Configuration Access
-DESTINATIONS = conf.Journey.NumberOfHarborsToSkipOnTravel
-# Configuration Access End
-
 
 class UniverseController:
     def __init__(self, universe):
@@ -23,10 +18,4 @@ class DestinationController:
 
     @log.Logger("Call Destination Controller")
     def Travel(self, harbor):
-        t = True
-        while t:
-            for h in self._harbors.Get(DESTINATIONS):
-                if h == harbor:
-                    self._current = self._harbors.Current()
-                    t = False
-                    break
+        self._harbors.Set(harbor)

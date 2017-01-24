@@ -8,15 +8,35 @@ class Button:
 
         self.TextCoordinates = txtcordfunc
 
-    def Rect(self):
-        col = self._colswitch(self._rect)
+    def Rect(self, *switchargs):
+        col = self._colswitch(self._rect, *switchargs)
         return self._rect, col
 
-    def Text(self):
-        return self._textswitch(self._rect)
+    def Text(self, *switchargs):
+        return self._textswitch(*switchargs)
 
     def Active(self):
         return self._colswitch.active
 
     def DeActivate(self):
         self._colswitch.deactivate()
+
+
+class TextButton:
+    def __init__(self, txt, colorswitch, txtcordfunc):
+        self._text = txt
+        self._colors = colorswitch
+
+        self.Coordinates = txtcordfunc
+
+    def Text(self):
+        return self._text
+
+    def Color(self, *switchargs):
+        return self._colors(*switchargs)
+
+    def Active(self):
+        return self._colors.active
+
+    def DeActivate(self):
+        self._colors.deactivate()

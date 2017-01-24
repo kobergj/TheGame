@@ -2,26 +2,21 @@ import logging as logging
 
 import kindaconfiguration as conf
 # Configuration Access
-LOGFILENAME = conf.Logger.LogFile
-LOGFILEMODE = conf.Logger.WriteMode
-LOGLEVEL = conf.Logger.Level
-LOGFORMAT = conf.Logger.Format
-LOGINITMESSAGE = conf.Logger.OnInitMessage
 FUNCTIONUPLOG = conf.Logger.FuntionInvokedLogMessage
 FUNCTIONDONELOG = conf.Logger.FunctionFinishedLogMessage
 # Configuration Access End
 
 
-def InitLoggers():
+def InitLoggers(logconfig):
     # Working with only one Logger at the Moment
     # Should be Improved
     logging.basicConfig(
-        filename=LOGFILENAME,
-        filemode=LOGFILEMODE,
-        level=LOGLEVEL,
-        format=LOGFORMAT,
+        filename=logconfig.LogFile,
+        filemode=logconfig.WriteMode,
+        level=logconfig.Level,
+        format=logconfig.Format,
     )
-    logging.critical(LOGINITMESSAGE)
+    logging.critical(logconfig.OnInitMessage)
 
 
 class Logger:

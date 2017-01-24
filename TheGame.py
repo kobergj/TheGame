@@ -21,10 +21,11 @@ if __name__ == '__main__':
     game = g.BetterGame(
         messages=config.Messages,
         viewsize=config.Layout.WindowSize,
-        mouse=view.GetMouse(),
         pricerange=config.Limits.PriceRange,
         destnumber=config.Limits.NumberOfDestinations,
         statnames=config.Stats,
+        colors=config.Colors,
+        margin=config.Layout.Margin,
     )
 
     game.NewGame(
@@ -57,4 +58,4 @@ if __name__ == '__main__':
 
     while True:
         # Lean Back and relax
-        game(view)
+        view(game.Recalculate())

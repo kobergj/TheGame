@@ -21,6 +21,7 @@ class FakeFactory:
         self.i += 1
         return self.robjects[self.i]
 
+
 # Test Helper to generate Boosters
 class Booster:
     def __init__(self, **kwargs):
@@ -102,6 +103,36 @@ class RefillingQueueTests(unittest.TestCase):
         actualResult = list(queue.Get(amount))
 
         self.assertEqual(actualResult, expectedResult)
+
+        self.assertEqual(queue._lifeline, expectedQueue)
+
+    @parameterized.expand([
+        param(
+            toset=1,
+            factory=FakeFactory(1, 2),
+            cache=0,
+            expectedQueue=[],
+        ),
+        param(
+            toset='One',
+            factory=FakeFactory(1, 2, 3, 4),
+            cache=1,
+            expectedQueue=[3],
+        ),
+        param(
+            toset='Another',
+            factory=FakeFactory(1, 2, 3, 4, 5, 6, 7, 8),
+            cache=3,
+            expectedQueue=[5, 6, 7],
+        )
+    ])
+    def test_set(self, toset, factory, cache, expectedQueue):
+        queue = q.RefillingQueue(factory, cache)
+
+        # Test
+        queue.Set(toset)
+
+        self.assertEqual(queue.Current(), toset)
 
         self.assertEqual(queue._lifeline, expectedQueue)
 

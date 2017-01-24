@@ -4,5 +4,5 @@ import kindaconfiguration as conf
 
 
 def SetUp(commandlineargs):
-    log.InitLoggers()
+    log.InitLoggers(conf.Logger)
     return conf

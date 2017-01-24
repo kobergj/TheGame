@@ -1,10 +1,5 @@
 import models.models as m
 
-import helpers.kindaconfiguration as conf
-# Configuration Access
-CREDITCURRENCYNAME = conf.Currencies.Credits
-# Configuration Access End
-
 
 class PlayerViewer:
     def __init__(self, player):
@@ -53,5 +48,4 @@ class CurrencyViewer:
         self._currency = currency
 
     def GetCreditAmount(self):
-        c = m.Currency(CREDITCURRENCYNAME)
-        return self._currency[c]
+        return self._currency[m.Credits()]

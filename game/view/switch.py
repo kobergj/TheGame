@@ -1,5 +1,28 @@
 
 
+class SwitchExecutor:
+    def __init__(self, switch):
+        self._switch = switch
+        self.active = False
+
+    def __call__(self, trigger, ishighlighted, isexecuted):
+        if self.active:
+            return self._switch.OnActive
+
+        if ishighlighted(trigger):
+
+            if isexecuted(trigger):
+                self.active = True
+                return self._switch.OnClick
+
+            return self._switch.OnHighlight
+
+        return self._switch.OnPassive
+
+    def deactivate(self):
+        self.active = False
+
+
 class MouseTrigger:
     def __init__(self, switch, mouse):
         self._switch = switch

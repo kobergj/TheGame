@@ -23,6 +23,7 @@ class SwitchExecutor:
         self.active = False
 
 
+# Deprecated
 class MouseTrigger:
     def __init__(self, switch, mouse):
         self._switch = switch

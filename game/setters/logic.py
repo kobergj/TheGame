@@ -11,7 +11,7 @@ class LogicController:
         self._universe = u.UniverseController(universe)
         self._fleet = f.Fleet(fleet)
 
-    def TradeCargo(self, cargo, credits):
+    def TradeCargo(self, cargo, credits, amount=1):
         self._player.Trade(credits, cargo)
 
     @log.Logger("Call Logic Controller")

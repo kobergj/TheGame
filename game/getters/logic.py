@@ -24,14 +24,17 @@ class GameViewer:
 
     def Cargo(self):
         for cargo, amount in self._player.GetCargo():
-            yield cargo, amount, self.Price(cargo)
+            yield cargo, self.Price(cargo), amount
 
     def CargoBuyOptions(self):
         for cargo in self._universe.CurrentHarborCargo():
-            yield cargo, self.Price(cargo)
+            yield cargo, -self.Price(cargo)
 
     def TravelOptions(self):
-        return self._universe.Destinations(self._numberofdest)
+        trcost = self._fleet.GetStat(self._statnames.TravelCosts) - 1
+        for harbor in self._universe.Destinations(self._numberofdest):
+            trcost += 1
+            yield harbor, trcost
 
     def Price(self, item):
         return self._priceregistry.Get(self._universe.CurrentHarborName(), item)

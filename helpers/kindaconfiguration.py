@@ -56,27 +56,6 @@ class Layout:
     WindowSize = 600, 400
 
 
-class Messages:
-    # Info Message for Welcome
-    Welcome = " -- Welcome To {} -- "
-    # Current Stats of Player
-    Stats = "[Credits] {} [Free Cargo Space] {}"
-    # Identifier for Sell Option
-    Sell = " [Sell] "
-    # Sell Option - UnExpanded
-    NoSell = " [SELL] ..."
-    # Sell Option - Line
-    SellLine = "   {}: {} (Sell for {})"
-    # Identifier for Buy Options
-    Buy = "[Buy] "
-    # Buy Option - UnExpanded
-    NoBuy = "... [BUY] "
-    # Buy Option - Line
-    BuyLine = "{} (Buy for {})   "
-    # Next Harbor Message
-    Travel = "Next Stop: {} (Travel for {})"
-
-
 class Colors:
     # RGB Tuple Representations of Colors
     Black = 0, 0, 0
@@ -87,15 +66,48 @@ class Colors:
 
     # Color Schemes -- Like: Passive, Highlight, Click, Active
     Clickable = White, Green, PurpleLike
-    Unclickable = White,
+    UnClickable = White,
     Blocked = White, Red
+
+
+class Messages:
+
+    class Buy:
+        # Identifier for Buy Options
+        Expanded = "[Buy] "
+        # Buy Option - UnExpanded
+        UnExpanded = "... [BUY] "
+        # Buy Option - Line
+        Line = "{} (Buy for {})   "
+
+    class Sell:
+        # Identifier for Sell Option
+        Expanded = " [Sell] "
+        # Sell Option - UnExpanded
+        UnExpanded = " [SELL] ..."
+        # Sell Option - Line
+        Line = "   {}: {} (Sell for {})"
+
+    class Travel:
+        # Next Harbor Message
+        Expanded = "Next Locations:"
+        # Next Harbor Information
+        Line = "{} (Travel for {})"
+
+    class Welcome:
+        # Info Message for Welcome
+        Expanded = " -- Welcome To {} -- "
+
+    class Stats:
+        # Current Stats of Player
+        Expanded = "[Credits] {} [Free Cargo Space] {}"
 
 
 class Limits:
     # Number of Harbors in Travel Cache
     HarborCache = 5
     # Number of Destination to Choose from
-    NumberOfDestinations = 1
+    NumberOfDestinations = 2
     # Price Range - Should be Depended on Item
     PriceRange = [5, 14]
 

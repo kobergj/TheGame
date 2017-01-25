@@ -1,5 +1,26 @@
 
 
+class TextButton:
+    def __init__(self, txt, colorswitch, txtcordfunc):
+        self._text = txt
+        self._colors = colorswitch
+
+        self.Coordinates = txtcordfunc
+
+    def Text(self):
+        return self._text
+
+    def Color(self, *switchargs):
+        return self._colors(*switchargs)
+
+    def Active(self):
+        return self._colors.active
+
+    def DeActivate(self):
+        self._colors.deactivate()
+
+
+# Not Implemented at the Moment
 class Button:
     def __init__(self, txtswitch, colswitch, rect, txtcordfunc):
         self._rect = rect
@@ -22,21 +43,3 @@ class Button:
         self._colswitch.deactivate()
 
 
-class TextButton:
-    def __init__(self, txt, colorswitch, txtcordfunc):
-        self._text = txt
-        self._colors = colorswitch
-
-        self.Coordinates = txtcordfunc
-
-    def Text(self):
-        return self._text
-
-    def Color(self, *switchargs):
-        return self._colors(*switchargs)
-
-    def Active(self):
-        return self._colors.active
-
-    def DeActivate(self):
-        self._colors.deactivate()

@@ -1,6 +1,6 @@
 import setters.logic as c
 import getters.logic as vl
-import widgets.widget as w
+import widgets.initiators as w
 import view.view as v
 
 
@@ -32,4 +32,3 @@ class BetterGame:
         self._widgets.Travel(self._viz.RegisterTopMid)
         self._widgets.Sell(self._viz.RegisterBottomLeft)
         return self._viz()
-

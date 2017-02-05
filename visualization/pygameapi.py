@@ -56,6 +56,15 @@ class PyGameEventHandler:
             pygame.quit()
             quit()
 
+        if event.type == pygame.MOUSEMOTION:
+            print event.pos
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            print event
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            print event
+
 
 class PyGameWindow:
     def __init__(self, size):

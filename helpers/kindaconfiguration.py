@@ -74,33 +74,35 @@ class Messages:
 
     class Buy:
         # Identifier for Buy Options
-        Expanded = "[Buy] "
+        Expanded = "Buy "
         # Buy Option - UnExpanded
-        UnExpanded = "... [BUY] "
+        UnExpanded = " [BUY] "
         # Buy Option - Line
         Line = "{} (Buy for {})   "
 
     class Sell:
         # Identifier for Sell Option
-        Expanded = " [Sell] "
+        Expanded = " Sell"
         # Sell Option - UnExpanded
-        UnExpanded = " [SELL] ..."
+        UnExpanded = " [SELL] "
         # Sell Option - Line
         Line = "   {}: {} (Sell for {})"
 
     class Travel:
         # Next Harbor Message
         Expanded = "Next Locations:"
+        # Next Harbor Message - UnExpanded
+        UnExpanded = "[Next Locations]"
         # Next Harbor Information
         Line = "{} (Travel for {})"
 
     class Welcome:
         # Info Message for Welcome
-        Expanded = " -- Welcome To {} -- "
+        UnExpanded = " -- Welcome To {} -- "
 
     class Stats:
         # Current Stats of Player
-        Expanded = "[Credits] {} [Free Cargo Space] {}"
+        UnExpanded = "[Credits] {} [Free Cargo Space] {}"
 
 
 class Limits:

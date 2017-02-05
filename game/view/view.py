@@ -9,17 +9,17 @@ class View:
     def __init__(self, wsize, margin):
         self._brbuilder = ButtonRegistryBuilder(wsize, margin)
 
-    def RegisterTopMid(self, col, msg, func, *args):
-        return self._brbuilder.Register(c.TOPMID, col, msg, func, *args)
+    def RegisterTopMid(self, col, msg, func, args=[]):
+        return self._brbuilder.Register(c.TOPMID, col, msg, func, args)
 
-    def RegisterBottomLeft(self, col, msg, func, *args):
-        return self._brbuilder.Register(c.BOTTOMLEFT, col, msg, func, *args)
+    def RegisterBottomLeft(self, col, msg, func, args=[]):
+        return self._brbuilder.Register(c.BOTTOMLEFT, col, msg, func, args)
 
-    def RegisterBottomMid(self, col, msg, func, *args):
-        return self._brbuilder.Register(c.BOTTOMMID, col, msg, func, *args)
+    def RegisterBottomMid(self, col, msg, func, args=[]):
+        return self._brbuilder.Register(c.BOTTOMMID, col, msg, func, args)
 
-    def RegisterBottomRight(self, col, msg, func, *args):
-        return self._brbuilder.Register(c.BOTTOMRIGHT, col, msg, func, *args)
+    def RegisterBottomRight(self, col, msg, func, args=[]):
+        return self._brbuilder.Register(c.BOTTOMRIGHT, col, msg, func, args)
 
     def __call__(self):
         reg = self._brbuilder.GetRegistry()
@@ -36,7 +36,7 @@ class ButtonRegistryBuilder:
         buttonfabric = f.TextButtonFabric(self._wsize, self._margin)
         self._reg = r.ExecRegistry(buttonfabric)
 
-    def Register(self, position, colors, msg, func, *args):
+    def Register(self, position, colors, msg, func, args):
         self._reg.Register(
             m.ButtonInfo(
                 text=msg,

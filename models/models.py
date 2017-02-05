@@ -81,6 +81,16 @@ class ButtonInfo:
         self.position = position
 
 
+class InteractionFuncs:
+    def __init__(self, titleargs=None, linelist=None, execute=None, lineargs=None, validator=None, expand=None):
+        self.titleargs = titleargs
+        self.linelist = linelist
+        self.execute = execute
+        self.lineargs = lineargs
+        self.validator = validator
+        self.expand = expand
+
+
 class Switch:
     def __init__(self, on_passive, on_highlight=None, on_click=None, on_active=None):
         self.OnPassive = on_passive

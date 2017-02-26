@@ -1,34 +1,33 @@
 import setters.logic as c
 import getters.logic as vl
-import widgets.initiators as w
-import view.view as v
+
+from models.constants import InteractionTypes as it
 
 
-class BetterGame:
-    def __init__(self, messages, viewsize, pricerange, destnumber, statnames, colors, margin):
-        self._messages = messages
-        self._colschemes = colors
-
-        self._view = vl.GameViewer(pricerange, destnumber, statnames)
-        self._viz = v.View(viewsize, margin)
-
-        self._showsell = True
-        self._showbuy = True
+class GameModel:
+    def __init__(self, pricerange, destnumber, statnames):
+        self._viewer = vl.GameViewer(pricerange, destnumber, statnames)
 
     def NewGame(self, player, universe, fleet):
-        self._logic = c.LogicController(player, universe, fleet)
-        self._view.NewGame(player, universe, fleet)
+        self._setter = c.GameSetter(player, universe, fleet)
+        self._viewer.NewGame(player, universe, fleet)
 
-        self._widgets = w.WidgetHandler(
-            setter=self._logic,
-            viewer=self._view,
-            messages=self._messages,
-            colors=self._colschemes
-        )
+    def Buy(self):
+        return Interaction(it.Buy, self._setter.TradeCargo, self._viewer.CargoBuyOptions)
 
-    def Recalculate(self):
-        self._widgets.StatsAndInfos(self._viz.RegisterTopMid)
-        self._widgets.Buy(self._viz.RegisterBottomRight)
-        self._widgets.Travel(self._viz.RegisterTopMid)
-        self._widgets.Sell(self._viz.RegisterBottomLeft)
-        return self._viz()
+
+class Interaction:
+    def __init__(self, typ, execfunc, argsfunc):
+        self._execfunc = execfunc
+        self._argsfunc = argsfunc
+        self._type = typ
+
+    def Func(self):
+        return self._execfunc
+
+    def Args(self):
+        for args in self._argsfunc():
+            yield args
+
+    def Type(self):
+        return self._type

@@ -1,5 +1,15 @@
 
 
+class SimpleWidget:
+    def __init__(self, text, colors, execfunc, execargs):
+        self._text = text
+        self._color = colors
+        self._func, self._args = execfunc, execargs
+
+    def __call__(self, regfunc):
+        regfunc(self._color, self._text, self._func, *self._args)
+
+
 class Widget:
     def __init__(self, colors, messages, interactionfuncs):
         self._arghandler = RegistryArgumentHandler(

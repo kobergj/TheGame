@@ -56,7 +56,7 @@ class Layout:
     WindowSize = 600, 400
 
 
-class Colors:
+class Images:
     # RGB Tuple Representations of Colors
     Black = 0, 0, 0
     White = 255, 255, 255
@@ -64,29 +64,23 @@ class Colors:
     PurpleLike = 123, 12, 178
     Red = 250, 18, 18
 
-    # Color Schemes -- Like: Passive, Highlight, Click, Active
-    Clickable = White, Green, PurpleLike
-    UnClickable = White,
-    Blocked = White, Red
+    # # Buy Action # #
 
+    # Identifier for Buy Options
+    BuyParent = "Buy ", White
+    # Buy Option - Line
+    BuyChild = "{} (Buy for {})   ", White
+    # Buy Option - Line - Highlighted
+    BuyHighlightedChild = "{} (Buy for {})   ", Green
 
-class Messages:
+    # # Sell Action # #
 
-    class Buy:
-        # Identifier for Buy Options
-        Expanded = "Buy "
-        # Buy Option - UnExpanded
-        UnExpanded = " [BUY] "
-        # Buy Option - Line
-        Line = "{} (Buy for {})   "
-
-    class Sell:
-        # Identifier for Sell Option
-        Expanded = " Sell"
-        # Sell Option - UnExpanded
-        UnExpanded = " [SELL] "
-        # Sell Option - Line
-        Line = "   {}: {} (Sell for {})"
+    # Identifier for Sell Option
+    SellParent = " Sell", White
+    # Sell Option - Line
+    SellChild = "   {}: {} (Sell for {})", White
+    # Sell Option - Line - Highlighted
+    SellChild = "   {}: {} (Sell for {})", Green
 
     class Travel:
         # Next Harbor Message

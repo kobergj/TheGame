@@ -3,7 +3,8 @@ import models.models as m
 import implementations.factory as f
 
 import game.game as g
-import visualization.pygameapi as pg
+import pygameapi.pygameapi as pg
+import view.view as v
 
 import sys
 
@@ -11,24 +12,20 @@ import sys
 if __name__ == '__main__':
     config = h.SetUp(sys.argv)
 
-    view = pg.PyGameApi(
+    controller = pg.PyGameApi(
         size=config.Layout.WindowSize,
         font=config.Layout.Font,
         fontsize=config.Layout.FontSize,
         bgcolor=config.Colors.Black
     )
 
-    game = g.BetterGame(
-        messages=config.Messages,
-        viewsize=config.Layout.WindowSize,
+    gamemodel = g.GameModel(
         pricerange=config.Limits.PriceRange,
         destnumber=config.Limits.NumberOfDestinations,
         statnames=config.Stats,
-        colors=config.Colors,
-        margin=config.Layout.Margin,
     )
 
-    game.NewGame(
+    gamemodel.NewGame(
         player=m.Player(
             name=config.Initial.PlayerName,
             startCurrency=[
@@ -56,6 +53,8 @@ if __name__ == '__main__':
         ),
     )
 
+    view = v.View(config.Images)
+
     while True:
         # Lean Back and relax
-        view(game.Recalculate())
+        view(gamemodel, controller)

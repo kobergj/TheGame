@@ -67,6 +67,13 @@ class Player(BaseModel):
         self.currency = c.Container(startItems=startCurrency)
 
 
+class Button:
+    def __init__(self, text, color, position):
+        self.text = text
+        self.color = color
+        self.position = position
+
+
 class Fleet:
     def __init__(self, ships=[]):
         self.stats = s.StatServer()

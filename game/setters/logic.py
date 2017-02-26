@@ -5,7 +5,7 @@ import fleet as f
 import helpers.logger as log
 
 
-class LogicController:
+class GameSetter:
     def __init__(self, player, universe, fleet):
         self._player = p.PlayerController(player)
         self._universe = u.UniverseController(universe)

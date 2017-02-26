@@ -1,45 +1,44 @@
 
 
 class TextButton:
-    def __init__(self, txt, colorswitch, txtcordfunc):
+    def __init__(self, txt, colors, txtcordfunc):
         self._text = txt
-        self._colors = colorswitch
+        self._active = False
+        self._color = colors
+        self._validator = lambda x: True
 
         self.Coordinates = txtcordfunc
+        # self.Color = self._color.UnClickable
 
     def Text(self):
         return self._text
 
-    def Color(self, *switchargs):
-        return self._colors(*switchargs)
+    def Highlight(self, condargs, do=True):
+        if not do:
+            self.Color = self._colors.UnClickable
+            return
+
+        if self._validator(condargs):
+            self.Color = self._colors.UnClickable
+            return
+
+        self.Color = self._colors.Clickable
 
     def Active(self):
-        return self._colors.active
+        return self._active
 
     def DeActivate(self):
-        self._colors.deactivate()
+        self._active = False
+    #    self.execfunc(execargs)
 
 
-# Not Implemented at the Moment
-class Button:
-    def __init__(self, txtswitch, colswitch, rect, txtcordfunc):
-        self._rect = rect
-        self._colswitch = colswitch
-        self._textswitch = txtswitch
+# class Validator:
+#     def __init__(self, condfunc, execfunc, execargs):
+#         self._conds = condfunc
+#         self._func = (execfunc, execargs)
 
-        self.TextCoordinates = txtcordfunc
+#     def __call__(self, condargs):
+#         if self._conds(conda rgs):
+#             return self._func
 
-    def Rect(self, *switchargs):
-        col = self._colswitch(self._rect, *switchargs)
-        return self._rect, col
-
-    def Text(self, *switchargs):
-        return self._textswitch(*switchargs)
-
-    def Active(self):
-        return self._colswitch.active
-
-    def DeActivate(self):
-        self._colswitch.deactivate()
-
-
+#         return

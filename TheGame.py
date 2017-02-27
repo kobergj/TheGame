@@ -16,7 +16,7 @@ if __name__ == '__main__':
         size=config.Layout.WindowSize,
         font=config.Layout.Font,
         fontsize=config.Layout.FontSize,
-        bgcolor=config.Colors.Black
+        bgcolor=config.Images.Black
     )
 
     gamemodel = g.GameModel(
@@ -56,5 +56,7 @@ if __name__ == '__main__':
     view = v.View(config.Images)
 
     while True:
-        # Lean Back and relax
+        # Lean Back
         view(gamemodel, controller)
+        # ... and relax
+        controller.Update()

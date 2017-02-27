@@ -1,13 +1,16 @@
 from models.constants import RelativePositions as rp
 
 
-class RelativeCoordinates:
+class CoordinateHandler:
     # NOTE: Returns currently TopLeft Coordinates always
     # EXTRANOTE: Should be configurable, though :)
     def __init__(self, maxsize):
         self._height = maxsize[1]
         self._width = maxsize[0]
 
+        self._registered = {}
+
+    def Reset(self):
         self._registered = {}
 
     def NewRect(self, size, position):
@@ -20,6 +23,9 @@ class RelativeCoordinates:
 
         if position == rp.TopRight:
             return self.TopRight(size)
+
+        if position == rp.Center:
+            return self.Center(size)
 
         if position == rp.BottomLeft:
             return self.BottomLeft(size)
@@ -53,6 +59,12 @@ class RelativeCoordinates:
     def TopRight(self, size):
         x = self._width - size[0]
         y = self._registered[rp.TopRight] - size[1]
+
+        return x, y
+
+    def Center(self, size):
+        x = self._width / 2 - size[0] / 2
+        y = self._height / 2 + self._registered[rp.Center]
 
         return x, y
 

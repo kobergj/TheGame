@@ -19,6 +19,11 @@ def InitLoggers(logconfig):
     logging.critical(logconfig.OnInitMessage)
 
 
+def DebugLog(message, logger=''):
+    log = logging.getLogger(logger)
+    log.debug(message)
+
+
 class Logger:
     def __init__(self, identifier, logger=''):
         self.logger = logging.getLogger(logger)

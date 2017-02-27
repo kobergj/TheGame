@@ -69,9 +69,11 @@ class Images:
     # Identifier for Buy Options
     BuyParent = "Buy ", White
     # Buy Option - Line
-    BuyChild = "{} (Buy for {})   ", White
+    BuyChild = "{} (Credits {})   ", White
     # Buy Option - Line - Highlighted
-    BuyHighlightedChild = "{} (Buy for {})   ", Green
+    BuyHighlightedChild = "{} (Credits {})   ", Green
+    # Buy Option - Line - Blocked
+    BuyBlockedChild = "{} (Credits {})   ", Red
 
     # # Sell Action # #
 
@@ -80,23 +82,26 @@ class Images:
     # Sell Option - Line
     SellChild = "   {}: {} (Sell for {})", White
     # Sell Option - Line - Highlighted
-    SellChild = "   {}: {} (Sell for {})", Green
+    SellHighlightedChild = "   {}: {} (Sell for {})", Green
 
-    class Travel:
-        # Next Harbor Message
-        Expanded = "Next Locations:"
-        # Next Harbor Message - UnExpanded
-        UnExpanded = "[Next Locations]"
-        # Next Harbor Information
-        Line = "{} (Travel for {})"
+    # # Player Stats # #
 
-    class Welcome:
-        # Info Message for Welcome
-        UnExpanded = " -- Welcome To {} -- "
+    # Identifier for Stats Option
+    StatsParent = " Current Stats ", White
+    # Current Stats of Player
+    StatsChild = "[{}]: {}", White
 
-    class Stats:
-        # Current Stats of Player
-        UnExpanded = "[Credits] {} [Free Cargo Space] {}"
+    # Next Harbor Message
+    TravelParent = "Next Locations:", White
+    # Next Harbor Information
+    TravelChild = "{} (Travel for {})", White
+    # Next Harbor Information -- Highlighted
+    TravelHighlightedChild = "{} (Travel for {})", Green
+
+    # Info Message for Welcome
+    WelcomeParent = " You arrived succesfully. Welcome To ", White
+    # Harbor Message
+    WelcomeChild = " -- {} -- ", White
 
 
 class Limits:
@@ -114,7 +119,7 @@ class Logger:
     # File Mode Used - should be 'w' or 'a'
     WriteMode = "w"
     # Level of Log Messages
-    Level = "ERROR"
+    Level = "DEBUG"
     # Format of Log Messages
     Format = "[%(levelname)s] %(filename)s // %(funcName)s: %(message)s "
     # Message that is shown on Logger Init

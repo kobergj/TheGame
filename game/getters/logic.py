@@ -16,8 +16,8 @@ class GameViewer:
         self._universe = u.UniverseViewer(universe)
         self._fleet = f.FleetViewer(fleet)
 
-    def HarborName(self):
-        return self._universe.CurrentHarborName()
+    def Harbor(self):
+        yield self._universe.CurrentHarborName(),
 
     def Credits(self):
         return self._player.GetCredits()
@@ -46,6 +46,16 @@ class GameViewer:
         used = self._player.UsedCargoSpace()
         cap = self._fleet.GetStat(self._statnames.CargoCapacity)
         return cap - used
+
+    def Stats(self):
+        cr = "Credits"
+        yield cr, self.Credits()
+
+        cc = self._statnames.CargoCapacity
+        yield cc, self._fleet.GetStat(cc)
+
+        fc = "FreeCargoSpace"
+        yield fc, self.FreeCargoSpace()
 
 
 class PriceRegistry:

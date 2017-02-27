@@ -7,7 +7,7 @@ import sprites as s
 class PyGameWindow:
     def __init__(self, size, bgcolor=None):
         self._screen = pygame.display.set_mode(size)
-        self._sprites = pygame.sprite.Group()
+        self.sprites = pygame.sprite.Group()
 
         self._bg = bgcolor
 
@@ -15,14 +15,13 @@ class PyGameWindow:
         self._bg = color
 
     def DrawSprites(self):
-        self._sprites.draw(self._screen)
-        self._sprites.empty()
+        self.sprites.draw(self._screen)
 
     def AddSprite(self, sprite):
-        self._sprites.add(sprite)
+        self.sprites.add(sprite)
 
-    def NewParent(self, imgstrategy, imgbuilder, func):
-        sprite = s.ParentSprite(imgstrategy, imgbuilder, func)
+    def NewParent(self, imgstrategy, imgbuilder, func, validator):
+        sprite = s.ParentSprite(imgstrategy, imgbuilder, func, validator)
         self.AddSprite(sprite)
         return sprite
 
@@ -32,15 +31,15 @@ class PyGameWindow:
         return sprite
 
     def Update(self):
-        self._sprites.update()
+        self.sprites.update()
         self.DrawSprites()
         pygame.display.flip()
         self._screen.fill(self._bg)
         # time.sleep(1)
 
-    def FindSprite(self, coordinates):
-        for sprite in self._sprites:
-            if sprite.ContainsCoordinates(coordinates):
+    def FindSpriteByImageSource(self, imgsource):
+        for sprite in self.sprites:
+            if sprite.imgsrcstrategy == imgsource:
                 return sprite
 
         return None

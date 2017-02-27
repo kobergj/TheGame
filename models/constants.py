@@ -15,9 +15,12 @@ class WidgetStatus:
     Passive = 0
     Highlighted = 1
     Active = 2
+    Blocked = 3
 
 
 class InteractionTypes:
     Buy = 0
     Sell = 1
     Travel = 2
+    Stats = 3
+    Info = 4

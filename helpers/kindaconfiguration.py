@@ -80,9 +80,9 @@ class Images:
     # Identifier for Sell Option
     SellParent = " Sell", White
     # Sell Option - Line
-    SellChild = "   {}: {} (Sell for {})", White
+    SellChild = "   {} (Credits {}) x{}", White
     # Sell Option - Line - Highlighted
-    SellHighlightedChild = "   {}: {} (Sell for {})", Green
+    SellHighlightedChild = "   {} (Credits {}) x{}", Green
 
     # # Player Stats # #
 

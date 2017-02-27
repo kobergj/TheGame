@@ -2,11 +2,14 @@ import pygame
 import time
 
 import sprites as s
+import coordinates as c
 
 
 class PyGameWindow:
     def __init__(self, size, bgcolor=None):
         self._screen = pygame.display.set_mode(size)
+        self._coordinatehandler = c.CoordinateHandler(size)
+
         self.sprites = pygame.sprite.Group()
 
         self._bg = bgcolor
@@ -14,28 +17,26 @@ class PyGameWindow:
     def Fill(self, color):
         self._bg = color
 
-    def DrawSprites(self):
-        self.sprites.draw(self._screen)
-
-    def AddSprite(self, sprite):
-        self.sprites.add(sprite)
-
-    def NewParent(self, imgstrategy, imgbuilder, func, validator):
+    def NewParent(self, position, imgstrategy, imgbuilder, func, validator):
         sprite = s.ParentSprite(imgstrategy, imgbuilder, func, validator)
-        self.AddSprite(sprite)
+        self._addsprite(sprite, position)
         return sprite
 
-    def NewChild(self, imgstrategy, imgbuilder, parent, args):
+    def NewChild(self, position, imgstrategy, imgbuilder, parent, args):
         sprite = s.ChildSprite(imgstrategy, imgbuilder, parent, args)
-        self.AddSprite(sprite)
+        self._addsprite(sprite, position)
         return sprite
 
     def Update(self):
         self.sprites.update()
-        self.DrawSprites()
+        self._drawsprites()
         pygame.display.flip()
         self._screen.fill(self._bg)
         # time.sleep(1)
+
+    def Reset(self):
+        self.sprites.empty()
+        self._coordinatehandler.Reset()
 
     def FindSpriteByImageSource(self, imgsource):
         for sprite in self.sprites:
@@ -43,3 +44,12 @@ class PyGameWindow:
                 return sprite
 
         return None
+
+    def _drawsprites(self):
+        self.sprites.draw(self._screen)
+
+    def _addsprite(self, sprite, position):
+        crds = self._coordinatehandler.NewRect(sprite.rect.size, position)
+        sprite.SetWay(crds)
+
+        self.sprites.add(sprite)

@@ -1,10 +1,10 @@
 import pygame
 
 import window as w
-import coordinates as c
 import eventhandler as eh
 
 import helpers.logger as log
+from models.constants import RelativePositions as rp
 
 
 class PyGameApi:
@@ -13,9 +13,8 @@ class PyGameApi:
 
         self._window = w.PyGameWindow(size)
         self._font = PyGameFont(font, fontsize)
-        self._coordinatehandler = c.CoordinateHandler(size)
 
-        self._eventhandler = eh.PyGameEventHandler(self._window.sprites, self._coordinatehandler.Reset)
+        self._eventhandler = eh.PyGameEventHandler(self._window.sprites, self._window.Reset)
 
         self.bgcolor = bgcolor
         self._window.Fill(self.bgcolor)
@@ -25,7 +24,34 @@ class PyGameApi:
         self._eventhandler()
         self._window.Update()
 
-    def CheckSprite(self, position, imgstrategy, parent=None, func=None, validator=None, args=[]):
+    def SetTopLeft(self, *spriteargs, **spritekwargs):
+        return self._check(rp.TopLeft, *spriteargs, **spritekwargs)
+
+    def SetTopMid(self, *spriteargs, **spritekwargs):
+        return self._check(rp.TopMid, *spriteargs, **spritekwargs)
+
+    def SetTopRight(self, *spriteargs, **spritekwargs):
+        return self._check(rp.TopRight, *spriteargs, **spritekwargs)
+
+    def SetMidLeft(self, *spriteargs, **spritekwargs):
+        return self._check(rp.MidLeft, *spriteargs, **spritekwargs)
+
+    def SetCenter(self, *spriteargs, **spritekwargs):
+        return self._check(rp.Center, *spriteargs, **spritekwargs)
+
+    def SetMidRight(self, *spriteargs, **spritekwargs):
+        return self._check(rp.MidRight, *spriteargs, **spritekwargs)
+
+    def SetBottomLeft(self, *spriteargs, **spritekwargs):
+        return self._check(rp.BottomLeft, *spriteargs, **spritekwargs)
+
+    def SetBottomMid(self, *spriteargs, **spritekwargs):
+        return self._check(rp.BottomMid, *spriteargs, **spritekwargs)
+
+    def SetBottomRight(self, *spriteargs, **spritekwargs):
+        return self._check(rp.BottomRight, *spriteargs, **spritekwargs)
+
+    def _check(self, position, imgstrategy, parent=None, func=None, validator=None, args=[]):
         # Is Sprite there?
         sprite = self._window.FindSpriteByImageSource(imgstrategy)
         if sprite:
@@ -34,25 +60,11 @@ class PyGameApi:
 
         # If it has no parent - it is a parent
         if not parent:
-            return self.NewParentSprite(position, imgstrategy, func, validator)
+            return self._window.NewParent(position, imgstrategy, self._renderfont, func, validator)
 
-        return self.NewChildSprite(position, imgstrategy, parent, args)
+        return self._window.NewChild(position, imgstrategy, self._renderfont, parent, args)
 
-    @log.Logger('NewParentSprite')
-    def NewParentSprite(self, position, imgstrategy, execfunc=None, validator=None):
-        sprite = self._window.NewParent(imgstrategy, self.RenderFont, execfunc, validator)
-        coordinates = self._coordinatehandler.NewRect(sprite.rect.size, position)
-        sprite.SetWay(coordinates, coordinates)
-        return sprite
-
-    @log.Logger('NewChildSprite')
-    def NewChildSprite(self, position, imgstrategy, parent, args=[]):
-        sprite = self._window.NewChild(imgstrategy, self.RenderFont, parent, args)
-        coordinates = self._coordinatehandler.NewRect(sprite.rect.size, position)
-        sprite.SetWay(coordinates, coordinates)
-        return sprite
-
-    def RenderFont(self, txt, col):
+    def _renderfont(self, txt, col):
         return self._font.Render(txt, col)
 
 

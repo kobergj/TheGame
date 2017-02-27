@@ -31,17 +31,14 @@ class Sprite(pygame.sprite.Sprite):
         return self._imgbuilder(*self.imgsrcstrategy[st])
 
     def update(self):
-        self.move()
+        self._move()
 
-    def SetTopLeft(self, topleft):
-        self.rect.topleft = topleft
+    def SetWay(self, start, end=None):
+        if not end:
+            end = start
 
-    def SetEndpoint(self, end):
-        self._end = end
-
-    def SetWay(self, start, end):
-        self.SetTopLeft(start)
-        self.SetEndpoint(end)
+        self._settopleft(start)
+        self._setendpoint(end)
 
     def UpdateStrategy(self, imgstrategy):
         self.imgsrcstrategy = imgstrategy
@@ -53,22 +50,33 @@ class Sprite(pygame.sprite.Sprite):
         self.status = ws.Passive
 
     def SetHighlighted(self):
-
         if self.Validate():
             self.status = ws.Highlighted
             return
 
         self.status = ws.Blocked
 
-    def move(self):
+    def Validate(self):
+        return True
+
+    def Execute(self):
+        return None
+
+    def _settopleft(self, topleft):
+        self.rect.topleft = topleft
+
+    def _setendpoint(self, end):
+        self._end = end
+
+    def _move(self):
         # X - Offset
-        x = self.getoffset(self.rect.x, self._end[0])
+        x = self._getoffset(self.rect.x, self._end[0])
         # Y - Offset
-        y = self.getoffset(self.rect.y, self._end[1])
+        y = self._getoffset(self.rect.y, self._end[1])
 
         self.rect.move_ip(x, y)
 
-    def getoffset(self, actual, desired):
+    def _getoffset(self, actual, desired):
         check = desired - actual
         if check in range(0 - MOVEMENTSPEED, 0 + MOVEMENTSPEED):
             return 0
@@ -85,13 +93,13 @@ class ParentSprite(Sprite):
         self._func = func
         self._validator = validator
 
-    def Execute(self, args=[]):
+    def ExecuteChild(self, args):
         if not self._func:
             return
 
         return self._func(*args)
 
-    def Validate(self, args=[]):
+    def ValidateChild(self, args=[]):
         if not self._validator:
             return
 
@@ -105,7 +113,10 @@ class ChildSprite(Sprite):
         self._parent = parent
 
     def Execute(self):
-        return self._parent.Execute(self._args)
+        if self.status == ws.Blocked:
+            return
+
+        return self._parent.ExecuteChild(self._args)
 
     def Validate(self):
-        return self._parent.Validate(self._args)
+        return self._parent.ValidateChild(self._args)

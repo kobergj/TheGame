@@ -1,4 +1,3 @@
-from models.constants import RelativePositions as rp
 
 import helpers.logger as log
 import images as i
@@ -10,22 +9,31 @@ class View:
 
     def __call__(self, gamemodel, controller):
         # Buy Action
-        self.RegisterInteraction(gamemodel.Buy(), controller, rp.BottomRight)
+        self.RegisterInteraction(gamemodel.Buy(), controller.SetBottomRight)
         # Sell Action
-        self.RegisterInteraction(gamemodel.Sell(), controller, rp.BottomLeft)
+        self.RegisterInteraction(gamemodel.Sell(), controller.SetBottomLeft)
         # Player Stats
-        self.RegisterInteraction(gamemodel.Stats(), controller, rp.TopLeft)
+        self.RegisterInteraction(gamemodel.Stats(), controller.SetTopLeft)
         # Travel Action
-        self.RegisterInteraction(gamemodel.Travel(), controller, rp.TopRight)
+        self.RegisterInteraction(gamemodel.Travel(), controller.SetTopRight)
         # Main Info
-        self.RegisterInteraction(gamemodel.Harbor(), controller, rp.Center)
+        self.RegisterInteraction(gamemodel.Harbor(), controller.SetCenter)
 
     @log.Logger('RegisterInteraction')
-    def RegisterInteraction(self, interaction, controller, position):
+    def RegisterInteraction(self, interaction, ctrlregistry):
+        # Generate ImageStrategy
+        typ = interaction.Type()
+        imgstry = self._imgsrc.ParentStrategy(typ)
+
+        # Get/Set parent
         func = interaction.Func()
         validator = interaction.Validator()
-        imgstry = self._imgsrc.ParentStrategy(interaction.Type())
-        parent = controller.CheckSprite(position, imgstry, func=func, validator=validator)
+        parent = ctrlregistry(imgstry, func=func, validator=validator)
+
+        # Loop through Arguments
         for args in interaction.Args():
-            imgstry = self._imgsrc.ChildStrategy(interaction.Type(), args)
-            controller.CheckSprite(position, imgstry, parent=parent, args=args)
+            # Generate ImageStrategy
+            imgstry = self._imgsrc.ChildStrategy(typ, args)
+
+            # Set Child
+            ctrlregistry(imgstry, parent=parent, args=args)

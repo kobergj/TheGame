@@ -4,7 +4,7 @@ import pygame
 class PyGameEventHandler:
     def __init__(self, sprites, cordsreset):
         self.sprites = sprites
-        self._resetcoordinates = cordsreset
+        self._reset = cordsreset
 
     def __call__(self):
         for event in pygame.event.get():
@@ -35,8 +35,7 @@ class PyGameEventHandler:
 
             if sprite.ContainsCoordinates(pos):
                 sprite.Execute()
-                self.sprites.empty()
-                self._resetcoordinates()
+                self._reset()
                 return
 
         return

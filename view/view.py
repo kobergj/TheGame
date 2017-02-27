@@ -1,23 +1,26 @@
+from models.constants import InteractionTypes as it
 
 import helpers.logger as log
 import images as i
 
 
 class View:
-    def __init__(self, imgpathes):
+    def __init__(self, imgpathes, controller):
         self._imgsrc = i.ImageSource(imgpathes)
 
+        self._layout = {
+            it.Buy: controller.SetBottomRight,
+            it.Sell: controller.SetBottomLeft,
+            it.Stats: controller.SetTopLeft,
+            it.Travel: controller.SetTopRight,
+            it.Info: controller.SetCenter,
+            it.GameOver: controller.SetCenter,
+        }
+
     def __call__(self, gamemodel, controller):
-        # Buy Action
-        self.RegisterInteraction(gamemodel.Buy(), controller.SetBottomRight)
-        # Sell Action
-        self.RegisterInteraction(gamemodel.Sell(), controller.SetBottomLeft)
-        # Player Stats
-        self.RegisterInteraction(gamemodel.Stats(), controller.SetTopLeft)
-        # Travel Action
-        self.RegisterInteraction(gamemodel.Travel(), controller.SetTopRight)
-        # Main Info
-        self.RegisterInteraction(gamemodel.Harbor(), controller.SetCenter)
+        for interaction in gamemodel.Interactions():
+            typ = interaction.Type()
+            self.RegisterInteraction(interaction, self._layout[typ])
 
     @log.Logger('RegisterInteraction')
     def RegisterInteraction(self, interaction, ctrlregistry):

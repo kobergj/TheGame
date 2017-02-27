@@ -23,6 +23,9 @@ class ImageSource:
         if typ == it.Info:
             return self.InfoParent()
 
+        if typ == it.GameOver:
+            return self.GameOverParent()
+
         raise NotImplementedError
 
     def ChildStrategy(self, typ, args=[]):
@@ -57,6 +60,9 @@ class ImageSource:
 
     def InfoParent(self):
         return ImageStrategy(it.Info, self._imgsrc.WelcomeParent)
+
+    def GameOverParent(self):
+        return ImageStrategy(it.GameOver, self._imgsrc.GameOver)
 
     def BuyChild(self, args):
         bc = self._imgsrc.BuyChild

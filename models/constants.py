@@ -24,3 +24,4 @@ class InteractionTypes:
     Travel = 2
     Stats = 3
     Info = 4
+    GameOver = 5

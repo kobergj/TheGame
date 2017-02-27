@@ -53,7 +53,7 @@ if __name__ == '__main__':
         ),
     )
 
-    view = v.View(config.Images)
+    view = v.View(config.Images, controller)
 
     while True:
         # Lean Back

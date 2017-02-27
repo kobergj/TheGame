@@ -12,6 +12,22 @@ class GameModel:
         self._setter = c.GameSetter(player, universe, fleet)
         self._viewer.NewGame(player, universe, fleet)
 
+    def Interactions(self):
+        if self._viewer.Credits() == 0 and len(list(self._viewer.Cargo())) == 0:
+            return self.GameOver()
+
+        return self.HarborOptions()
+
+    def HarborOptions(self):
+        yield self.Buy()
+        yield self.Sell()
+        yield self.Stats()
+        yield self.Travel()
+        yield self.Harbor()
+
+    def GameOver(self):
+        yield Interaction(it.GameOver, None, lambda: [])
+
     def Buy(self):
         return Interaction(
             typ=it.Buy,
@@ -28,7 +44,7 @@ class GameModel:
         return Interaction(it.Stats, lambda *x: None, self._viewer.Stats)
 
     def Travel(self):
-        return Interaction(it.Travel, self._setter.Travel, self._viewer.TravelOptions)
+        return Interaction(it.Travel, self._setter.Travel, self._viewer.TravelOptions, lambda harbor, price: self._viewer.Credits() - price >= 0,)
 
     def Harbor(self):
         return Interaction(it.Info, lambda *x: None, self._viewer.Harbor)

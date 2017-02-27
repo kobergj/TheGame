@@ -103,6 +103,9 @@ class Images:
     # Harbor Message
     WelcomeChild = " -- {} -- ", White
 
+    # Well, ... yes ... GAME OVER
+    GameOver = " -- Sorry, TheGame is over -- ", Red
+
 
 class Limits:
     # Number of Harbors in Travel Cache
